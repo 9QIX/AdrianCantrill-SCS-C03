@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<title>AWS Certified Security Specialty</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#1c1d1f;color:#fff;min-height:100vh}
+
+/* Header */
+.header{background:#2d2f31;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #3e4143;position:sticky;top:0;z-index:100}
+.header h1{font-size:16px;font-weight:600;color:#fff;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.header-right{display:flex;align-items:center;gap:12px}
+.timer{font-size:14px;color:#a435f0;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums;transition:color .3s,text-shadow .3s}
+.timer.urgent{color:#ef4444;animation:timerPulse 1s ease-in-out infinite}
+.timer.critical{color:#ef4444;text-shadow:0 0 12px rgba(239,68,68,.6);animation:timerPulse .5s ease-in-out infinite}
+@keyframes timerPulse{0%,100%{opacity:1}50%{opacity:.5}}
+.live-score{font-size:13px;font-weight:600;padding:4px 12px;border-radius:6px;background:rgba(16,185,129,.12);color:#10b981;white-space:nowrap;transition:all .3s}
+.live-score.failing{background:rgba(239,68,68,.12);color:#ef4444}
+
+/* Buttons */
+.btn{padding:8px 16px;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary{background:#a435f0;color:#fff}.btn-primary:hover{background:#8710d8;box-shadow:0 4px 12px rgba(164,53,240,.3)}
+.btn-outline{background:transparent;color:#a435f0;border:1px solid #a435f0}.btn-outline:hover{background:rgba(164,53,240,.08)}
+.btn-danger{background:#ef4444;color:#fff}.btn-danger:hover{background:#dc2626}
+.btn-success{background:#10b981;color:#fff}.btn-success:hover{background:#059669}
+.btn-check{background:#6366f1;color:#fff;padding:10px 28px;font-size:15px;border-radius:8px}.btn-check:hover{background:#4f46e5;box-shadow:0 4px 12px rgba(99,102,241,.3)}
+.btn-ghost{background:transparent;color:#6b7280;border:1px solid #3e4143;font-size:12px;padding:6px 12px}.btn-ghost:hover{border-color:#6b7280;color:#a0a0a0}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* Layout */
+.main{max-width:900px;margin:0 auto;padding:24px}
+
+/* Progress */
+.progress-row{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.progress-bar{background:#3e4143;border-radius:8px;height:6px;overflow:hidden;flex:1}
+.progress-fill{height:100%;background:linear-gradient(90deg,#a435f0,#6d28d9);border-radius:8px;transition:width .4s ease}
+.progress-counter{font-size:12px;color:#a0a0a0;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* Question */
+.question-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.q-number{font-size:14px;color:#a0a0a0}.q-section{font-size:12px;color:#a435f0;background:rgba(164,53,240,.08);padding:4px 10px;border-radius:12px}
+.q-type{font-size:13px;color:#f59e0b;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.question-text{font-size:16px;line-height:1.6;margin-bottom:24px;color:#e0e0e0}
+.question-text p{margin-bottom:10px}
+
+.question-text img{max-width:100%;border-radius:8px;margin:8px 0}
+.question-text ul{margin-left:24px;margin-bottom:16px}
+.question-text li{margin-bottom:6px}
+
+/* Answers */
+.answers{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.answer{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:2px solid #3e4143;border-radius:8px;cursor:pointer;transition:all .2s;background:#2d2f31;position:relative}
+.answer:hover:not(.locked){border-color:#6d28d9;background:rgba(45,47,49,.6);transform:translateX(2px)}
+.answer.just-selected{animation:answerPulse .3s ease}
+@keyframes answerPulse{0%{transform:scale(1)}50%{transform:scale(1.01)}100%{transform:scale(1)}}
+.answer.selected{border-color:#a435f0;background:rgba(164,53,240,.08)}
+.answer.correct{border-color:#10b981;background:rgba(16,185,129,.07)}
+.answer.incorrect{border-color:#ef4444;background:rgba(239,68,68,.07)}
+.answer.missed{border-color:#f59e0b;background:rgba(245,158,11,.06)}
+.answer.locked{cursor:default}
+
+/* Answer label tags */
+.answer-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:auto;flex-shrink:0;white-space:nowrap;letter-spacing:.3px;user-select:all}
+.answer-tag.tag-correct{background:rgba(16,185,129,.15);color:#10b981}
+.answer-tag.tag-wrong{background:rgba(239,68,68,.15);color:#ef4444}
+.answer-tag.tag-missed{background:rgba(245,158,11,.15);color:#f59e0b}
+
+/* Radio indicator (single-answer) */
+.answer-indicator{min-width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid #6b7280;flex-shrink:0;margin-top:3px;transition:all .2s}
+.answer-indicator .dot{width:10px;height:10px;border-radius:50%;background:#a435f0;display:none}
+.answer.selected .answer-indicator{border-color:#a435f0}.answer.selected .answer-indicator .dot{display:block}
+.answer.correct .answer-indicator{border-color:#10b981;background:#10b981}.answer.correct .answer-indicator .dot{display:block;background:#fff}
+.answer.incorrect .answer-indicator{border-color:#ef4444;background:#ef4444}.answer.incorrect .answer-indicator .dot{display:block;background:#fff}
+.answer.missed .answer-indicator{border-color:#f59e0b;background:#f59e0b}.answer.missed .answer-indicator .dot{display:block;background:#fff}
+
+/* Checkbox indicator (multi-answer) */
+.answer-indicator.checkbox{border-radius:4px}
+.answer-indicator.checkbox .dot{width:14px;height:14px;border-radius:2px;background:transparent;display:none;font-size:14px;font-weight:700;color:#a435f0;line-height:14px}
+.answer.selected .answer-indicator.checkbox{border-color:#a435f0;background:rgba(164,53,240,.15)}.answer.selected .answer-indicator.checkbox .dot{display:flex;align-items:center;justify-content:center}
+.answer.correct .answer-indicator.checkbox{border-color:#10b981;background:#10b981}.answer.correct .answer-indicator.checkbox .dot{display:flex;color:#fff}
+.answer.incorrect .answer-indicator.checkbox{border-color:#ef4444;background:#ef4444}.answer.incorrect .answer-indicator.checkbox .dot{display:flex;color:#fff}
+.answer.missed .answer-indicator.checkbox{border-color:#f59e0b;background:#f59e0b}.answer.missed .answer-indicator.checkbox .dot{display:flex;color:#fff}
+
+.answer-text{font-size:14px;line-height:1.5;color:#d1d5db;flex:1}
+.answer-text p{margin-bottom:4px}
+.answer-text code{background:#1a1a2e;padding:2px 6px;border-radius:3px;font-size:13px;font-family:'Cascadia Code','Fira Code','Consolas',monospace;color:#e2b714;border:1px solid #2d2f31}
+
+/* Explanation */
+.explanation{background:#1a2332;border:1px solid #1e3a5f;border-radius:8px;padding:20px;margin:16px 0;display:none}
+.explanation.show{display:block;animation:fadeIn .3s ease}
+.explanation h3{color:#60a5fa;margin-bottom:12px;font-size:15px}.explanation-body{font-size:14px;line-height:1.7;color:#cbd5e1}
+.explanation-body p{margin-bottom:10px}.explanation-body img{max-width:100%;border-radius:8px;margin:8px 0}
+.explanation-body a{color:#60a5fa}
+
+/* Result banner */
+.result-banner{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-weight:600;font-size:15px;display:none}
+.result-banner.show{display:flex;align-items:center;gap:8px;animation:fadeIn .3s ease}
+.result-banner.banner-correct{background:rgba(16,185,129,.12);border:1px solid #10b981;color:#10b981}
+.result-banner.banner-incorrect{background:rgba(239,68,68,.12);border:1px solid #ef4444;color:#ef4444}
+
+/* Nav */
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;padding-top:16px;border-top:1px solid #3e4143}
+.check-row{display:flex;justify-content:center;margin-bottom:16px}
+
+/* Question grid */
+.q-grid{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0}
+.q-dot{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:2px solid #3e4143;background:#2d2f31;transition:all .2s;position:relative}
+.q-dot:hover{border-color:#a435f0;transform:scale(1.05)}
+.q-dot.current{border-color:#a435f0;background:rgba(164,53,240,.25);box-shadow:0 0 0 3px rgba(164,53,240,.3);transform:scale(1.1);font-weight:700;z-index:1}
+.q-dot.answered{background:#6d28d9;border-color:#6d28d9;color:#fff}
+.q-dot.correct-dot{background:#10b981;border-color:#10b981;color:#fff}
+.q-dot.incorrect-dot{background:#ef4444;border-color:#ef4444;color:#fff}
+.q-dot.flagged::after{content:"";width:6px;height:6px;background:#f59e0b;border-radius:50%;position:absolute;top:-2px;right:-2px}
+
+/* Score card */
+.score-card{text-align:center;padding:48px 24px}
+.score-ring-wrap{width:180px;height:180px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative;background:conic-gradient(var(--ring-color,#3e4143) 0deg,#3e4143 0deg)}
+.score-ring-wrap.animate{animation:ringFill 1.2s ease-out forwards}
+@keyframes ringFill{from{background:conic-gradient(var(--ring-color) 0deg,#2d2f31 0deg)}}
+.score-ring-inner{width:160px;height:160px;border-radius:50%;background:#1c1d1f;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:1}
+.score-ring-threshold{position:absolute;width:180px;height:180px;border-radius:50%;border:2px dashed rgba(255,255,255,.15);top:0;left:0;z-index:0}
+.score-pct{font-size:48px;font-weight:700}.score-label{font-size:14px;color:#a0a0a0;margin-top:4px}
+.score-details{display:flex;justify-content:center;gap:32px;margin:24px 0}
+.score-stat{text-align:center}.score-stat .num{font-size:24px;font-weight:700}.score-stat .lbl{font-size:12px;color:#a0a0a0}
+.score-stat .num.green{color:#10b981}.score-stat .num.red{color:#ef4444}.score-stat .num.yellow{color:#f59e0b}
+.score-trend{display:flex;align-items:center;gap:8px;justify-content:center;margin:12px 0;font-size:13px;color:#a0a0a0}
+.score-trend .trend-dot{display:inline-block;padding:3px 8px;border-radius:4px;font-weight:600;font-size:12px}
+.score-trend .trend-dot.pass{background:rgba(16,185,129,.12);color:#10b981}
+.score-trend .trend-dot.fail{background:rgba(239,68,68,.12);color:#ef4444}
+.score-trend .trend-arrow{color:#6b7280}
+.section-breakdown{max-width:500px;margin:24px auto;text-align:left}
+.section-row{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-bottom:1px solid #2d2f31;font-size:14px}
+.section-row-header{display:flex;justify-content:space-between;align-items:center}
+.section-row .sec-name{color:#d1d5db;font-size:13px}.section-row .sec-score{font-weight:600;font-size:13px}
+.section-bar{height:6px;background:#3e4143;border-radius:4px;overflow:hidden}
+.section-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+
+/* Start screen */
+.start-screen{text-align:center;padding:60px 24px;max-width:650px;margin:0 auto}
+.start-screen h2{font-size:28px;margin-bottom:12px;color:#fff;font-weight:700}
+.start-screen .subtitle{color:#a0a0a0;font-size:15px;margin-bottom:16px}
+.quick-stats{display:flex;gap:12px;justify-content:center;margin-bottom:28px;flex-wrap:wrap}
+.quick-stat{font-size:12px;color:#a0a0a0;background:#2d2f31;border:1px solid #3e4143;border-radius:20px;padding:5px 14px;font-weight:600}
+.quick-stat .qs-val{color:#a435f0}
+.quick-stat .qs-val.pass{color:#10b981}
+.quick-stat .qs-val.fail{color:#ef4444}
+.mode-cards{display:flex;gap:16px;margin:0 auto 32px;flex-wrap:wrap;justify-content:center}
+.mode-card{background:#2d2f31;border:2px solid #3e4143;border-radius:12px;padding:32px 24px;cursor:pointer;transition:all .25s;flex:1;min-width:240px;max-width:290px;position:relative;overflow:hidden}
+.mode-card::before{content:"";position:absolute;inset:0;border-radius:12px;padding:2px;background:linear-gradient(135deg,#a435f0,#6d28d9,#a435f0);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .3s}
+.mode-card:hover::before{opacity:1}
+.mode-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(164,53,240,.15)}
+.mode-card h3{font-size:18px;margin-bottom:8px;font-weight:600}.mode-card p{font-size:13px;color:#a0a0a0;line-height:1.5}
+.mode-card .mode-icon{font-size:36px;margin-bottom:14px}
+
+/* Info panel */
+.info-panel{max-width:600px;margin:0 auto;padding:40px 24px;text-align:left;animation:fadeIn .3s ease}
+.info-panel h2{font-size:22px;margin-bottom:16px;text-align:center}
+.info-panel .info-desc{background:#2d2f31;border-radius:8px;padding:24px;margin-bottom:24px;font-size:14px;line-height:1.7;color:#d1d5db}
+.info-panel .info-desc p{margin-bottom:12px}
+.info-panel .info-desc ul{margin-left:20px;margin-bottom:12px}
+.info-panel .info-desc li{margin-bottom:6px}
+.info-panel .info-meta{display:flex;gap:16px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
+.info-meta-item{background:#2d2f31;border-radius:8px;padding:12px 20px;text-align:center;flex:1;min-width:120px}
+.info-meta-item .meta-val{font-size:20px;font-weight:700;color:#a435f0}.info-meta-item .meta-lbl{font-size:12px;color:#a0a0a0;margin-top:4px}
+
+/* Past attempts */
+.attempts-section{margin-top:32px;text-align:left}
+.attempts-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.attempts-header h3{font-size:15px;color:#a0a0a0;font-weight:600}
+.attempts-table{width:100%;border-collapse:collapse;font-size:13px}
+.attempts-table th{text-align:left;padding:8px 12px;color:#6b7280;font-weight:600;border-bottom:1px solid #3e4143;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.attempts-table td{padding:8px 12px;border-bottom:1px solid #2d2f31;color:#d1d5db}
+.attempts-table tr{cursor:pointer;transition:background .15s}
+.attempts-table tr:hover{background:rgba(164,53,240,.08)}
+.attempt-mode{font-size:10px;padding:2px 6px;border-radius:3px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.attempt-mode.exam{background:rgba(164,53,240,.15);color:#a435f0}
+.attempt-mode.review{background:rgba(59,130,246,.15);color:#3b82f6}
+.attempt-score{font-weight:700}
+.attempt-score.pass{color:#10b981}.attempt-score.fail{color:#ef4444}
+.no-attempts{color:#6b7280;font-size:14px;text-align:center;padding:20px}
+
+/* Misc */
+.hidden{display:none!important}
+
+/* Custom confirm modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;animation:fadeIn .15s ease}
+.modal-card{background:#2d2f31;border:1px solid #3e4143;border-radius:16px;padding:32px;max-width:420px;width:90%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.4);animation:slideIn .2s ease}
+.modal-icon{font-size:40px;margin-bottom:12px}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:8px;color:#fff}
+.modal-body{font-size:14px;color:#a0a0a0;line-height:1.6;margin-bottom:24px}
+.modal-stats{display:flex;gap:12px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.modal-stat{background:#1c1d1f;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600}
+.modal-stat.s-answered{color:#a435f0}.modal-stat.s-unanswered{color:#f59e0b}.modal-stat.s-flagged{color:#60a5fa}
+.modal-actions{display:flex;gap:10px;justify-content:center}
+
+/* Navigator summary chips */
+.nav-summary{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.nav-chip{font-size:11px;color:#a0a0a0;background:#2d2f31;border:1px solid #3e4143;border-radius:16px;padding:4px 12px;font-weight:600;display:inline-flex;align-items:center;gap:4px}
+.nav-chip .chip-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.nav-chip .chip-dot.c-answered{background:#6d28d9}
+.nav-chip .chip-dot.c-remaining{background:#3e4143}
+.nav-chip .chip-dot.c-correct{background:#10b981}
+.nav-chip .chip-dot.c-incorrect{background:#ef4444}
+.nav-chip .chip-dot.c-flagged{background:#f59e0b}
+
+/* Bookmark button */
+.bookmark-btn{background:none;border:none;cursor:pointer;padding:6px;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;border-radius:6px}
+.bookmark-btn:hover{background:rgba(255,255,255,.06)}
+.bookmark-btn svg{width:24px;height:24px;stroke:#a0a0a0;stroke-width:2;fill:none;transition:all .2s}
+.bookmark-btn:hover svg{stroke:#fff}
+.bookmark-btn.bookmarked svg{fill:#fff;stroke:#fff}
+
+/* Navigator filter dropdowns */
+.nav-filters{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.filter-dropdown{position:relative;display:inline-block}
+.filter-dropdown-btn{background:#a435f0;border:none;border-radius:4px;font-size:13px;cursor:pointer;padding:8px 14px;color:#fff;font-weight:600;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+.filter-dropdown-btn:hover{background:#8b2ccf}
+.filter-dropdown-btn .arrow{font-size:10px;opacity:.8}
+.filter-dropdown-menu{display:none;position:absolute;top:calc(100% + 4px);left:0;background:#1e1f22;border:1px solid #3e4143;border-radius:6px;min-width:200px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.4);overflow:hidden;animation:fadeIn .15s ease}
+.filter-dropdown-menu.show{display:block}
+.filter-dropdown-item{padding:10px 16px;font-size:13px;color:#d1d5db;cursor:pointer;transition:background .1s;border-left:3px solid transparent}
+.filter-dropdown-item:hover{background:rgba(255,255,255,.06)}
+.filter-dropdown-item.active{color:#fff;border-left-color:#a435f0;background:rgba(164,53,240,.12)}
+.mode-badge{font-size:11px;padding:3px 8px;border-radius:4px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-right:auto}
+.mode-badge.exam{background:rgba(164,53,240,.15);color:#a435f0}.mode-badge.review{background:rgba(59,130,246,.15);color:#3b82f6}
+.mode-badge.history{background:rgba(107,114,128,.15);color:#9ca3af}
+
+/* Question transition animation */
+.quiz-content{animation:slideIn .25s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* Subtle card */
+.quiz-content{background:rgba(45,47,49,.55);border:1px solid rgba(62,65,67,.5);border-radius:16px;padding:28px;margin:-4px}
+
+@media(max-width:640px){
+  .main{padding:12px}.header h1{font-size:14px}.score-details{gap:16px}
+  .q-dot{width:36px;height:36px;font-size:11px}
+  .mode-cards{flex-direction:column;align-items:center}
+  .header-right{gap:8px}.live-score{font-size:11px;padding:3px 8px}
+  .info-panel .info-meta{flex-direction:column}
+  .nav{flex-wrap:wrap;gap:8px;justify-content:center}
+  .nav-filters{flex-direction:column}
+  .quiz-content{padding:16px;margin:0;border-radius:12px}
+  .filter-dropdown-btn{font-size:12px;padding:6px 12px}
+  .score-ring-wrap{width:150px;height:150px}
+  .score-ring-inner{width:132px;height:132px}
+  .score-pct{font-size:36px}
+}
+
+/* 1. The Code Container */
+.question-text pre, 
+.answer-text pre {
+    /* Deep navy/black background like the screenshot */
+    background-color: #0d1117 !important; 
+    
+    /* Soft border to define the edges */
+    border: 1px solid #30363d !important;
+    
+    /* Rounded corners */
+    border-radius: 12px !important;
+    
+    /* Generous padding for breathing room */
+    padding: 24px !important;
+    
+    /* Shadow to make it "pop" off the page */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    
+    /* Modern coding font */
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #e6edf3; /* Default text color (brackets/punctuation) */
+    overflow-x: auto;
+    margin: 16px 0;
+}
+
+/* Inline code styling (for single words and inline blocks) */
+.question-text code, 
+.answer-text code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+    background: #0d1117 !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    border: 1px solid #30363d !important;
+    color: #e6edf3 !important;
+}
+
+/* Fix for code inside pre: remove double border/background & avoid line artifacts */
+.question-text pre code,
+.answer-text pre code {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    color: inherit !important;
+}
+
+/* 2. Syntax Highlighting Colors */
+
+/* JSON Keys (e.g., "Version":) -> Cyan/Blue */
+.highlight-key {
+    color: #79c0ff !important; 
+    font-weight: 600;
+}
+
+/* Strings (e.g., "2021-10-17") -> Soft Orange */
+.highlight-string {
+    color: #ffab70 !important;
+}
+
+/* Numbers -> Mint Green */
+.highlight-number {
+    color: #7ee787 !important;
+}
+
+/* Booleans (true/false) -> Blue */
+.highlight-boolean {
+    color: #79c0ff !important;
+    font-style: italic;
+}
+
+/* Nulls -> Red/Pink */
+.highlight-null {
+    color: #ff7b72 !important;
+}
+
+/* Generic Code Highlighting */
+.highlight-keyword { color: #ff7b72 !important; font-weight: bold; } /* Red/Pink */
+.highlight-comment { color: #8b949e !important; font-style: italic; } /* Grey */
+.highlight-func { color: #d2a8ff !important; } /* Purple */
+.highlight-operator { color: #79c0ff !important; } /* Blue */
+.question-search{min-width:220px;padding:9px 12px;border:1px solid #4b5563;border-radius:6px;background:#1f2937;color:#fff}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1 id="headerTitle"></h1>
+  <div class="header-right">
+    <span class="mode-badge hidden" id="modeBadge"></span>
+    <span class="live-score hidden" id="liveScore"></span>
+    <span class="timer" id="timer">00:00:00</span>
+    <button class="btn btn-ghost hidden" id="exitBtn" onclick="exitReview()">Exit</button>
+    <button class="btn btn-danger hidden" id="endExamBtn" onclick="endExam()">End Exam</button>
+  </div>
+</div>
+
+<div class="main">
+  <!-- Start Screen -->
+  <div id="startScreen" class="start-screen">
+    <h2 id="examTitle"></h2>
+    <p class="subtitle"><strong id="examCount"></strong> &middot; Questions and answers will be randomized</p>
+    <div class="quick-stats" id="quickStats"></div>
+    <div class="mode-cards">
+      <div class="mode-card" onclick="selectMode('exam')">
+        <div class="mode-icon">📝</div>
+        <h3>Exam Mode</h3>
+        <p>Simulate the real exam. Answers and explanations are revealed only after you finish all questions.</p>
+      </div>
+      <div class="mode-card" onclick="selectMode('review')">
+        <div class="mode-icon">📖</div>
+        <h3>Review Mode</h3>
+        <p>Learn as you go. Check your answer after each question and see the explanation immediately.</p>
+      </div>
+    </div>
+    <div class="attempts-section" id="attemptsSection"></div>
+  </div>
+
+  <!-- Info Panel (shown after mode selection) -->
+  <div id="infoPanel" class="hidden">
+    <div class="info-panel">
+      <h2 id="infoTitle"></h2>
+      <div class="info-meta" id="infoMeta">
+        <div class="info-meta-item"><div class="meta-val" id="infoQuestions">0</div><div class="meta-lbl">Questions</div></div>
+        <div class="info-meta-item"><div class="meta-val" id="infoTime">--</div><div class="meta-lbl">Duration</div></div>
+        <div class="info-meta-item"><div class="meta-val" id="infoPass">72%</div><div class="meta-lbl">To Pass</div></div>
+      </div>
+      <div class="info-desc" id="infoDesc"></div>
+      <div style="text-align:center">
+        <button class="btn btn-primary" style="padding:14px 40px;font-size:16px" onclick="startExam()">Start Practice Test</button>
+        <div style="margin-top:12px"><button class="btn btn-ghost" onclick="goBackToStart()">← Back</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Screen -->
+  <div id="quizScreen" class="hidden">
+    <div class="quiz-content" id="quizContent">
+      <div class="progress-row">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <span class="progress-counter" id="progressCounter"></span>
+      </div>
+      <div class="question-header">
+        <span class="q-number" id="qNumber"></span>
+        <span class="q-section" id="qSection"></span>
+      </div>
+      <div class="q-type" id="qType"></div>
+      <div class="question-text" id="qText"></div>
+      <div class="answers" id="answers"></div>
+      <div class="result-banner" id="resultBanner"></div>
+      <div class="check-row hidden" id="checkRow"><button class="btn btn-check" id="checkBtn" onclick="checkAnswer()" disabled>Check Answer</button></div>
+      <div class="explanation" id="explanation"><h3>💡 Explanation</h3><div class="explanation-body" id="explanationBody"></div></div>
+      <div class="nav">
+        <button class="btn btn-outline" id="prevBtn" onclick="navigate(-1)">← Previous</button>
+        <button class="bookmark-btn" id="flagBtn" onclick="toggleFlag()" title="Save for review"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16l-7-3.5L5 21V5z" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="btn btn-primary" id="nextBtn" onclick="navigate(1)">Next →</button>
+      </div>
+      <div style="margin-top:24px">
+      <div class="nav-summary" id="navSummary"></div>
+        <div class="nav-filters" id="navFilters"></div>
+        <div class="q-grid" id="qGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Score Screen -->
+  <div id="scoreScreen" class="hidden">
+    <div class="score-card">
+      <h2 style="margin-bottom:24px;font-size:24px">Exam Results</h2>
+      <div class="score-ring-wrap" id="scoreCircle">
+        <div class="score-ring-threshold"></div>
+        <div class="score-ring-inner">
+          <div class="score-pct" id="scorePct"></div>
+          <div class="score-label" id="scoreStatus"></div>
+        </div>
+      </div>
+      <div class="score-trend" id="scoreTrend"></div>
+      <div class="score-details">
+        <div class="score-stat"><div class="num green" id="scoreCorrect">0</div><div class="lbl">Correct</div></div>
+        <div class="score-stat"><div class="num red" id="scoreIncorrect">0</div><div class="lbl">Incorrect</div></div>
+        <div class="score-stat"><div class="num yellow" id="scoreSkipped">0</div><div class="lbl">Skipped</div></div>
+      </div>
+      <div id="scoreTime" style="color:#a0a0a0;font-size:14px;margin-bottom:16px"></div>
+      <div class="section-breakdown" id="sectionBreakdown"></div>
+      <div style="margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="reviewFromScore()">Review All Answers</button>
+        <button class="btn btn-outline" onclick="retakeExam()">Retake Exam</button>
+        <button class="btn btn-ghost" onclick="exportAttempts()">Export Attempt History</button>
+        <button class="btn btn-ghost" onclick="goBackToStart()">Back to Start</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script id="quiz-data-script" type="application/json">{"id": 5750708, "title": "AWS Certified Security Specialty", "description": null, "pass_score": null, "assessments": [{"_class": "assessment", "id": 185526675, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eA security engineer created an Amazon S3 bucket and attached the following bucket policy.\u003c/p\u003e\u003cp\u003e\u003cimg src=\"https://img-c.udemycdn.com/redactor/raw/practice_test_question/2023-01-04_02-13-58-26157aa0edcfdbf06a08442548015df5.jpg\"\u003e\u003c/p\u003e\u003cp\u003eWhat is the effect of this bucket policy?\u003c/p\u003e", "relatedLectureIds": [], "links": [], "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eThe first statement in the bucket policy denies all S3 API actions for the AWS account specified with the Effect, Action, and Principal elements. This blocks all access to the account’s IAM principals, regardless of the IAM policy attached to those users or roles.\u003c/p\u003e\u003cp\u003eThis policy prevents unintended access to the secure S3 bucket that could be introduced by IAM policies or ACLs. The policy then uses a Condition element to make exceptions for the allowed principals.\u003c/p\u003e\u003cp\u003eThe Deny statement only applies when the principal whose access is being evaluated is \u003cem\u003enot\u003c/em\u003e one of the specified users.\u003c/p\u003e\u003cp\u003e\u003cbr\u003e\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"The specified users are not denied S3 permissions but must be granted permissions through IAM user policies or ACLs\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"The specified users are granted all S3 permissions to the bucket and objects within the bucket regardless of IAM user policies and ACLs\" is incorrect.\u003c/p\u003e\u003cp\u003eThe policy does not grant any permissions, it simply does not deny any permissions for the specified users. The users will need to have permissions granted elsewhere.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"The specified users are denied all S3 permissions to the bucket and objects within the bucket regardless of IAM user policies and ACLs\" is incorrect.\u003c/p\u003e\u003cp\u003eThe specified users are not denied permissions based on the Condition element in the policy.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"The specified account will be denied all S3 permissions but specified users from other accounts are excepted\" is incorrect.\u003c/p\u003e\u003cp\u003eThe policy denies permissions for all users except those specified within the account specified. It does not grant or deny permissions for other AWS accounts.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://aws.amazon.com/blogs/security/how-to-create-a-policy-that-whitelists-access-to-sensitive-amazon-s3-buckets/\"\u003ehttps://aws.amazon.com/blogs/security/how-to-create-a-policy-that-whitelists-access-to-sensitive-amazon-s3-buckets/\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eThe specified users are granted all S3 permissions to the bucket and objects within the bucket regardless of IAM user policies and ACLs.\u003c/p\u003e", "\u003cp\u003eThe specified users are denied all S3 permissions to the bucket and objects within the bucket regardless of IAM user policies and ACLs.\u003c/p\u003e", "\u003cp\u003eThe specified users are not denied S3 permissions but must be granted permissions through IAM user policies or ACLs.\u003c/p\u003e", "\u003cp\u003eThe specified account will be denied all S3 permissions but specified users from other accounts are excepted.\u003c/p\u003e"]}, "correct_response": ["c"], "section": "Domain 2 - Incident Response", "question_plain": "A security engineer created an Amazon S3 bucket and attached the following bucket policy.What is the effect of this bucket policy?", "related_lectures": []}, {"_class": "assessment", "id": 185526677, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eA company is deploying Amazon EC2 instances into a new VPC. The instances must be scanned to detect any known software vulnerabilities. The instances should also be checked for compliance with CIS benchmarks.\u003c/p\u003e\u003cp\u003eWhich solution addresses these requirements?\u003c/p\u003e", "relatedLectureIds": [], "links": [], "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eNote: the CIS scans are not available in the new Amazon Inspector but are still mentioned in the exam in relation to Amazon Inspector Classic.\u003c/p\u003e\u003cp\u003eAmazon Inspector Classic can be used to scan the instances and detect known software vulnerabilities and compliance with CIS benchmarks.\u003c/p\u003e\u003cp\u003eThe “Common vulnerabilities and exposures” assessment verifies whether the EC2 instances in your assessment targets are exposed to common vulnerabilities and exposures (CVEs).\u003c/p\u003e\u003cp\u003eAttacks can exploit unpatched vulnerabilities to compromise the confidentiality, integrity, or availability of your service or data. The CVE system provides a reference method for publicly known information security vulnerabilities and exposures.\u003c/p\u003e\u003cp\u003eThe “Center for Internet Security (CIS) Benchmarks” helps to establish secure configuration postures for several operating system versions.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003eUse Amazon Inspector and run the “Common vulnerabilities and exposures” assessment and the “Center for Internet Security (CIS) Benchmarks” assessment\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Use Amazon Inspector and run the “Network Reachability” assessment and the “Center for Internet Security (CIS) Benchmarks” assessment\" is incorrect.\u003c/p\u003e\u003cp\u003eThe “Common vulnerabilities and exposures” assessment should be used to identify unpatched software vulnerabilities. The “Network Reachability” assessment checks which ports are open and how your network interfaces are configured.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Use AWS Config and configure the “restricted-common-ports” and ‘wafv2-logging-enabled” managed rules\" is incorrect.\u003c/p\u003e\u003cp\u003eAWS Config cannot be used to scan for software vulnerabilities or CIS benchmarks.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Use AWS CloudTrail and monitor the “PutEventSelectors” and “PutInsightSelectors” API actions\" is incorrect.\u003c/p\u003e\u003cp\u003eThese CloudTrail API actions are totally unrelated to Amazon EC2.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/inspector/latest/userguide/inspector_rule-packages.html\"\u003ehttps://docs.aws.amazon.com/inspector/latest/userguide/inspector_rule-packages.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eUse Amazon Inspector and run the “Common vulnerabilities and exposures” assessment and the “Center for Internet Security (CIS) Benchmarks” assessment.\u003c/p\u003e", "\u003cp\u003eUse AWS Config and configure the “restricted-common-ports” and ‘wafv2-logging-enabled” managed rules.\u003c/p\u003e", "\u003cp\u003eUse Amazon Inspector and run the “Network Reachability” assessment and the “Center for Internet Security (CIS) Benchmarks” assessment.\u003c/p\u003e", "\u003cp\u003eUse AWS CloudTrail and monitor the “PutEventSelectors” and “PutInsightSelectors” API actions.\u003c/p\u003e"]}, "correct_response": ["a"], "section": "Domain 3 - Infrastructure Security", "question_plain": "A company is deploying Amazon EC2 instances into a new VPC. The instances must be scanned to detect any known software vulnerabilities. The instances should also be checked for compliance with CIS benchmarks.Which solution addresses these requirements?", "related_lectures": []}, {"_class": "assessment", "id": 185526679, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eAn attack left several Amazon EC2 Windows instances unresponsive. A security engineer has been asked to collect any memory dumps that may exist on the EC2 instances attached Amazon EBS volumes.\u003c/p\u003e\u003cp\u003eHow should the security collect memory dumps for forensic analysis?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eThe EC2Rescue for Windows Server command line interface (CLI) allows you to run an EC2Rescue for Windows Server plugin (referred as an \"action\") programmatically.\u003c/p\u003e\u003cp\u003eThe EC2Rescue for Windows Server tool has two execution modes:\u003c/p\u003e\u003cul\u003e\u003cli\u003e\u003cp\u003e\u003cstrong\u003e/online\u003c/strong\u003e—This allows you to take action on the instance that EC2Rescue for Windows Server is installed on, such as collect log files.\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003e\u003cstrong\u003e/offline:\u0026lt;device_id\u0026gt;\u003c/strong\u003e—This allows you to take action on the offline root volume that is attached to a separate Amazon EC2 Windows instance, on which you have installed EC2Rescue for Windows Server.\u003c/p\u003e\u003c/li\u003e\u003c/ul\u003e\u003cp\u003eIn this case the instances are unresponsive so the /offline mode must be used and the device ID of the EBS volumes must be specified when running the CLI command.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Run the EC2Rescue CLI using the /offline mode and specify the device ID\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Run the EC2Rescue CLI using the /online mode and specify the instance ID\" is incorrect.\u003c/p\u003e\u003cp\u003eOnline mode cannot be used on an unresponsive instance as the commands are run on the instance itself. You also do not specify the instance ID as the commands are run locally.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Install the SSM agent and stream log data to Amazon CloudWatch Logs\" is incorrect.\u003c/p\u003e\u003cp\u003eYou cannot install the SSM agent on an unresponsive instance and it does not collect memory dumps.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Reboot the EC2 Windows Server, enter safe mode, and select memory dump\" is incorrect.\u003c/p\u003e\u003cp\u003eThis is not a valid method of exporting memory dumps from a Windows server.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/ec2rw-cli.html\"\u003ehttps://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/ec2rw-cli.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eInstall the SSM agent and stream log data to Amazon CloudWatch Logs.\u003c/p\u003e", "\u003cp\u003eRun the EC2Rescue CLI using the /online mode and specify the instance ID.\u003c/p\u003e", "\u003cp\u003eReboot the EC2 Windows Server, enter safe mode, and select memory dump.\u003c/p\u003e", "\u003cp\u003eRun the EC2Rescue CLI using the /offline mode and specify the device ID.\u003c/p\u003e"]}, "correct_response": ["d"], "section": "Domain 1 - Detection", "question_plain": "An attack left several Amazon EC2 Windows instances unresponsive. A security engineer has been asked to collect any memory dumps that may exist on the EC2 instances attached Amazon EBS volumes.How should the security collect memory dumps for forensic analysis?", "related_lectures": []}, {"_class": "assessment", "id": 185526723, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eAn application is being deployed on Amazon EC2 instances behind a Network Load Balancer (NLB) with an attached security group. The EC2 instances are failing health checks and are not entering the \u003cstrong\u003eInService\u003c/strong\u003e state.\u003c/p\u003e\u003cp\u003eWhat could be the cause of this issue?\u003c/p\u003e", "relatedLectureIds": [], "links": [], "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eWhen security groups are used with an NLB, the EC2 instance security group must allow inbound traffic from the security group attached to the NLB for both application traffic and health checks.\u003c/p\u003e\u003cp\u003eNLBs send health check traffic from specific IP addresses. If the EC2 instance security group does not explicitly allow this traffic, the health checks will fail, causing the instances to remain in a failed state.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"The EC2 instance security group does not allow inbound traffic from the security group associated with the NLB\" is a correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"The security group associated with the NLB does not allow outbound traffic to the EC2 instance security group\" is incorrect.\u003c/p\u003e\u003cp\u003eNetwork Load Balancers do not initiate outbound traffic to EC2 instances. Instead, they forward traffic to targets. The traffic to EC2 instances comes from the \u003cstrong\u003eNLB's security group\u003c/strong\u003e or health check IP addresses, so this does not apply.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"The network ACL associated with the instance subnets does not allow ICMP traffic from the NLB\" is incorrect.\u003c/p\u003e\u003cp\u003eThe ICMP protocol is not used for health checks so it is not necessary to allow this traffic from the NLB.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"The security group associated with the NLB does not allow inbound traffic from the internet\" is incorrect.\u003c/p\u003e\u003cp\u003eWhile the NLB's security group must allow inbound internet traffic to forward requests to EC2 instances, this does not directly impact \u003cstrong\u003ehealth checks\u003c/strong\u003e, which are internal communications between the NLB and the targets.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/elasticloadbalancing/latest/network/target-group-health-checks.html\"\u003ehttps://docs.aws.amazon.com/elasticloadbalancing/latest/network/target-group-health-checks.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eThe security group associated with the NLB does not allow outbound traffic to the EC2 instance security group.\u003c/p\u003e", "\u003cp\u003eThe EC2 instance security group does not allow inbound traffic from the security group associated with the NLB.\u003c/p\u003e", "\u003cp\u003eThe network ACL associated with the instance subnets does not allow ICMP traffic from the NLB.\u003c/p\u003e", "\u003cp\u003eThe security group associated with the NLB does not allow inbound traffic from the internet.\u003c/p\u003e"]}, "correct_response": ["b"], "section": "Domain 3 - Infrastructure Security", "question_plain": "An application is being deployed on Amazon EC2 instances behind a Network Load Balancer (NLB) with an attached security group. The EC2 instances are failing health checks and are not entering the InService state.What could be the cause of this issue?", "related_lectures": []}, {"_class": "assessment", "id": 185526681, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eDue to compliance requirements, a company must rotate encryption keys every year. An AWS KMS key was created using imported key material. A security engineer needs a process to rotate the KMS key.\u003c/p\u003e\u003cp\u003eWhich key rotation process is MOST efficient?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eAWS KMS keys with imported key material are not eligible for automatic rotation. Therefore, a new KMS key must be created with new key material. An Alias is a friendly name for an AWS KMS key and can be updated to point to a different KMS key. This is the most efficient method as it means any applications configured to use the Alias do not need to be updated.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Create a new KMS key and update the existing Key Alias to point to the new KMS key\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Select the option to enable automatic rotation for the existing KMS key\" is incorrect.\u003c/p\u003e\u003cp\u003eAWS KMS keys with imported key material are not eligible for automatic rotation.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Upload new key material into the existing KMS key\" is incorrect.\u003c/p\u003e\u003cp\u003eYou cannot upload new key material to an AWS KMS key that was created with imported key material.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Create a new KMS key and change the application to point to the new KMS key\" is incorrect.\u003c/p\u003e\u003cp\u003eThis is less efficient compared to using an Alias, so applications do not need to be updated to point to the new KMS key.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html\"\u003ehttps://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html\u003c/a\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/kms/latest/developerguide/kms-alias.html\"\u003ehttps://docs.aws.amazon.com/kms/latest/developerguide/kms-alias.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eSelect the option to enable automatic rotation for the existing KMS key.\u003c/p\u003e", "\u003cp\u003eUpload new key material into the existing KMS key.\u003c/p\u003e", "\u003cp\u003eCreate a new KMS key and change the application to point to the new KMS key.\u003c/p\u003e", "\u003cp\u003eCreate a new KMS key and update the existing Key Alias to point to the new KMS key.\u003c/p\u003e"]}, "correct_response": ["d"], "section": "Domain 5 - Data Protection", "question_plain": "Due to compliance requirements, a company must rotate encryption keys every year. An AWS KMS key was created using imported key material. A security engineer needs a process to rotate the KMS key.Which key rotation process is MOST efficient?", "related_lectures": []}, {"_class": "assessment", "id": 185526683, "assessment_type": "multi-select", "prompt": {"question": "\u003cp\u003eA company has launched a web application running on port 80 on Amazon EC2 instances. The instances have been launched in a private subnet. An Application Load Balancer (ALB) is configured in front of the instances with an HTTP listener.\u003c/p\u003e\u003cp\u003eThe instances are assigned to a security group named WebAppSG and the ALB is assigned to a security group named ALB-SG. The security team requires that the security group rules are locked down according to best practice.\u003c/p\u003e\u003cp\u003eWhat rules should be configured in the security groups? (Select THREE.)\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", "", "", ""], "explanation": "\u003cp\u003eThe most secure configuration that will allow the required traffic is as follows:\u003c/p\u003e\u003cp\u003eALB-SG:\u003c/p\u003e\u003cul\u003e\u003cli\u003e\u003cp\u003eInbound rule to allow port 80 from 0.0.0.0/0.\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003eOutbound rule to allow port 80 to WebAppSG (and the health check port if different).\u003c/p\u003e\u003c/li\u003e\u003c/ul\u003e\u003cp\u003eWebAppSG:\u003c/p\u003e\u003cul\u003e\u003cli\u003e\u003cp\u003eInbound rule to allow port 80 from the security group ID for ALB-SG.\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003eOutbound rules are not necessary as the response traffic to the ALB is allowed by default (may require rules for security updates etc.)\u003c/p\u003e\u003c/li\u003e\u003c/ul\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"An inbound rule in WebAppSG allowing port 80 from source ALB-SG\" is a correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"An inbound rule in ALB-SG allowing port 80 from source 0.0.0.0/0\" is also a correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"An outbound rule in ALB-SG allowing port 80 to WebAppSG\" is also a correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"An inbound rule in ALB-SG allowing port 80 from WebAppSG\" is incorrect.\u003c/p\u003e\u003cp\u003eThe ALB receives traffic from the internet so it should allow incoming traffic from 0.0.0.0/0. The ALB sends traffic to the web application outbound on port 80\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"An outbound rule in WebAppSG allowing ports 1024-65535 to destination ALB-SG\" is incorrect.\u003c/p\u003e\u003cp\u003eThe web application security group does not need an outbound rule as response traffic is allowed. Ephemeral ports as specified above do not need to be opened.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"An outbound rule in ALB-SG allowing ports 1024-65535 to destination 0.0.0.0/\" is incorrect.\u003c/p\u003e\u003cp\u003eThere’s no need for an outbound rule to ephemeral ports as security groups are stateful and will allow response traffic.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html\"\u003ehttps://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eAn inbound rule in WebAppSG allowing port 80 from source ALB-SG.\u003c/p\u003e", "\u003cp\u003eAn inbound rule in ALB-SG allowing port 80 from WebAppSG.\u003c/p\u003e", "\u003cp\u003eAn outbound rule in WebAppSG allowing ports 1024-65535 to destination ALB-SG.\u003c/p\u003e", "\u003cp\u003eAn inbound rule in ALB-SG allowing port 80 from source 0.0.0.0/0.\u003c/p\u003e", "\u003cp\u003eAn outbound rule in ALB-SG allowing ports 1024-65535 to destination 0.0.0.0/0.\u003c/p\u003e", "\u003cp\u003eAn outbound rule in ALB-SG allowing port 80 to WebAppSG.\u003c/p\u003e"]}, "correct_response": ["a", "d", "f"], "section": "Domain 3 - Infrastructure Security", "question_plain": "A company has launched a web application running on port 80 on Amazon EC2 instances. The instances have been launched in a private subnet. An Application Load Balancer (ALB) is configured in front of the instances with an HTTP listener.The instances are assigned to a security group named WebAppSG and the ALB is assigned to a security group named ALB-SG. The security team requires that the security group rules are locked down according to best practice.What rules should be configured in the security groups? (Select THREE.)", "related_lectures": []}, {"_class": "assessment", "id": 185526685, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eA developer recently left a company, and the company wants to ensure that any code the developer wrote cannot be deployed to AWS Lambda functions. The company uses AWS Signer for all Lambda functions.\u003c/p\u003e\u003cp\u003eWhich solution will meet this requirement?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eCode signing for Lambda provides four signature checks. First, the \u003cem\u003eintegrity\u003c/em\u003e check confirms that the deployment artifact hasn’t been modified after it was signed using AWS Signer. Lambda performs this check by matching the hash of the artifact with the hash from the signature.\u003c/p\u003e\u003cp\u003eThe second check is the \u003cem\u003esource mismatch\u003c/em\u003e check, which detects if a signature isn’t present or if the artifact is signed by a signing profile that isn’t specified in the CSC. The third, \u003cem\u003eexpiry\u003c/em\u003e check, will fail if a signature is past its point of expiration.\u003c/p\u003e\u003cp\u003eThe fourth is the \u003cem\u003erevocation\u003c/em\u003e check, which is used to see if anyone has explicitly marked the signing profile used for signing or the signing job as invalid by revoking it.\u003c/p\u003e\u003cp\u003eThe integrity check must succeed, or Lambda will not run the artifact. The other three checks can be configured to either block invocation or generate a warning. These checks are performed in order until one check fails, or all checks succeed.\u003c/p\u003e\u003cp\u003eIn this case if the signing profile is revoked and the revocation check is configured to block on failure, the code cannot be deployed to Lambda functions.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Revoke all versions of the signing profile assigned to the developer\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Remove all IAM permissions that grant access to AWS Signer\" is incorrect.\u003c/p\u003e\u003cp\u003eThis would prevent the developer from using Signer but would not stop the existing code from being deployed.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Change the AWS KMS key that is used to encrypt the source code\" is incorrect.\u003c/p\u003e\u003cp\u003eThis would not prevent the code from being deployed, it would change the keys used to encrypt the code.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Use Amazon CodeGuru to review the code before it is deployed\" is incorrect.\u003c/p\u003e\u003cp\u003eCodeGuru is used for reviewing source code and provides recommendations for improvements but will not prevent the code from being deployed.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://aws.amazon.com/blogs/security/best-practices-and-advanced-patterns-for-lambda-code-signing/\"\u003ehttps://aws.amazon.com/blogs/security/best-practices-and-advanced-patterns-for-lambda-code-signing/\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eChange the AWS KMS key that is used to encrypt the source code.\u003c/p\u003e", "\u003cp\u003eRemove all IAM permissions that grant access to AWS Signer.\u003c/p\u003e", "\u003cp\u003eRevoke all versions of the signing profile assigned to the developer.\u003c/p\u003e", "\u003cp\u003eUse Amazon CodeGuru to review the code before it is deployed.\u003c/p\u003e"]}, "correct_response": ["c"], "section": "Domain 5 - Data Protection", "question_plain": "A developer recently left a company, and the company wants to ensure that any code the developer wrote cannot be deployed to AWS Lambda functions. The company uses AWS Signer for all Lambda functions.Which solution will meet this requirement?", "related_lectures": []}, {"_class": "assessment", "id": 185526687, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eA company is implementing an application that will use AWS KMS encryption keys. The company plans to create customer managed KMS keys within KMS and will not import any key material. The encryption keys should be rotated every 12 months.\u003c/p\u003e\u003cp\u003eWhich solution will meet these requirements?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eWhen you enable \u003cem\u003eautomatic key rotation\u003c/em\u003e for a customer managed key, AWS KMS generates new cryptographic material for the KMS key every year. You can enable or disable automatic key rotation for customer managed KMS keys at any time. You cannot modify the rotation configuration for AWS managed KMS keys which are automatically rotated every year.\u003c/p\u003e\u003cp\u003eKey rotation changes only the KMS key's \u003cem\u003ekey material\u003c/em\u003e, which is the cryptographic material that is used in encryption operations. The KMS key is the same logical resource, regardless of whether or how many times its key material changes. The properties of the KMS key do not change, as shown in the following image.\u003c/p\u003e\u003cp\u003e\u003cimg src=\"https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2023-01-04_00-34-09-a05cd64102acfb99c6f3e498dfdafdf3.jpg\"\u003e\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Enable the option to automatically rotate each KMS key every year\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Use AWS managed KMS keys instead so that AWS will rotate the keys automatically\" is incorrect.\u003c/p\u003e\u003cp\u003eYou cannot modify the rotation configuration for AWS managed KMS keys which are automatically rotated every year.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Schedule an AWS Lambda function to rotate the backing key of each KMS key\" is incorrect.\u003c/p\u003e\u003cp\u003eCustomer managed KMS keys are being used so there is no need to create a custom solution as you can simply enable automatic key rotation.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Change the customer managed KMS key policy to enable automatic key rotation\" is incorrect.\u003c/p\u003e\u003cp\u003eYou do not enable key rotation through a key policy. Key policies are used to grant permissions to use a KMS key.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html\"\u003ehttps://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eChange the customer managed KMS key policy to enable automatic key rotation.\u003c/p\u003e", "\u003cp\u003eUse AWS managed KMS keys instead so that AWS will rotate the keys automatically.\u003c/p\u003e", "\u003cp\u003eEnable the option to automatically rotate each KMS key every year.\u003c/p\u003e", "\u003cp\u003eSchedule an AWS Lambda function to rotate the backing key of each KMS keys.\u003c/p\u003e"]}, "correct_response": ["c"], "section": "Domain 5 - Data Protection", "question_plain": "A company is implementing an application that will use AWS KMS encryption keys. The company plans to create customer managed KMS keys within KMS and will not import any key material. The encryption keys should be rotated every 12 months.Which solution will meet these requirements?", "related_lectures": []}, {"_class": "assessment", "id": 185526689, "assessment_type": "multi-select", "prompt": {"question": "\u003cp\u003eAn administrative user accidentally exposed an access key ID and secret access key to a public support forum. The user notified the security team about the incident after removing the exposed credentials from the forum.\u003c/p\u003e\u003cp\u003eWhich initial steps should a security engineer take to mitigate the exposure without interrupting operations? (Select TWO.)\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", "", ""], "explanation": "\u003cp\u003eThere are several steps you can take if credentials are inadvertently exposed (see article below). The initial steps the engineer should take include invalidating any temporary security credentials that may have been issued and deleting or disabling the access key ID and secret access key.\u003c/p\u003e\u003cp\u003eThese actions will ensure that any malicious actor who obtains the access key will not be able to use it and if temporary security credentials have been obtained they will no longer be valid for use.\u003c/p\u003e\u003cp\u003eOne method of invalidating temporary security credentials is to attach a policy that denies all access to temporary security credentials that were issued before the specified date and time. Here is an example of such a policy:\u003c/p\u003e\u003cimg src=\"https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2023-01-04_00-38-39-c2422bcd01ee5286f611b96458006f6c.jpg\"\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Invalidate any temporary security credentials\" is a correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Delete the access key ID and secret access key\" is also a correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Reset the password for the root user on the account\" is incorrect.\u003c/p\u003e\u003cp\u003eThis is unnecessary as the root user account has not been compromised.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Implement a deny policy blocking access to resources\" is incorrect.\u003c/p\u003e\u003cp\u003eThis would cause interruption as resources would be inaccessible.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Terminate or disable any resources the user has access to\" is incorrect.\u003c/p\u003e\u003cp\u003eThis would be very disruptive and may result in lost data and downtime.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://aws.amazon.com/blogs/security/what-to-do-if-you-inadvertently-expose-an-aws-access-key/\"\u003ehttps://aws.amazon.com/blogs/security/what-to-do-if-you-inadvertently-expose-an-aws-access-key/\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eReset the password for the root user on the account.\u003c/p\u003e", "\u003cp\u003eImplement a deny policy blocking access to resources.\u003c/p\u003e", "\u003cp\u003eTerminate or disable any resources the user has access to.\u003c/p\u003e", "\u003cp\u003eInvalidate any temporary security credentials.\u003c/p\u003e", "\u003cp\u003eDelete the access key ID and secret access key.\u003c/p\u003e"]}, "correct_response": ["d", "e"], "section": "Domain 1 - Detection", "question_plain": "An administrative user accidentally exposed an access key ID and secret access key to a public support forum. The user notified the security team about the incident after removing the exposed credentials from the forum.Which initial steps should a security engineer take to mitigate the exposure without interrupting operations? (Select TWO.)", "related_lectures": []}, {"_class": "assessment", "id": 185526691, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eAn application running in a private subnet needs outbound connectivity to an internet service using the IPv6 protocol. A security engineer has created a separate route table for the private subnet.\u003c/p\u003e\u003cp\u003eThe security engineer needs to enable outbound connectivity to the internet service. The solution should ensure inbound connections from the internet cannot be initiated.\u003c/p\u003e\u003cp\u003eWhich actions should the network engineer take to meet this requirement?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eAn egress-only internet gateway is a horizontally scaled, redundant, and highly available VPC component that allows outbound communication over IPv6 from instances in your VPC to the internet and prevents the internet from initiating an IPv6 connection with your instances.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Create an egress-only internet gateway and update the route table in the private subnet\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Create a NAT gateway in a public subnet and update the route table in the private subnet\" is incorrect.\u003c/p\u003e\u003cp\u003eNAT gateways are used for IPv4 not IPv6.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Create an internet gateway in a private subnet and update the route table in the private subnet\" is incorrect.\u003c/p\u003e\u003cp\u003eInternet gateways are used for routing traffic out of the VPC and are attached at the VPC level. To enable outbound IPv6 an egress-only internet gateway is also needed.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Create an internet gateway in a public subnet and update the route table in the private subnet\" is incorrect.\u003c/p\u003e\u003cp\u003eInternet gateways are used for routing traffic out of the VPC and are attached at the VPC level. To enable outbound IPv6 an egress-only internet gateway is also needed.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/vpc/latest/userguide/egress-only-internet-gateway.html\"\u003ehttps://docs.aws.amazon.com/vpc/latest/userguide/egress-only-internet-gateway.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eCreate a NAT gateway in a public subnet and update the route table in the private subnet.\u003c/p\u003e", "\u003cp\u003eCreate an internet gateway in a private subnet and update the route table in the private subnet.\u003c/p\u003e", "\u003cp\u003eCreate an egress-only internet gateway and update the route table in the private subnet.\u003c/p\u003e", "\u003cp\u003eCreate an internet gateway in a public subnet and update the route table in the private subnet.\u003c/p\u003e"]}, "correct_response": ["c"], "section": "Domain 3 - Infrastructure Security", "question_plain": "An application running in a private subnet needs outbound connectivity to an internet service using the IPv6 protocol. A security engineer has created a separate route table for the private subnet.The security engineer needs to enable outbound connectivity to the internet service. The solution should ensure inbound connections from the internet cannot be initiated.Which actions should the network engineer take to meet this requirement?", "related_lectures": []}, {"_class": "assessment", "id": 185526693, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eA security engineer has deployed a virtual security appliance inline. The virtual security appliance will be used to inspect traffic that is forwarded between subnets.\u003c/p\u003e\u003cp\u003eWhat configuration is necessary to allow the virtual security appliance to route the traffic?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eAn inline security appliance running on an Amazon EC2 instance can be configured with multiple network interfaces. These interfaces may reside in different subnets within the VPC.\u003c/p\u003e\u003cp\u003eEach EC2 instance performs source/destination checks by default. This means that the instance must be the source or destination of any traffic it sends or receives. However, an inline security appliance must be able to send and receive traffic when the source or destination is not itself. Therefore, you must disable source/destination checks on these instances.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Disable the Network Source/Destination check on the security appliance's elastic network interface\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Configure the security appliance's elastic network interfaces for promiscuous mode and attach elastic IP addresses\" is incorrect.\u003c/p\u003e\u003cp\u003ePromiscuous mode (not supported) is a networking configuration where you are able to capture all the traffic from a network interface for inspection.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Attach an elastic network adapter (ENA), install the ENA module, and enable ENA support\" is incorrect.\u003c/p\u003e\u003cp\u003eThis is a high-performance adapter and does not need to be used in this configuration.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Place the security appliance in the public subnet with the internet gateway and route traffic to the appliance\" is incorrect.\u003c/p\u003e\u003cp\u003eThe security appliance can be attached to private or public subnets and does not need an internet gateway.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/scenarios-enis.html\"\u003ehttps://docs.aws.amazon.com/AWSEC2/latest/UserGuide/scenarios-enis.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eAttach an elastic network adapter (ENA), install the ENA module, and enable ENA support.\u003c/p\u003e", "\u003cp\u003eDisable the Network Source/Destination check on the security appliance's elastic network interface.\u003c/p\u003e", "\u003cp\u003eConfigure the security appliance's elastic network interfaces for promiscuous mode and attach elastic IP addresses.\u003c/p\u003e", "\u003cp\u003ePlace the security appliance in the public subnet with the internet gateway and route traffic to the appliance.\u003c/p\u003e"]}, "correct_response": ["b"], "section": "Domain 3 - Infrastructure Security", "question_plain": "A security engineer has deployed a virtual security appliance inline. The virtual security appliance will be used to inspect traffic that is forwarded between subnets.What configuration is necessary to allow the virtual security appliance to route the traffic?", "related_lectures": []}, {"_class": "assessment", "id": 185526695, "assessment_type": "multi-select", "prompt": {"question": "\u003cp\u003eA solutions architect is designing a secure, distributed application that will run on Amazon EC2 instances across multiple Availability Zones and AWS Regions and on-premises servers. The has asked a security engineer how encryption will be applied between the EC2 instances and on-premises servers.\u003c/p\u003e\u003cp\u003eWhich statements are correct about encryption in transit? (Select TWO.)\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", "", ""], "explanation": "\u003cp\u003eAll data flowing across AWS Regions over the AWS global network is automatically encrypted at the physical layer before it leaves AWS secured facilities. All traffic between AZs is also encrypted.\u003c/p\u003e\u003cp\u003eTraffic between instances may be encrypted in some circumstances. The instances must use a supported instance type and be within the same Region and VPC (or in a peered VPC.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"All inter-region traffic over the AWS global network is automatically encrypted\" is a correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"All traffic between Availability Zones is encrypted by default\" is also a correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"All intra-region traffic is encrypted between instances for all instance types\" is incorrect.\u003c/p\u003e\u003cp\u003eThis is not true. Traffic may be encrypted between instances with certain constraints as mentioned above and in the reference link below.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"All traffic between Availability Zones is unencrypted by default\" is incorrect.\u003c/p\u003e\u003cp\u003eThis is not true as AWS does encrypt all traffic between AZs.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"All traffic across an AWS Direct Connect connection is automatically encrypted\" is incorrect.\u003c/p\u003e\u003cp\u003eThis is not true as AWS Direct Connect does not provide encryption. You must create an encrypted VPN tunnel over your DX connection to provide encryption.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/data-protection.html\"\u003ehttps://docs.aws.amazon.com/AWSEC2/latest/UserGuide/data-protection.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eAll inter-region traffic over the AWS global network is automatically encrypted.\u003c/p\u003e", "\u003cp\u003eAll intra-region traffic is encrypted between instances for all instance types.\u003c/p\u003e", "\u003cp\u003eAll traffic between Availability Zones is unencrypted by default.\u003c/p\u003e", "\u003cp\u003eAll traffic across an AWS Direct Connect connection is automatically encrypted.\u003c/p\u003e", "\u003cp\u003eAll traffic between Availability Zones is encrypted by default.\u003c/p\u003e"]}, "correct_response": ["a", "e"], "section": "Domain 5 - Data Protection", "question_plain": "A solutions architect is designing a secure, distributed application that will run on Amazon EC2 instances across multiple Availability Zones and AWS Regions and on-premises servers. The has asked a security engineer how encryption will be applied between the EC2 instances and on-premises servers.Which statements are correct about encryption in transit? (Select TWO.)", "related_lectures": []}, {"_class": "assessment", "id": 185526697, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eA company uses AWS Organizations and federation between and on-premises identity provider (IdP). Users authenticate to AWS using credentials in the IdP. A security engineer needs to audit requests to AWS Organizations for creating new AWS accounts.\u003c/p\u003e\u003cp\u003eWhat should the engineer review to determine who made the request?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eAWS Organizations enables you to create new accounts through the console or programmatically using the organizations API. When you create accounts through organizations the API calls are logged in AWS CloudTrail.\u003c/p\u003e\u003cp\u003eIn this case AWS CloudTrail can be used to track the activity of the federated users. CloudTrail records the following AWS Security Token Service (AWS STS) API calls: AssumeRoleWithWebIdentity and AssumeRoleWithSAML.\u003c/p\u003e\u003cp\u003eRecords of these API calls will be stored in CloudTrail and the user name of the federated user who made the call can be identified.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"AWS CloudTrail for the federated identity user name\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"AWS IAM Access Analyzer for the federated user name\" is incorrect.\u003c/p\u003e\u003cp\u003eThis service helps you identify the resources in your organization and accounts, such as Amazon S3 buckets or IAM roles, that are shared with an external entity.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"AWS X-Ray traces for the federated identity user name\" is incorrect.\u003c/p\u003e\u003cp\u003eThis service is used for analyzing and debugging production, distributed applications. It is not used for auditing account activity.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Federated identity provider logs for the user name\" is incorrect.\u003c/p\u003e\u003cp\u003eThe request to AWS Organizations will be recorded by CloudTrail and the federated identity user name will be recorded in the log entry.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/organizations/latest/userguide/services-that-can-integrate-ct.html\"\u003ehttps://docs.aws.amazon.com/organizations/latest/userguide/services-that-can-integrate-ct.html\u003c/a\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://aws.amazon.com/blogs/security/how-to-easily-identify-your-federated-users-by-using-aws-cloudtrail/\"\u003ehttps://aws.amazon.com/blogs/security/how-to-easily-identify-your-federated-users-by-using-aws-cloudtrail/\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eAWS CloudTrail for the federated identity user name.\u003c/p\u003e", "\u003cp\u003eAWS IAM Access Analyzer for the federated user name.\u003c/p\u003e", "\u003cp\u003eAWS X-Ray traces for the federated identity user name.\u003c/p\u003e", "\u003cp\u003eFederated identity provider logs for the user name.\u003c/p\u003e"]}, "correct_response": ["a"], "section": "Domain 4 - Identity and Access Management", "question_plain": "A company uses AWS Organizations and federation between and on-premises identity provider (IdP). Users authenticate to AWS using credentials in the IdP. A security engineer needs to audit requests to AWS Organizations for creating new AWS accounts.What should the engineer review to determine who made the request?", "related_lectures": []}, {"_class": "assessment", "id": 185526699, "assessment_type": "multi-select", "prompt": {"question": "\u003cp\u003eA company is deploying a solution that includes an Application Load Balancer in front of many Amazon EC2 instances. A caching and distribution solution is required for the content. Customers will connect to the application using a custom domain name and subdomains and must be secured with TLS encryption.\u003c/p\u003e\u003cp\u003eWhich combination of actions will achieve the requirements? (Select TWO.)\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", "", ""], "explanation": "\u003cp\u003eThe CloudFront distribution will cache and distribute content. When creating the distribution you can add alternate domain names (CNAMEs). However, note that a CNAME cannot be used for an apex (or root) domain name in Amazon Route 53. Therefore, Alias records should be created in Route 53 instead.\u003c/p\u003e\u003cp\u003eFor TLS encryption AWS Certificate Manager can be used to create SSL/TLS certificates which you can select in the CloudFront distribution. You can add multiple domain names to the certificate.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Create an Amazon CloudFront distribution, configure the alternate domain name and subdomains, and select a certificate from AWS Certificate Manager (ACM)\" is a correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Create a certificate in AWS Certificate Manager (ACM) and add the domain name and subdomains. Create Alias records for the distribution in Amazon Route 53\" is also a correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Create an Amazon CloudFront distribution, configure the alternate domain name and subdomains, and select a key from AWS KMS\" is incorrect.\u003c/p\u003e\u003cp\u003eAWS KMS is used for creating and managing encryption keys for encryption at rest, not encryption in transit which uses certificates.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Create an encryption key in AWS Key Management Service (KMS) and add CloudFront to the key policy. Create CNAME. records in Amazon Route 53\" is incorrect.\u003c/p\u003e\u003cp\u003eAWS KMS is used for creating and managing encryption keys for encryption at rest, not encryption in transit which uses certificates.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Create a certificate in AWS Certificate Manager (ACM) and add the domain name and subdomains. Create CNAME. records in Amazon Route 53\" is incorrect.\u003c/p\u003e\u003cp\u003eA CNAME cannot be used for an apex domain name in Route 53.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html\"\u003ehttps://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html\u003c/a\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/acm/latest/userguide/acm-certificate.html\"\u003ehttps://docs.aws.amazon.com/acm/latest/userguide/acm-certificate.html\u003c/a\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-cloudfront-distribution.html\"\u003ehttps://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-cloudfront-distribution.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eCreate an Amazon CloudFront distribution, configure the alternate domain name and subdomains, and select a key from AWS KMS.\u003c/p\u003e", "\u003cp\u003eCreate an Amazon CloudFront distribution, configure the alternate domain name and subdomains, and select a certificate from AWS Certificate Manager (ACM).\u003c/p\u003e", "\u003cp\u003eCreate a certificate in AWS Certificate Manager (ACM) and add the domain name and subdomains. Create Alias records for the distribution in Amazon Route 53.\u003c/p\u003e", "\u003cp\u003eCreate an encryption key in AWS Key Management Service (KMS) and add CloudFront to the key policy. Create CNAME. records in Amazon Route 53.\u003c/p\u003e", "\u003cp\u003eCreate a certificate in AWS Certificate Manager (ACM) and add the domain name and subdomains. Create CNAME. records in Amazon Route 53.\u003c/p\u003e"]}, "correct_response": ["b", "c"], "section": "Domain 1 - Detection", "question_plain": "A company is deploying a solution that includes an Application Load Balancer in front of many Amazon EC2 instances. A caching and distribution solution is required for the content. Customers will connect to the application using a custom domain name and subdomains and must be secured with TLS encryption.Which combination of actions will achieve the requirements? (Select TWO.)", "related_lectures": []}, {"_class": "assessment", "id": 185526701, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eA company uses AWS across multiple Regions. A security audit highlighted some issues that must be addressed. The company must track all configuration changes affecting AWS resources and have detailed records of who has accessed the AWS environment. The data should include information such as which user has logged in and which API calls they made\u003c/p\u003e\u003cp\u003eWhat actions should be taken to meet these requirements?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eAWS Config is a service used to track and remediation any unauthorized configuration changes made with your AWS Account. AWS Config could be used in this example with AWS AWS CloudTrail which keeps detailed logs of all API calls made within the account such as who logged in, which AWS Identity and Access Management (IAM) role is being used and also how they interact with the AWS Cloud.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Use AWS Config to track configuration changes and AWS CloudTrail to record API calls and track access patterns in the AWS Cloud\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Use Amazon CloudWatch to track configuration changes and AWS Config to record API calls and track access patterns in the AWS Cloud\" is incorrect. Amazon CloudWatch does not make track configuration changes, it tracks performance metrics and AWS Config does not track API calls, it tracks configuration changes.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Use AWS Config to track configuration changes and Amazon EventBridge to record API calls and track access patterns in the AWS Cloud\" is incorrect. Although AWS Config would work in this scenario, \u003cem\u003eAmazon EventBridge\u003c/em\u003e is a serverless event bus used to build event-driven- architectures so it cannot be used for tracking API calls.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Use Amazon Macie to track configuration changes and Amazon CloudTrail to record API calls and track access patterns in the AWS Cloud\" is incorrect. Amazon Macie is used with Amazon S3 to detect sensitive PII data, which has nothing to do with tracking configuration changes.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://aws.amazon.com/config\"\u003ehttps://aws.amazon.com/config\u003c/a\u003e\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eSave time with our AWS cheat sheets:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://digitalcloud.training/aws-config/\"\u003ehttps://digitalcloud.training/aws-config/\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eUse Amazon CloudWatch to track configuration changes and AWS Config to record API calls and track access patterns in the AWS Cloud.\u003c/p\u003e", "\u003cp\u003eUse AWS Config to track configuration changes and AWS CloudTrail to record API calls and track access patterns in the AWS Cloud.\u003c/p\u003e", "\u003cp\u003eUse AWS Config to track configuration changes and Amazon EventBridge to record API calls and track access patterns in the AWS Cloud.\u003c/p\u003e", "\u003cp\u003eUse Amazon Macie to track configuration changes and Amazon CloudTrail to record API calls and track access patterns in the AWS Cloud.\u003c/p\u003e"]}, "correct_response": ["b"], "section": "Domain 3 - Infrastructure Security", "question_plain": "A company uses AWS across multiple Regions. A security audit highlighted some issues that must be addressed. The company must track all configuration changes affecting AWS resources and have detailed records of who has accessed the AWS environment. The data should include information such as which user has logged in and which API calls they madeWhat actions should be taken to meet these requirements?", "related_lectures": []}, {"_class": "assessment", "id": 185526703, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eA company has a multi-account setup in AWS Organizations with 50 member accounts. The company uses AWS Security Hub to aggregate security findings across all accounts, with one account acting as a Security Hub administrator. The company's security operations team wants to receive real-time email alerts whenever there's a high-priority AWS Inspector finding across any of the accounts.\u003c/p\u003e\u003cp\u003eWhich solution will fulfill these requirements?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eWith an EventBridge rule in the Security Hub administrator account, the team can detect high-severity AWS Inspector findings across the organization. They can then use SNS to send real-time email alerts to the security operations team.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"In the Security Hub administrator account, create an Amazon EventBridge rule to react to AWS Inspector findings with a high priority level. Configure the rule to target an Amazon SNS topic and subscribe the security operations team's email addresses to the SNS topic\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Enable AWS Config across the organization and create a rule to detect AWS Inspector findings. Then, configure an EventBridge rule in the management account to react when AWS Config registers a compliance change. Have the EventBridge rule target an Amazon SNS topic and subscribe the security operations team's email addresses to it\" is incorrect.\u003c/p\u003e\u003cp\u003eAWS Config is used for resource configuration tracking and compliance auditing, not for responding to AWS Inspector findings. This approach would not meet the requirements.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"In each member account, set up a rule in Amazon EventBridge that reacts to AWS Inspector findings with high severity. Configure the rule to target an Amazon SNS topic and subscribe the security operations team's email addresses to the SNS topic\" is incorrect.\u003c/p\u003e\u003cp\u003eThis solution could technically work but would be operationally intensive to implement and maintain across 50 member accounts. It's more efficient to manage this centrally from the Security Hub administrator account.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Enable AWS CloudTrail for the organization in the management account. Set up an Amazon EventBridge rule to react to ListFindings API calls from AWS Inspector. Configure the rule to target an Amazon SNS topic and subscribe the security operations team's email addresses to it\" is incorrect.\u003c/p\u003e\u003cp\u003eAWS CloudTrail tracks API calls but does not directly interact with AWS Inspector findings. Using CloudTrail for this purpose would not meet the requirement.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/securityhub/latest/userguide/what-is-securityhub.html\"\u003ehttps://docs.aws.amazon.com/securityhub/latest/userguide/what-is-securityhub.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eIn the Security Hub administrator account, create an Amazon EventBridge rule to react to AWS Inspector findings with a high priority level. Configure the rule to target an Amazon SNS topic and subscribe the security operations team's email addresses to the SNS topic.\u003c/p\u003e", "\u003cp\u003eEnable AWS Config across the organization and create a rule to detect AWS Inspector findings. Then, configure an EventBridge rule in the management account to react when AWS Config registers a compliance change. Have the EventBridge rule target an Amazon SNS topic and subscribe the security operations team's email addresses to it.\u003c/p\u003e", "\u003cp\u003eIn each member account, set up a rule in Amazon EventBridge that reacts to AWS Inspector findings with high severity. Configure the rule to target an Amazon SNS topic and subscribe the security operations team's email addresses to the SNS topic.\u003c/p\u003e", "\u003cp\u003eEnable AWS CloudTrail for the organization in the management account. Set up an Amazon EventBridge rule to react to ListFindings API calls from AWS Inspector. Configure the rule to target an Amazon SNS topic and subscribe the security operations team's email addresses to it.\u003c/p\u003e"]}, "correct_response": ["a"], "section": "Domain 6 - Security Foundations and Governance", "question_plain": "A company has a multi-account setup in AWS Organizations with 50 member accounts. The company uses AWS Security Hub to aggregate security findings across all accounts, with one account acting as a Security Hub administrator. The company's security operations team wants to receive real-time email alerts whenever there's a high-priority AWS Inspector finding across any of the accounts.Which solution will fulfill these requirements?", "related_lectures": []}, {"_class": "assessment", "id": 185526705, "assessment_type": "multi-select", "prompt": {"question": "\u003cp\u003eA company replicates data between two S3 buckets in different regions using cross-region replication (CRR). The source bucket in \u003cstrong\u003eeu-west-1\u003c/strong\u003e stores sensitive data encrypted with a \u003cstrong\u003ecustomer-managed KMS key (SSE-KMS)\u003c/strong\u003e. The destination bucket in \u003cstrong\u003eeu-central-1\u003c/strong\u003e uses its own customer-managed KMS key for encryption.\u003c/p\u003e\u003cp\u003eAn IAM role is configured for replication. However, only unencrypted objects are being replicated successfully. Encrypted objects fail to replicate.\u003c/p\u003e\u003cp\u003eWhat steps should the security team take to resolve the issue? (Select THREE.)\u003c/p\u003e", "relatedLectureIds": [], "links": [], "feedbacks": ["", "", "", "", "", ""], "explanation": "\u003cp\u003e\u003cstrong\u003eCORRECT:\u003c/strong\u003e \"Modify the key policy of the source KMS key to allow the replication role to perform the \u003ccode\u003ekms:Decrypt\u003c/code\u003e action\" is correct. Without decrypt permission, the replication service cannot access encrypted objects.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT:\u003c/strong\u003e \"Ensure the replication role has \u003ccode\u003ekms:Decrypt\u003c/code\u003e, \u003ccode\u003ekms:ReEncryptFrom\u003c/code\u003e, \u003ccode\u003ekms:Encrypt\u003c/code\u003e, and \u003ccode\u003ekms:ReEncryptTo\u003c/code\u003e permissions for both KMS keys\" is correct. These are required to decrypt and re-encrypt data during replication.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT:\u003c/strong\u003e \"Modify the key policy of the destination KMS key to allow the replication role to perform the \u003ccode\u003ekms:Encrypt\u003c/code\u003e action\" is correct. The role must have encrypt permission to store objects in the destination bucket.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Modify the replication configuration to use SSE-S3 instead of SSE-KMS for the destination bucket\" is incorrect. The requirement is to use customer-managed KMS keys for both buckets.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Use the same KMS key in eu-west-1 for both source and destination buckets\" is incorrect. KMS keys are regional and cannot be shared across regions.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Add the \u003ccode\u003es3:GetObjectVersion\u003c/code\u003e and \u003ccode\u003es3:GetObjectVersionTagging\u003c/code\u003e permissions to the replication role\" is incorrect. These permissions are standard but not the cause of the issue specific to encrypted object replication.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003cbr\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication-config-for-kms-objects.html\"\u003ehttps://docs.aws.amazon.com/AmazonS3/latest/userguide/replication-config-for-kms-objects.html\u003c/a\u003e\u003c/p\u003e\u003cp\u003e\u003cbr\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-modifying.html\"\u003ehttps://docs.aws.amazon.com/kms/latest/developerguide/key-policy-modifying.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eModify the key policy of the source KMS key to allow the replication role to perform the \u003ccode\u003ekms:Decrypt\u003c/code\u003e action.\u003c/p\u003e", "\u003cp\u003eEnsure the replication role has \u003ccode\u003ekms:Decrypt\u003c/code\u003e, \u003ccode\u003ekms:ReEncryptFrom\u003c/code\u003e, \u003ccode\u003ekms:Encrypt\u003c/code\u003e, and \u003ccode\u003ekms:ReEncryptTo\u003c/code\u003e permissions for both KMS keys.\u003c/p\u003e", "\u003cp\u003eModify the replication configuration to use SSE-S3 instead of SSE-KMS for the destination bucket.\u003c/p\u003e", "\u003cp\u003eModify the key policy of the destination KMS key to allow the replication role to perform the \u003ccode\u003ekms:Encrypt\u003c/code\u003e action.\u003c/p\u003e", "\u003cp\u003eUse the same KMS key in eu-west-1 for both source and destination buckets.\u003c/p\u003e", "\u003cp\u003eAdd the \u003ccode\u003es3:GetObjectVersion\u003c/code\u003e and \u003ccode\u003es3:GetObjectVersionTagging\u003c/code\u003e permissions to the replication role.\u003c/p\u003e"]}, "correct_response": ["a", "b", "d"], "section": "Domain 6 - Security Foundations and Governance", "question_plain": "A company replicates data between two S3 buckets in different regions using cross-region replication (CRR). The source bucket in eu-west-1 stores sensitive data encrypted with a customer-managed KMS key (SSE-KMS). The destination bucket in eu-central-1 uses its own customer-managed KMS key for encryption.An IAM role is configured for replication. However, only unencrypted objects are being replicated successfully. Encrypted objects fail to replicate.What steps should the security team take to resolve the issue? (Select THREE.)", "related_lectures": []}, {"_class": "assessment", "id": 185526707, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eA company has several microservices running on Amazon EC2 instances in multiple AWS accounts. Each microservice generates logs containing performance and utilization data. The company wants to centralize the logs in one account for further analysis and detection of unusual patterns. A solutions architect is assigned to ensure that logs from all the company's AWS accounts are aggregated and ingested in real-time into a data processing system for anomaly detection.\u003c/p\u003e\u003cp\u003eWhich solution will meet this requirement?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eCloudWatch Logs subscription filters can be used to stream logs in real-time. By sending logs to an Amazon Kinesis Data Firehose stream in the central account, you can efficiently aggregate logs from multiple accounts. Kinesis Data Firehose can then forward these logs directly to the data processing system for real-time analysis.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Set up CloudWatch Logs subscription filters in each account. Use the subscription filters to stream the logs to an Amazon Kinesis Data Firehose stream in the central account, which then forwards the logs to the data processing system\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Configure Amazon CloudWatch Logs agent on EC2 instances in each account to send logs to an Amazon S3 bucket in the central account. Set up a Lambda function to process the logs from the S3 bucket and send them to the data processing system\" is incorrect.\u003c/p\u003e\u003cp\u003eThis option is not efficient for real-time log ingestion as it involves storing logs in an S3 bucket first and then processing them through a Lambda function. This additional step can cause delays and isn’t optimized for real-time data processing.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Set up AWS Config in each account to monitor changes in EC2 instances and aggregate the data in the central account. Use AWS Lambda to process the aggregated data and send it to the data processing system\" is incorrect.\u003c/p\u003e\u003cp\u003eAWS Config is primarily for configuration management and compliance. While it can monitor changes in EC2 instances, it isn't designed for log aggregation or real-time analysis of performance and utilization data from application logs.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Write a custom script on each EC2 instance to push logs to Amazon S3 in the respective accounts. Set up cross-account access for S3 buckets and use AWS Glue to aggregate and process logs in the central account\" is incorrect.\u003c/p\u003e\u003cp\u003eThis option involves writing logs to S3 and then processing them. This is not optimized for real-time ingestion and processing, and writing custom scripts can add additional complexity and maintenance overhead.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/SubscriptionFilters.html#FirehoseExample\"\u003ehttps://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/SubscriptionFilters.html#FirehoseExample\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eConfigure Amazon CloudWatch Logs agent on EC2 instances in each account to send logs to an Amazon S3 bucket in the central account. Set up a Lambda function to process the logs from the S3 bucket and send them to the data processing system.\u003c/p\u003e", "\u003cp\u003eSet up CloudWatch Logs subscription filters in each account. Use the subscription filters to stream the logs to an Amazon Kinesis Data Firehose stream in the central account, which then forwards the logs to the data processing system.\u003c/p\u003e", "\u003cp\u003eSet up AWS Config in each account to monitor changes in EC2 instances and aggregate the data in the central account. Use AWS Lambda to process the aggregated data and send it to the data processing system.\u003c/p\u003e", "\u003cp\u003eWrite a custom script on each EC2 instance to push logs to Amazon S3 in the respective accounts. Set up cross-account access for S3 buckets and use AWS Glue to aggregate and process logs in the central account.\u003c/p\u003e"]}, "correct_response": ["b"], "section": "Domain 6 - Security Foundations and Governance", "question_plain": "A company has several microservices running on Amazon EC2 instances in multiple AWS accounts. Each microservice generates logs containing performance and utilization data. The company wants to centralize the logs in one account for further analysis and detection of unusual patterns. A solutions architect is assigned to ensure that logs from all the company's AWS accounts are aggregated and ingested in real-time into a data processing system for anomaly detection.Which solution will meet this requirement?", "related_lectures": []}, {"_class": "assessment", "id": 185526709, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eA multinational enterprise uses AWS Organizations to manage several AWS accounts spread across different regions. The company's IT department centrally manages the creation of IAM roles. Recently, the company decided to delegate the IAM role creation to various regional teams to speed up the process and reduce the IT department's workload. However, it is critical to prevent privilege escalation and ensure the scope of IAM roles remains within the defined limits.\u003c/p\u003e\u003cp\u003eWhich solution will meet these requirements with the LEAST operational overhead?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eIn AWS Organizations, Service Control Policies (SCPs) are one type of policy that you can use to manage permissions. SCPs offer central control over the maximum available permissions for all accounts in your organization. SCPs help to ensure your accounts stay within your organization’s access control guidelines.\u003c/p\u003e\u003cp\u003eWhen you attach an SCP to the root, it affects all the OUs, accounts, and users under the root. Any permissions that are not explicitly granted by the SCP are implicitly denied.\u003c/p\u003e\u003cp\u003eA permissions boundary is an advanced feature in which you set the maximum permissions that an entity (user or role) can have. By setting a permissions boundary for IAM roles, the security team can delegate the role creation to application teams but still control the maximum permissions any IAM role can have.\u003c/p\u003e\u003cp\u003eUsing a combination of SCPs and permissions boundaries provides a mechanism to delegate IAM role creation to the application teams while limiting the permissions those roles can have, thus preventing privilege escalation and controlling the scope of IAM roles.\u003c/p\u003e\u003cp\u003eBy attaching the SCP to the root OU, you ensure that these restrictions apply to all accounts in your organization, not just the ones you specifically identify. And by using a permissions boundary, you can provide a 'safety net' that limits the permissions of any roles that are created, regardless of who creates them or what permissions they attempt to assign to the role. This mechanism significantly reduces the operational overhead and ensures security compliance across all teams and roles.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Establish an SCP and a permissions boundary for IAM roles. Apply the SCP to the root OU so that only roles with the attached permissions boundary can create any new IAM roles\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Assign an IAM group for each regional team, attach relevant policies to these groups, and then create IAM users for each regional team member. Add the respective IAM users to their relevant IAM group using Role-Based Access Control (RBAC)\" is incorrect.\u003c/p\u003e\u003cp\u003eAlthough IAM groups and RBAC can help in managing permissions, this solution does not inherently prevent privilege escalation or limit the scope of IAM roles.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Empower regional team leaders to create IAM roles for their teams and conduct bi-annual audits of the IAM roles they have created. Provide necessary training to these leaders about the rules and best practices of IAM role creation\" is incorrect.\u003c/p\u003e\u003cp\u003eThis approach places a lot of responsibility and potential risk with the team leaders, and bi-annual audits could allow for extended periods of misconfigured access. It also adds operational overhead due to training needs.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Organize each AWS account into an Organizational Unit (OU) based on the regions. Attach Service Control Policies (SCP) to each OU, granting access only to the AWS services required by the regional teams\" is incorrect.\u003c/p\u003e\u003cp\u003eWhile this can limit access to certain services, it does not necessarily limit the scope of IAM roles or prevent privilege escalation within the allowed services.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html\"\u003ehttps://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eAssign an IAM group for each regional team, attach relevant policies to these groups, and then create IAM users for each regional team member. Add the respective IAM users to their relevant IAM group using Role-Based Access Control (RBAC).\u003c/p\u003e", "\u003cp\u003eEmpower regional team leaders to create IAM roles for their teams and conduct bi-annual audits of the IAM roles they have created. Provide necessary training to these leaders about the rules and best practices of IAM role creation.\u003c/p\u003e", "\u003cp\u003eOrganize each AWS account into an Organizational Unit (OU) based on the regions. Attach Service Control Policies (SCP) to each OU, granting access only to the AWS services required by the regional teams.\u003c/p\u003e", "\u003cp\u003eEstablish an SCP and a permissions boundary for IAM roles. Apply the SCP to the root OU so that only roles with the attached permissions boundary can create any new IAM roles.\u003c/p\u003e"]}, "correct_response": ["d"], "section": "Domain 6 - Security Foundations and Governance", "question_plain": "A multinational enterprise uses AWS Organizations to manage several AWS accounts spread across different regions. The company's IT department centrally manages the creation of IAM roles. Recently, the company decided to delegate the IAM role creation to various regional teams to speed up the process and reduce the IT department's workload. However, it is critical to prevent privilege escalation and ensure the scope of IAM roles remains within the defined limits.Which solution will meet these requirements with the LEAST operational overhead?", "related_lectures": []}, {"_class": "assessment", "id": 185526711, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eA university is using AWS Organizations to manage several AWS accounts for different departments. Recently, there was an incident of misuse with one of the departmental accounts. To prevent any misuse or accidental changes, the university wants to limit the access level of the AWS root account across all member accounts.\u003c/p\u003e\u003cp\u003eWhich solution will help meet this requirement?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eService Control Policies (SCPs) can limit the maximum permission level for all AWS accounts in an organization, including the root user. By implementing SCPs, the university can prevent the root user in any account from exceeding the permissions defined in the SCP.\u003c/p\u003e\u003cp\u003eThe following example policy restricts all access to the specified actions for the root user in a member account:\u003c/p\u003e\u003cimg src=\"https://img-c.udemycdn.com/redactor/raw/practice_test_question_explanation/2023-07-06_22-06-36-0ebfba80d678d4db0d0e8f8b26ba8db4.jpg\"\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Use Service Control Policies (SCPs) to limit root account permissions\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Use AWS IAM policies to restrict root account access\" is incorrect.\u003c/p\u003e\u003cp\u003eIAM policies are used to grant permissions to IAM users, groups, or roles. They cannot be used to directly restrict the permissions of the root user account.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Implement multi-factor authentication (MFA) on the root account\" is incorrect.\u003c/p\u003e\u003cp\u003eAlthough MFA adds an extra layer of security to the root account, it does not limit the access level or permissions of the root account. The root user always has full access to all resources in the AWS account.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Activate AWS CloudTrail for monitoring root account activities\" is incorrect.\u003c/p\u003e\u003cp\u003eWhile AWS CloudTrail allows you to log and monitor activities in your AWS environment, it does not restrict or limit the permissions of the root account.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html\"\u003ehttps://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html\u003c/a\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples_general.html#example-scp-root-user\"\u003ehttps://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples_general.html#example-scp-root-user\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eUse AWS IAM policies to restrict root account access.\u003c/p\u003e", "\u003cp\u003eImplement multi-factor authentication (MFA) on the root account.\u003c/p\u003e", "\u003cp\u003eUse Service Control Policies (SCPs) to limit root account permissions.\u003c/p\u003e", "\u003cp\u003eActivate AWS CloudTrail for monitoring root account activities.\u003c/p\u003e"]}, "correct_response": ["c"], "section": "Domain 6 - Security Foundations and Governance", "question_plain": "A university is using AWS Organizations to manage several AWS accounts for different departments. Recently, there was an incident of misuse with one of the departmental accounts. To prevent any misuse or accidental changes, the university wants to limit the access level of the AWS root account across all member accounts.Which solution will help meet this requirement?", "related_lectures": []}, {"_class": "assessment", "id": 185526713, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eA security engineer must identify any Amazon EC2 instances that are running a vulnerable version of a common web framework. The security team need to quickly identify all compute resources running the specific version so they can install patches.\u003c/p\u003e\u003cp\u003eWhich approach should the team take to accomplish this task?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eAWS Systems Manager Patch Manager can be used to scan systems and identify vulnerable versions of software and then install the patches on the systems. Patch Manager provides options to scan your instances and report compliance on a schedule, install available patches on a schedule, and patch or scan instances on demand whenever you need to.\u003c/p\u003e\u003cp\u003ePatch Manager integrates with AWS Identity and Access Management (IAM), AWS CloudTrail, and Amazon EventBridge to provide a secure patching experience that includes event notifications and the ability to audit usage.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Scan all the EC2 instances with AWS Systems Manager to identify the vulnerable version of the web framework\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Scan all the EC2 instances with the Amazon Inspector Network Reachability rules package\" is incorrect.\u003c/p\u003e\u003cp\u003eThis service is used more for determining if ports are open and accessible leading to vulnerabilities. The question is specifically asking to identify the vulnerable software.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Scan all the EC2 instances for noncompliance with AWS Config and an AWS Lambda function\" is incorrect.\u003c/p\u003e\u003cp\u003eAWS Config can be used for compliance management but is not ideal for identifying vulnerable versions of software.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Scan all the EC2 instances with Amazon GuardDuty to identify the vulnerable version of the web framework\" is incorrect.\u003c/p\u003e\u003cp\u003eGuardDuty provides continuous threat detection but does not scan software to identify vulnerable software versions.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-patch.html\"\u003ehttps://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-patch.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eScan all the EC2 instances for noncompliance with AWS Config and an AWS Lambda function.\u003c/p\u003e", "\u003cp\u003eScan all the EC2 instances with the Amazon Inspector Network Reachability rules package.\u003c/p\u003e", "\u003cp\u003eScan all the EC2 instances with Amazon GuardDuty to identify the vulnerable version of the web framework.\u003c/p\u003e", "\u003cp\u003eScan all the EC2 instances with AWS Systems Manager to identify the vulnerable version of the web framework.\u003c/p\u003e"]}, "correct_response": ["d"], "section": "Domain 3 - Infrastructure Security", "question_plain": "A security engineer must identify any Amazon EC2 instances that are running a vulnerable version of a common web framework. The security team need to quickly identify all compute resources running the specific version so they can install patches.Which approach should the team take to accomplish this task?", "related_lectures": []}, {"_class": "assessment", "id": 185526715, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eAmazon S3 is used for storing sensitive data that is generated by a serverless application. The data must be encrypted, and the company plans to use the AWS Key Management Service (KMS) to create and manage the encryption keys. The company’s security policies require that the company’s own key material is imported, and custom expiration dates are configured.\u003cbr\u003eHow should the company configure AWS KMS?\u003c/p\u003e", "relatedLectureIds": [], "links": [], "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eAWS KMS allows customers to \u003cstrong\u003eimport their own key material only into customer managed KMS keys in the default key store\u003c/strong\u003e. When importing key material, the customer can \u003cstrong\u003edefine a custom expiration date\u003c/strong\u003e for the imported key material, which meets the company’s security requirements.\u003c/p\u003e\u003cp\u003eAWS managed KMS keys do not support importing customer key material or configuring expiration settings.\u003cbr\u003eCustom key stores are backed by AWS CloudHSM and \u003cstrong\u003edo not support importing key material into KMS-managed keys\u003c/strong\u003e, making them unsuitable for this requirement.\u003c/p\u003e\u003cp\u003eNote that \u003cstrong\u003eautomatic key rotation is not supported for KMS keys with imported key material\u003c/strong\u003e, but this does not affect the requirement, which only specifies custom expiration dates.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Use the default key store and import the company’s keys into a customer managed KMS key\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Create a custom key store and import the company’s keys into a customer managed KMS key\" is incorrect. Custom key stores do not support importing key material into KMS keys.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Create a custom key store and import the company’s keys into an AWS managed KMS key\" is incorrect. AWS managed KMS keys do not allow importing customer key material.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT: \u003c/strong\u003e\"Use the default key store and import the company’s keys into an AWS managed KMS key\" is incorrect.\u003c/p\u003e\u003cp\u003eAWS managed KMS keys do not support importing customer key material or setting expiration dates.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/kms/latest/developerguide/importing-keys.html\"\u003ehttps://docs.aws.amazon.com/kms/latest/developerguide/importing-keys.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eCreate a custom key store and import the company’s keys into a customer managed KMS key.\u003c/p\u003e", "\u003cp\u003eUse the default key store and import the company’s keys into a customer managed KMS key.\u003c/p\u003e", "\u003cp\u003eCreate a custom key store and import the company’s keys into an AWS managed KMS key.\u003c/p\u003e", "\u003cp\u003eUse the default key store and import the company’s keys into an AWS managed KMS key.\u003c/p\u003e"]}, "correct_response": ["b"], "section": "Domain 5 - Data Protection", "question_plain": "Amazon S3 is used for storing sensitive data that is generated by a serverless application. The data must be encrypted, and the company plans to use the AWS Key Management Service (KMS) to create and manage the encryption keys. The company’s security policies require that the company’s own key material is imported, and custom expiration dates are configured.How should the company configure AWS KMS?", "related_lectures": []}, {"_class": "assessment", "id": 185526717, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eAn application runs on Amazon EC2 instances behind an Application Load Balancer (ALB). Amazon CloudFront is used as the front-end of the application an AWS WAF is used to protect the front-end with the AWS Managed Rules rule group.\u003c/p\u003e\u003cp\u003eA security architect is concerned that the infrastructure is vulnerable to layer 7 DDoS attacks. What improvements can be made to the solution to protect against this type of attack?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eA rate-based rule tracks the rate of requests for each originating IP address and triggers the rule action on IPs with rates that go over a limit. You set the limit as the number of requests per 5-minute time span. You can use this type of rule to put a temporary block on requests from an IP address that's sending excessive requests. By default, AWS WAF aggregates requests based on the IP address from the web request origin, but you can configure the rule to use an IP address from an HTTP header, like X-Forwarded-For, instead.\u003c/p\u003e\u003cp\u003eThis rule can help prevent layer 7 DDoS attacks as the IP addresses of bots would be automatically blocked once they exceed the rate defined.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Configure a rate-based rule on AWS WAF that puts a temporary block on requests from IP addresses that send excessive requests\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Configure a Lambda@Edge function that imposes a rate limit on CloudFront viewer requests and blocks traffic that exceeds the limits\" is incorrect.\u003c/p\u003e\u003cp\u003eAWS WAF can do this using rate-based rules and is much better suited to the job than writing your own custom code and running it using Lambda.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Configure an IP set match rule on AWS WAF that blocks web requests based on the IP address of the web request origin\" is incorrect.\u003c/p\u003e\u003cp\u003eAn IP set match rule uses a list of known IP addresses. With a DDoS attack you don’t know the IP addresses of the bots ahead of time so this would not be effective.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Configure field-level encryption for the distribution and upload an SSL/TLS certificate from Amazon Certificate Manager (ACM)\" is incorrect.\u003c/p\u003e\u003cp\u003eField level encryption adds protection for certain data in transit and is not useful for protecting against DDoS attacks.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/waf/latest/developerguide/waf-rule-statement-type-rate-based.html\"\u003ehttps://docs.aws.amazon.com/waf/latest/developerguide/waf-rule-statement-type-rate-based.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eConfigure a Lambda@Edge function that imposes a rate limit on CloudFront viewer requests and blocks traffic that exceeds the limits.\u003c/p\u003e", "\u003cp\u003eConfigure a rate-based rule on AWS WAF that puts a temporary block on requests from IP addresses that send excessive requests.\u003c/p\u003e", "\u003cp\u003eConfigure an IP set match rule on AWS WAF that blocks web requests based on the IP address of the web request origin.\u003c/p\u003e", "\u003cp\u003eConfigure field-level encryption for the distribution and upload an SSL/TLS certificate from Amazon Certificate Manager (ACM).\u003c/p\u003e"]}, "correct_response": ["b"], "section": "Domain 3 - Infrastructure Security", "question_plain": "An application runs on Amazon EC2 instances behind an Application Load Balancer (ALB). Amazon CloudFront is used as the front-end of the application an AWS WAF is used to protect the front-end with the AWS Managed Rules rule group.A security architect is concerned that the infrastructure is vulnerable to layer 7 DDoS attacks. What improvements can be made to the solution to protect against this type of attack?", "related_lectures": []}, {"_class": "assessment", "id": 185526719, "assessment_type": "multiple-choice", "prompt": {"question": "\u003cp\u003eA company is deploying an application on Amazon EC2 instances with an Amazon RDS MySQL database. The application will store sensitive data and a security engineer has been tasked with recommending measures to protect the sensitive data against security breaches. The solution must minimize operational overhead and credentials must be regularly and automatically rotated.\u003c/p\u003e\u003cp\u003eWhich measures should the security engineer suggest?\u003c/p\u003e", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "\u003cp\u003eThe key requirements are to ensure data protection for the application running on EC2 and RDS and to ensure credentials are automatically rotated. For data protection we must ensure data is protected both in transit and at rest.\u003c/p\u003e\u003cp\u003eAt rest encryption can be implemented for Amazon EBS volumes and RDS databases. Whether we use the default AWS managed keys or keys managed in AWS KMS is not important in this scenario if encryption is enabled.\u003c/p\u003e\u003cp\u003eEncryption in transit is not relevant to Amazon EBS as the volumes are attached at the block level and all data is encrypted in transit by default. For RDS we can use a TLS certificate to protect the data in transit.\u003c/p\u003e\u003cp\u003eLastly, rotation of credentials can be implemented by using Secrets Manager which allows RDS database credentials to be rotated automatically without any custom development.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Implement encryption at rest for the Amazon EBS volumes attached to EC2 instances. Encrypt the RDS database and use a TLS secured connection. Store the database credentials in AWS Secrets Manager and configure automatic rotation\" is the correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Implement encryption at rest for the Amazon EBS volumes attached to EC2 instances. Encrypt the RDS database and use a TLS secured connection. Store the database credentials in instance metadata and automatically rotate with AWS Lambda\" is incorrect.\u003c/p\u003e\u003cp\u003eCredentials should not be stored in instance metadata as this is insecure.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Enable Amazon RDS encryption using AWS CloudHSM keys for the database and snapshots. Implement TLS connections to the Amazon EBS volumes and RDS instance. Import the credentials in AWS KMS and enable rotation every 365 days\" is incorrect.\u003c/p\u003e\u003cp\u003eKMS cannot be used for storing and rotating database credentials, it works only for encryption keys.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Enable Amazon RDS encryption using AWS KMS keys for the database and snapshots. Implement encryption at rest for Amazon EBS volumes. Use an ACM certificate for TLS connectivity to the database instance and use Systems Manager Parameter store to automatically rotate credentials\" is incorrect.\u003c/p\u003e\u003cp\u003eSystems Manager Parameter Store does not automatically rotate credentials, you must write your own Lambda function which increases operational overhead.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets.html\"\u003ehttps://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eEnable Amazon RDS encryption using AWS CloudHSM keys for the database and snapshots. Implement TLS connections to the Amazon EBS volumes and RDS instance. Import the credentials in AWS KMS and enable rotation every 365 days.\u003c/p\u003e", "\u003cp\u003eImplement encryption at rest for the Amazon EBS volumes attached to EC2 instances. Encrypt the RDS database and use a TLS secured connection. Store the database credentials in AWS Secrets Manager and configure automatic rotation.\u003c/p\u003e", "\u003cp\u003eEnable Amazon RDS encryption using AWS KMS keys for the database and snapshots. Implement encryption at rest for Amazon EBS volumes. Use an ACM certificate for TLS connectivity to the database instance and use Systems Manager Parameter store to automatically rotate credentials.\u003c/p\u003e", "\u003cp\u003eImplement encryption at rest for the Amazon EBS volumes attached to EC2 instances. Encrypt the RDS database and use a TLS secured connection. Store the database credentials in instance metadata and automatically rotate with AWS Lambda.\u003c/p\u003e"]}, "correct_response": ["b"], "section": "Domain 5 - Data Protection", "question_plain": "A company is deploying an application on Amazon EC2 instances with an Amazon RDS MySQL database. The application will store sensitive data and a security engineer has been tasked with recommending measures to protect the sensitive data against security breaches. The solution must minimize operational overhead and credentials must be regularly and automatically rotated.Which measures should the security engineer suggest?", "related_lectures": []}, {"_class": "assessment", "id": 185526721, "assessment_type": "multi-select", "prompt": {"question": "\u003cp\u003eA security team is concerned about a possible vulnerability affecting the instance metadata service. The team requires that all existing and new Amazon EC2 instances must use version 2 of the instance metadata service (IMDSV2).\u003c/p\u003e\u003cp\u003eWhich combination of steps should the security team take to complete the migration to IMDSV2 in the AWS environment? (Select TWO.)\u003c/p\u003e", "relatedLectureIds": [], "links": [], "feedbacks": ["", "", "", "", ""], "explanation": "\u003cp\u003eYou can access instance metadata from a running instance using one of the following methods:\u003c/p\u003e\u003cul\u003e\u003cli\u003e\u003cp\u003eInstance Metadata Service Version 1 (IMDSv1) – a request/response method\u003c/p\u003e\u003c/li\u003e\u003cli\u003e\u003cp\u003eInstance Metadata Service Version 2 (IMDSv2) – a session-oriented method\u003c/p\u003e\u003c/li\u003e\u003c/ul\u003e\u003cp\u003eBy default, you can use either IMDSv1 or IMDSv2, or both. The instance metadata service distinguishes between IMDSv1 and IMDSv2 requests based on whether, for any given request, either the PUT or GET headers, which are unique to IMDSv2, are present in that request.\u003c/p\u003e\u003cp\u003eYou can configure the instance metadata service on each instance such that local code or users must use IMDSv2. When you specify that IMDSv2 must be used, IMDSv1 no longer works.\u003c/p\u003e\u003cp\u003eIMDSv2 uses session-oriented requests. With session-oriented requests, you create a session token that defines the session duration, which can be a minimum of one second and a maximum of six hours.\u003c/p\u003e\u003cp\u003eYou can require the use of IMDSv2 by setting the HttpTokens parameter to “required” for the ec2 run instances action and by modifying existing instances using the CLI. Please check the reference link below for more detailed information on transitioning to IMDSv2.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"When using the ec2:runinstances API action set the “--metadata-options HttpTokens” option to “required”\" is a correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCORRECT: \u003c/strong\u003e\"Update existing instances using the “ec2 modify-instance-metadata-options” commands from the AWS CLI with the “HttpTokens required” option\" is also a correct answer (as explained above.)\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Update existing instances using the “ec2 modify-instance-metadata-options” commands from the AWS CLI with the “HttpEndpoint disabled” option\" is incorrect.\u003c/p\u003e\u003cp\u003eSetting the endpoint to disabled will prevent the instance metadata service from working completely.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"Update Network ACLs to deny all inbound traffic to the 169.254.169.254 IP address for the HTTP protocol\" is incorrect.\u003c/p\u003e\u003cp\u003eThis is the IP address on which the instance metadata service runs and is a local address used from within the instance itself. Therefore, updating security groups and network ACLs will not achieve anything.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eINCORRECT:\u003c/strong\u003e \"When using the ec2:runinstances API action set the “--metadata-options HttpTokens” option to “disabled\" is incorrect.\u003c/p\u003e\u003cp\u003eThis is not a valid option and does not achieve the stated objectives.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eReferences:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003e\u003ca href=\"https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html\"\u003ehttps://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html\u003c/a\u003e\u003c/p\u003e", "answers": ["\u003cp\u003eWhen using the ec2:runinstances API action set the “--metadata-options HttpTokens” option to “required”.\u003c/p\u003e", "\u003cp\u003eUpdate existing instances using the “ec2 modify-instance-metadata-options” commands from the AWS CLI with the “HttpEndpoint disabled” option.\u003c/p\u003e", "\u003cp\u003eUpdate existing instances using the “ec2 modify-instance-metadata-options” commands from the AWS CLI with the “HttpTokens required” option.\u003c/p\u003e", "\u003cp\u003eUpdate Network ACLs to deny all inbound traffic to the 169.254.169.254 IP address for the HTTP protocol.\u003c/p\u003e", "\u003cp\u003eWhen using the ec2:runinstances API action set the “--metadata-options HttpTokens” option to “disabled”.\u003c/p\u003e"]}, "correct_response": ["a", "c"], "section": "Domain 3 - Infrastructure Security", "question_plain": "A security team is concerned about a possible vulnerability affecting the instance metadata service. The team requires that all existing and new Amazon EC2 instances must use version 2 of the instance metadata service (IMDSV2).Which combination of steps should the security team take to complete the migration to IMDSV2 in the AWS environment? (Select TWO.)", "related_lectures": []}]}</script>
+<script>
+var DATA = JSON.parse(document.getElementById("quiz-data-script").textContent);
+var questions = [];
+var userAnswers = [];
+var flagged = [];
+var checked = [];
+var currentQ = 0;
+var timerInterval = null;
+var seconds = 0;
+var examFinished = false;
+var mode = "exam";
+var selectedMode = "exam";
+var STORAGE_KEY = "attempts_" + DATA.title.replace(/[^a-zA-Z0-9]/g, "_").substring(0, 60);
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function formatTime(sec) {
+  var h = Math.floor(sec / 3600);
+  var m = String(Math.floor((sec % 3600) / 60)).padStart(2, "0");
+  var s = String(sec % 60).padStart(2, "0");
+  if (h > 0) return String(h).padStart(2, "0") + ":" + m + ":" + s;
+  return "00:" + m + ":" + s;
+}
+
+function formatDescription(html) {
+  if (!html) return "";
+  // Convert - bullet points to real bullets if regex matches
+  // Matches "- text<br>" or "- text$"
+  return html.replace(/(?:^|<br>)\s*-\s+(.*?)(?=<br>|$)/g, "<li>$1</li>")
+             .replace(/((?:<li>.*?<\/li>\s*)+)/g, "<ul>$1</ul>");
+}
+
+// ── Helper: Format Answer ──────────────────────────────────
+function formatAnswer(text) {
+  if (!text) return "";
+  if (text.includes("<pre") || text.includes("<code")) return text;
+
+  // Heuristic: If text has newlines and starts with { or [, treat as code (JSON/Array)
+  var trimmed = text.trim();
+  if (trimmed.length > 20 && (trimmed.startsWith("{") || trimmed.startsWith("["))) {
+     try {
+       // Try to parse and re-stringify for perfect indentation
+       var obj = JSON.parse(text);
+       var pretty = JSON.stringify(obj, null, 2);
+       return '<pre><code>' + syntaxHighlight(pretty) + '</code></pre>';
+     } catch(e) {
+       // Fallback for partial/invalid JSON
+       return '<pre><code>' + syntaxHighlight(text) + '</code></pre>';
+     }
+  }
+  return text.replace(/\n/g, "<br>");
+}
+
+function syntaxHighlight(json) {
+    if (typeof json !== 'string') {
+         json = JSON.stringify(json, undefined, 2);
+    }
+    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        var cls = 'highlight-number';
+        if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+                cls = 'highlight-key';
+            } else {
+                cls = 'highlight-string';
+            }
+        } else if (/true|false/.test(match)) {
+            cls = 'highlight-boolean';
+        } else if (/null/.test(match)) {
+            cls = 'highlight-null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+    });
+}
+
+function highlightGeneric(text) {
+    // 1. Strings (double and single quoted)
+    // 2. Comments (// and #)
+    // 3. Keywords
+    // 4. Numbers
+    
+    // HTML Escape first
+    text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    
+    // Comments: // ... or # ...
+    // We must handle strings first to avoid replacing inside strings, but simple regex is hard.
+    // Let's do a simple pass: Tokenize by likely boundaries?
+    // Actually, simple regex replacement order matters. Strings first, then comments? 
+    // But comment markers can be inside strings.
+    // A robust way is to match ALL tokens in one regex.
+    
+    // 5. ARNs and AWS patterns (e.g. arn:aws:..., aws:RequestedRegion) - treat as string/key
+    // Match arn:... or aws:... until end of word or path
+    
+    const re = /("(?:\\.|[^\\"])*"\s*:)|("(?:\\.|[^\\"])*"|'(?:\\.|[^\\'])*')|(\/\/.*$|#.*$|\/\*[\s\S]*?\*\/)|(\b(?:arn|aws):[\w\-:/*.]+\b)|(\b(?:def|class|function|var|let|const|if|else|return|void|int|public|private|static|import|from|try|catch|while|for|switch|case|break|continue|new|this|true|false|null)\b)|(\b\d+(?:\.\d+)?\b)/gm;
+    
+    return text.replace(re, function(match, keyPair, string, comment, aws, keyword, number) {
+        if (keyPair) {
+             return keyPair.replace(/^"((?:\\.|[^\\"])*)"/, '<span class="highlight-key">"$1"</span>');
+        }
+        if (string) return '<span class="highlight-string">' + string + '</span>';
+        if (comment) return '<span class="highlight-comment">' + comment + '</span>';
+        if (aws) return '<span class="highlight-string">' + aws + '</span>'; // Treat ARNs as strings (orange) 
+        if (keyword) return '<span class="highlight-keyword">' + keyword + '</span>';
+        if (number) return '<span class="highlight-number">' + number + '</span>';
+        return match;
+    });
+}
+
+// ── localStorage Attempts ──────────────────────────────────
+
+function getAttempts() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch(e) { return []; }
+}
+
+function saveAttempt(data) {
+  var attempts = getAttempts();
+  attempts.unshift(data);
+  if (attempts.length > 20) attempts = attempts.slice(0, 20);
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(attempts)); } catch(e) {}
+}
+
+function clearAttempts() {
+  if (!confirm("Clear all past attempts for this test?")) return;
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  renderAttempts();
+}
+
+function exportAttempts() {
+  var payload = {quiz: DATA.title, exportedAt: new Date().toISOString(), attempts: getAttempts()};
+  var blob = new Blob([JSON.stringify(payload, null, 2)], {type: "application/json"});
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement("a");
+  link.href = url;
+  link.download = DATA.title.replace(/[^a-zA-Z0-9._-]+/g, "_") + "_attempts.json";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function loadAttempt(idx) {
+  var attempts = getAttempts();
+  var att = attempts[idx];
+  
+  if (!att.snapshot) {
+    alert("This attempt cannot be reviewed because it was saved before the 'Full History' feature was added.\n\nPlease take a new exam to enable detailed review.");
+    return;
+  }
+  
+  // Restore state from snapshot
+  questions = att.snapshot;
+  mode = "review";
+  examFinished = true;
+  userAnswers = att.answers || [];
+  flagged = att.flagged || new Array(questions.length).fill(false);
+  checked = new Array(questions.length).fill(true);
+    
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("scoreScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
+    
+  document.getElementById("exitBtn").classList.remove("hidden");
+  document.getElementById("endExamBtn").classList.add("hidden");
+  document.getElementById("checkRow").classList.add("hidden");
+  document.getElementById("modeBadge").textContent = "History";
+  document.getElementById("modeBadge").className = "mode-badge history";
+    
+  currentQ = 0;
+  activeFilter = "all";
+  activeSection = "all";
+  buildGrid();
+  buildNavFilters();
+  renderQuestion();
+}
+
+function renderAttempts() {
+  var section = document.getElementById("attemptsSection");
+  var attempts = getAttempts();
+  if (attempts.length === 0) {
+    section.innerHTML = "";
+    return;
+  }
+  
+  var passGoal = getPassPercent();
+  
+  var html = '<div class="attempts-header"><h3>📊 Past Attempts</h3><button class="btn btn-ghost" onclick="clearAttempts()">Clear History</button></div>';
+  html += '<table class="attempts-table"><thead><tr><th>Date</th><th>Mode</th><th>Score</th><th>Result</th><th>Time</th><th></th></tr></thead><tbody>';
+  for (var i = 0; i < attempts.length; i++) {
+    var a = attempts[i];
+    var pClass = a.pct >= passGoal ? "pass" : "fail";
+    var canReview = !!a.snapshot;
+    var rowClass = canReview ? "clickable" : "legacy";
+    var title = canReview ? "Click to review attempt" : "Legacy attempt (score only)";
+    
+    html += '<tr class="' + rowClass + '" onclick="loadAttempt(' + i + ')" title="' + title + '">';
+    html += '<td>' + a.date + '</td>';
+    html += '<td><span class="attempt-mode ' + a.mode + '">' + a.mode + '</span></td>';
+    html += '<td>' + a.correct + '/' + a.total + '</td>';
+    html += '<td><span class="attempt-score ' + pClass + '">' + a.pct + '%</span></td>';
+    html += '<td>' + a.time + '</td>';
+    html += '<td>' + (canReview ? '<span style="font-size:14px">👁️</span>' : '<span style="opacity:0.3">🚫</span>') + '</td>';
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  section.innerHTML = html;
+}
+
+// ── Init ────────────────────────────────────────────────────
+
+function getPassPercent() {
+  // Logic: 
+  // If pass_score is provided and > 100, assuming it's a scaled score (e.g. 720/1000) -> 72%
+  // If pass_score is <= 100, assume it's the percentage.
+  // Default to 72% if missing.
+  if (DATA.pass_score) {
+    if (DATA.pass_score > 100) return Math.round(DATA.pass_score / 10);
+    return DATA.pass_score;
+  }
+  return 72; // Default
+}
+
+function init() {
+  document.getElementById("examTitle").textContent = DATA.title;
+  document.getElementById("headerTitle").textContent = DATA.title;
+  document.getElementById("examCount").textContent = DATA.assessments.length + " Questions";
+  
+  // Initial shuffle for fresh start
+  initQuestions();
+  renderAttempts();
+  renderQuickStats();
+}
+
+function renderQuickStats() {
+  var container = document.getElementById("quickStats");
+  var attempts = getAttempts();
+  if (attempts.length === 0) { container.innerHTML = ""; return; }
+  var passGoal = getPassPercent();
+  var best = 0, last = attempts[0].pct;
+  for (var i = 0; i < attempts.length; i++) { if (attempts[i].pct > best) best = attempts[i].pct; }
+  var bClass = best >= passGoal ? "pass" : "fail";
+  var lClass = last >= passGoal ? "pass" : "fail";
+  container.innerHTML = '<span class="quick-stat">Best: <span class="qs-val ' + bClass + '">' + best + '%</span></span>' +
+    '<span class="quick-stat">Last: <span class="qs-val ' + lClass + '">' + last + '%</span></span>' +
+    '<span class="quick-stat">Attempts: <span class="qs-val">' + attempts.length + '</span></span>';
+}
+
+function initQuestions() {
+  var indexed = DATA.assessments.map(function(a, i) { return Object.assign({}, a, {_origIdx: i}); });
+  questions = shuffle(indexed);
+
+  questions.forEach(function(q) {
+    var prompt = q.prompt;
+    var isMulti = q.assessment_type === "multi-select" || q.correct_response.length > 1;
+    q._isMulti = isMulti;
+    var answers = prompt.answers.map(function(ans, i) { return {text: ans, origLetter: String.fromCharCode(97 + i)}; });
+    var shuffled = shuffle(answers);
+    q._shuffledAnswers = shuffled;
+    // Map correct response letters to indices in the shuffled array
+    q._correctMapped = q.correct_response.map(function(cr) { return shuffled.findIndex(function(s) { return s.origLetter === cr; }); });
+  });
+}
+
+// ── Mode Selection → Info Panel ─────────────────────────────
+
+function selectMode(m) {
+  selectedMode = m;
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("infoPanel").classList.remove("hidden");
+
+  document.getElementById("infoTitle").textContent = DATA.title;
+  document.getElementById("infoQuestions").textContent = DATA.assessments.length;
+  
+  // Time/Pass metadata
+  var dur = DATA.duration || Math.round(DATA.assessments.length * 2); // default 2 min/q if unknown
+  document.getElementById("infoTime").textContent = dur + " min";
+  var pass = getPassPercent();
+  document.getElementById("infoPass").textContent = pass + "%";
+  
+  // Prepare description
+  var descEl = document.getElementById("infoDesc");
+  if (DATA.description) {
+    descEl.innerHTML = formatDescription(DATA.description);
+    descEl.style.display = "";
+  } else {
+    descEl.style.display = "none";
+  }
+}
+
+function goBackToStart() {
+  document.getElementById("infoPanel").classList.add("hidden");
+  document.getElementById("startScreen").classList.remove("hidden");
+  document.getElementById("scoreScreen").classList.add("hidden");
+  renderAttempts();
+  renderQuickStats();
+}
+
+function exitReview() {
+  showModal("📚", "Exit Review?", "Return to the start screen?", "Exit", function() {
+    closeModal();
+    clearInterval(timerInterval);
+    document.getElementById("quizScreen").classList.add("hidden");
+    document.getElementById("startScreen").classList.remove("hidden");
+    document.getElementById("exitBtn").classList.add("hidden");
+    document.getElementById("navFilters").innerHTML = "";
+    document.getElementById("navSummary").innerHTML = "";
+    activeFilter = "all";
+    activeSection = "all";
+    initQuestions();
+    renderAttempts();
+    renderQuickStats();
+  }, function() { closeModal(); });
+}
+
+// ── Start Exam ──────────────────────────────────────────────
+
+function startExam() {
+  mode = selectedMode;
+  var badge = document.getElementById("modeBadge");
+  badge.textContent = mode === "exam" ? "Exam" : "Review";
+  badge.className = "mode-badge " + mode;
+  badge.classList.remove("hidden");
+
+  // Re-shuffle for new exam
+  initQuestions();
+
+  userAnswers = [];
+  flagged = [];
+  checked = [];
+  for (var i = 0; i < questions.length; i++) {
+    userAnswers.push([]);
+    flagged.push(false);
+    checked.push(false);
+  }
+  currentQ = 0;
+  seconds = DATA.duration ? DATA.duration * 60 : 0;
+  examFinished = false;
+
+  document.getElementById("infoPanel").classList.add("hidden");
+  document.getElementById("scoreScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
+  
+  // Show/Hide buttons
+  document.getElementById("exitBtn").classList.remove("hidden"); // Exit button always useful?
+  document.getElementById("endExamBtn").classList.remove("hidden");
+
+  if (mode === "review") {
+    document.getElementById("checkRow").classList.remove("hidden");
+    document.getElementById("liveScore").classList.remove("hidden");
+    document.getElementById("exitBtn").classList.remove("hidden"); 
+    updateLiveScore();
+  } else {
+    document.getElementById("checkRow").classList.add("hidden");
+    document.getElementById("liveScore").classList.add("hidden");
+  }
+
+  buildGrid();
+  activeFilter = "all";
+  activeSection = "all";
+  buildNavFilters();
+  renderQuestion();
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  var isCountdown = !!DATA.duration;
+  var timerEl = document.getElementById("timer");
+  
+  timerInterval = setInterval(function() {
+    if (isCountdown) {
+      seconds--;
+      if (seconds <= 0) {
+        seconds = 0;
+        clearInterval(timerInterval);
+        showModal("⏱", "Time's Up!", "Your time has expired. The exam will now be scored.", "View Results", function() { closeModal(); examFinished = true; clearInterval(timerInterval); showScore(); }, null);
+        return;
+      }
+      // Timer urgency
+      if (seconds <= 60) { timerEl.className = "timer critical"; }
+      else if (seconds <= 300) { timerEl.className = "timer urgent"; }
+      else { timerEl.className = "timer"; }
+    } else {
+      seconds++;
+      timerEl.className = "timer";
+    }
+    timerEl.textContent = formatTime(seconds);
+  }, 1000);
+  
+  timerEl.textContent = formatTime(seconds);
+  timerEl.className = "timer";
+}
+
+// ── Live Score (Review Mode) ────────────────────────────────
+
+function updateLiveScore() {
+  if (mode !== "review") return;
+  var answered = 0, correct = 0;
+  for (var i = 0; i < questions.length; i++) {
+    if (checked[i]) {
+      answered++;
+      if (checkCorrect(i)) correct++;
+    }
+  }
+  var el = document.getElementById("liveScore");
+  if (answered === 0) {
+    el.textContent = "Score: 0/0";
+    el.className = "live-score";
+  } else {
+    var pct = Math.round(correct / answered * 100);
+    var pass = getPassPercent();
+    el.textContent = "Score: " + correct + "/" + answered + " (" + pct + "%)";
+    el.className = "live-score" + (pct < pass ? " failing" : "");
+  }
+}
+
+// ── Grid ────────────────────────────────────────────────────
+
+function buildGrid() {
+  var grid = document.getElementById("qGrid");
+  grid.innerHTML = "";
+  for (var i = 0; i < questions.length; i++) {
+    var dot = document.createElement("div");
+    dot.className = "q-dot";
+    dot.textContent = i + 1;
+    dot.setAttribute("data-index", i);
+    dot.onclick = function() {
+      currentQ = parseInt(this.getAttribute("data-index"));
+      renderQuestion();
+      window.scrollTo(0, 0);
+    };
+    grid.appendChild(dot);
+  }
+}
+
+function updateGrid() {
+  var dots = document.querySelectorAll(".q-dot");
+  for (var i = 0; i < dots.length; i++) {
+    var dot = dots[i];
+    dot.className = "q-dot";
+    if (i === currentQ) dot.classList.add("current");
+
+    if (examFinished) {
+      if (userAnswers[i].length > 0) {
+        if (checkCorrect(i)) dot.classList.add("correct-dot");
+        else dot.classList.add("incorrect-dot");
+      }
+    } else if (mode === "review" && checked[i]) {
+      if (checkCorrect(i)) dot.classList.add("correct-dot");
+      else dot.classList.add("incorrect-dot");
+    } else if (userAnswers[i].length > 0) {
+      dot.classList.add("answered");
+    }
+    if (flagged[i]) dot.classList.add("flagged");
+  }
+}
+
+function checkCorrect(qi) {
+  var q = questions[qi];
+  var correct = q._correctMapped.slice().sort().join(",");
+  var user = userAnswers[qi].slice().sort().join(",");
+  return correct === user && user !== "";
+}
+
+// ── Render Question ─────────────────────────────────────────
+
+function renderQuestion() {
+  var q = questions[currentQ];
+  var prompt = q.prompt;
+  var isMulti = q._isMulti;
+  var isChecked = checked[currentQ];
+  var showAnswer = examFinished || (mode === "review" && isChecked);
+
+  // Trigger animation
+  var content = document.getElementById("quizContent");
+  content.style.animation = "none";
+  content.offsetHeight; // reflow
+  content.style.animation = "";
+
+  document.getElementById("qNumber").textContent = "Question " + (currentQ + 1) + " of " + questions.length;
+  document.getElementById("qSection").textContent = q.section || "";
+  document.getElementById("qSection").style.display = q.section ? "" : "none";
+
+  var typeEl = document.getElementById("qType");
+  if (isMulti) {
+    typeEl.innerHTML = "☑ Select " + q.correct_response.length + " answers";
+  } else {
+    typeEl.innerHTML = "◉ Select one answer";
+  }
+
+  var qTextField = document.getElementById("qText");
+  qTextField.innerHTML = prompt.question || "";
+  
+  // Fix list styling
+  if(qTextField.innerHTML.includes("- ")) {
+       qTextField.innerHTML = formatDescription(qTextField.innerHTML);
+  }
+  
+  // 0. Coalesce adjacent <p><code>...</code></p> blocks into <pre>...</pre>
+  // Udemy often renders code blocks as separate paragraphs, causing "striped" styling.
+  var children = Array.from(qTextField.children);
+  var currentBlock = [];
+  
+  function processBlock(nodes) {
+      if (nodes.length === 0) return;
+      
+      // If it's a single line but looks like a standalone code block (starts with { or [), convert to pre
+      // If it's just a variable name in a P, maybe keep it? 
+      // User complaint was "background on every line", which implies multi-line.
+      if (nodes.length === 1 && nodes[0].textContent.trim().length < 50 && !nodes[0].textContent.trim().match(/[{[]/)) {
+          return; 
+      }
+
+      var first = nodes[0];
+      var pre = document.createElement("pre");
+      // Join with newlines and Normalize non-breaking spaces to regular spaces
+      var combinedText = nodes.map(function(n) { return n.textContent; }).join("\n").replace(/\u00A0/g, " ");
+      pre.textContent = combinedText;
+      
+      first.parentNode.insertBefore(pre, first);
+      nodes.forEach(function(n) { n.remove(); });
+  }
+
+  children.forEach(function(child) {
+      var isCodeP = false;
+      if (child.tagName === "P") {
+          var code = child.querySelector("code");
+          // Check if P contains *only* code (ignoring whitespace)
+          if (code && child.textContent.trim() === code.textContent.trim()) {
+              isCodeP = true;
+          }
+      }
+
+      if (isCodeP) {
+          currentBlock.push(child);
+      } else {
+          processBlock(currentBlock);
+          currentBlock = [];
+      }
+  });
+  processBlock(currentBlock);
+
+  // Auto-highlight code blocks in question
+  var codeBlocks = qTextField.querySelectorAll("pre, code");
+  codeBlocks.forEach(function(block) {
+      // Skip code elements that are inside pre (avoid double highlight)
+      if (block.tagName === 'CODE' && block.closest('pre')) return;
+
+      var txt = block.textContent;
+      try {
+         var trimmed = txt.trim();
+         // Only attempt JSON parse if it's a PRE block (likely full JSON)
+         if (block.tagName === 'PRE' && (trimmed.startsWith("{") || trimmed.startsWith("["))) {
+             var obj = JSON.parse(trimmed);
+             var pretty = JSON.stringify(obj, null, 2);
+             block.innerHTML = '<code>' + syntaxHighlight(pretty) + '</code>';
+         } else {
+             // Use generic highlighter
+             if (block.tagName === 'PRE') {
+                block.innerHTML = '<code>' + highlightGeneric(txt) + '</code>';
+             } else {
+                block.innerHTML = highlightGeneric(txt);
+             }
+         }
+      } catch(e) {
+         if (block.tagName === 'PRE') {
+            block.innerHTML = '<code>' + highlightGeneric(txt) + '</code>';
+         } else {
+            block.innerHTML = highlightGeneric(txt);
+         }
+      }
+      // Ensure strict styling
+      block.style.textDecoration = "none";
+  });
+  
+  document.getElementById("progressFill").style.width = ((currentQ + 1) / questions.length * 100) + "%";
+  var answered = userAnswers.filter(function(a){ return a.length > 0; }).length;
+  document.getElementById("progressCounter").textContent = answered + " / " + questions.length;
+
+  // Answers
+  var container = document.getElementById("answers");
+  container.innerHTML = "";
+  for (var i = 0; i < q._shuffledAnswers.length; i++) {
+    (function(idx) {
+      var ans = q._shuffledAnswers[idx];
+      var div = document.createElement("div");
+      var isSelected = userAnswers[currentQ].indexOf(idx) >= 0;
+      var isCorrectAnswer = q._correctMapped.indexOf(idx) >= 0;
+
+      div.className = "answer";
+      if (isSelected) div.classList.add("selected");
+      if (showAnswer) {
+        div.classList.add("locked");
+        if (isCorrectAnswer && isSelected) div.classList.add("correct");
+        else if (isCorrectAnswer && !isSelected) div.classList.add("missed");
+        else if (isSelected && !isCorrectAnswer) div.classList.add("incorrect");
+      }
+
+      var indicatorClass = isMulti ? "answer-indicator checkbox" : "answer-indicator";
+      var checkmark = isMulti ? "✓" : "";
+
+      // Build answer inner HTML with tag
+      var innerHtml = '<div class="' + indicatorClass + '"><div class="dot">' + checkmark + '</div></div>';
+      innerHtml += '<div class="answer-text">' + formatAnswer(ans.text) + '</div>';
+
+      // Add copyable label tags when showing answers
+      if (showAnswer) {
+        if (isSelected && isCorrectAnswer) {
+          innerHtml += '<span class="answer-tag tag-correct">✓ Your Answer (Correct)</span>';
+        } else if (isSelected && !isCorrectAnswer) {
+          innerHtml += '<span class="answer-tag tag-wrong">✗ Your Answer (Wrong)</span>';
+        } else if (isCorrectAnswer && !isSelected) {
+          innerHtml += '<span class="answer-tag tag-missed">✓ Correct Answer</span>';
+        }
+      }
+
+      div.innerHTML = innerHtml;
+
+      if (!showAnswer) {
+        div.onclick = function() {
+          if (isMulti) {
+            var pos = userAnswers[currentQ].indexOf(idx);
+            if (pos >= 0) userAnswers[currentQ].splice(pos, 1);
+            else userAnswers[currentQ].push(idx);
+          } else {
+            userAnswers[currentQ] = [idx];
+          }
+          // Pulse animation
+          div.classList.add("just-selected");
+          setTimeout(function(){ div.classList.remove("just-selected"); }, 300);
+          renderQuestion();
+        };
+      }
+      container.appendChild(div);
+      
+      // Auto-highlight code blocks in this answer
+      var ansCodes = div.querySelectorAll(".answer-text code");
+      ansCodes.forEach(function(c) {
+          // If it doesn't already have highlighting classes...
+          if (!c.querySelector("span[class^='highlight-']")) {
+             c.innerHTML = highlightGeneric(c.textContent);
+          }
+      });
+      
+    })(i);
+  }
+
+  // Result banner (review mode)
+  var banner = document.getElementById("resultBanner");
+  if (showAnswer && userAnswers[currentQ].length > 0) {
+    var isRight = checkCorrect(currentQ);
+    banner.className = "result-banner show " + (isRight ? "banner-correct" : "banner-incorrect");
+    banner.textContent = isRight ? "✓ Correct!" : "✗ Incorrect";
+  } else {
+    banner.className = "result-banner";
+  }
+
+  // Check button (review mode only)
+  if (mode === "review" && !examFinished) {
+    var checkBtn = document.getElementById("checkBtn");
+    checkBtn.disabled = userAnswers[currentQ].length === 0 || isChecked;
+    checkBtn.textContent = isChecked ? "✓ Checked" : "Check Answer";
+  }
+
+  // Explanation
+  var expl = document.getElementById("explanation");
+  var explBody = document.getElementById("explanationBody");
+  if (showAnswer && prompt.explanation) {
+    explBody.innerHTML = prompt.explanation;
+    // Open links in new tab
+    var links = explBody.querySelectorAll("a");
+    for (var li = 0; li < links.length; li++) { links[li].setAttribute("target", "_blank"); links[li].setAttribute("rel", "noopener"); }
+    expl.classList.add("show");
+  } else {
+    expl.classList.remove("show");
+  }
+
+  // Nav buttons
+  document.getElementById("prevBtn").disabled = currentQ === 0;
+  var nextBtn = document.getElementById("nextBtn");
+  if (currentQ === questions.length - 1 && !examFinished) {
+    nextBtn.textContent = mode === "exam" ? "Finish Exam →" : "See Results →";
+  } else {
+    nextBtn.textContent = "Next →";
+  }
+  nextBtn.disabled = currentQ === questions.length - 1 && examFinished;
+
+  // Flag
+  var flagBtn = document.getElementById("flagBtn");
+  flagBtn.className = "bookmark-btn" + (flagged[currentQ] ? " bookmarked" : "");
+
+  updateGrid();
+  updateNavSummary();
+}
+
+function checkAnswer() {
+  if (checked[currentQ] || userAnswers[currentQ].length === 0) return;
+  checked[currentQ] = true;
+  updateLiveScore();
+  renderQuestion();
+}
+
+function navigate(dir) {
+  if (dir === 1 && currentQ === questions.length - 1 && !examFinished) {
+    endExam();
+    return;
+  }
+  currentQ = Math.max(0, Math.min(questions.length - 1, currentQ + dir));
+  renderQuestion();
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function toggleFlag() {
+  flagged[currentQ] = !flagged[currentQ];
+  renderQuestion();
+}
+
+// ── End Exam ────────────────────────────────────────────────
+
+function endExam() {
+  if (mode === "exam") {
+    var answeredCount = userAnswers.filter(function(a) { return a.length > 0; }).length;
+    var unanswered = questions.length - answeredCount;
+    var flaggedCount = flagged.filter(Boolean).length;
+    var statsHtml = '<div class="modal-stats">' +
+      '<div class="modal-stat s-answered">✓ ' + answeredCount + ' answered</div>' +
+      '<div class="modal-stat s-unanswered">⊘ ' + unanswered + ' unanswered</div>' +
+      (flaggedCount > 0 ? '<div class="modal-stat s-flagged">🔖 ' + flaggedCount + ' flagged</div>' : '') +
+      '</div>';
+    showModal("🏁", "End Exam?", statsHtml + '<p style="color:#6b7280;font-size:13px">You cannot change your answers after submitting.</p>', "Submit Exam", function() {
+      closeModal();
+      clearInterval(timerInterval);
+      examFinished = true;
+      showScore();
+    }, function() { closeModal(); });
+    return;
+  }
+
+  clearInterval(timerInterval);
+  examFinished = true;
+  showScore();
+}
+
+// ── Custom Modal ────────────────────────────────────────────
+
+function showModal(icon, title, bodyHtml, confirmText, onConfirm, onCancel) {
+  var overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+  overlay.id = "customModal";
+  var cancelBtn = onCancel ? '<button class="btn btn-outline" onclick="if(window._modalCancel) window._modalCancel()">Cancel</button>' : '';
+  overlay.innerHTML = '<div class="modal-card">' +
+    '<div class="modal-icon">' + icon + '</div>' +
+    '<div class="modal-title">' + title + '</div>' +
+    '<div class="modal-body">' + bodyHtml + '</div>' +
+    '<div class="modal-actions">' + cancelBtn +
+    '<button class="btn btn-primary" onclick="if(window._modalConfirm) window._modalConfirm()">' + confirmText + '</button>' +
+    '</div></div>';
+  document.body.appendChild(overlay);
+  window._modalConfirm = onConfirm;
+  window._modalCancel = onCancel;
+}
+
+function closeModal() {
+  var m = document.getElementById("customModal");
+  if (m) m.remove();
+  window._modalConfirm = null;
+  window._modalCancel = null;
+}
+
+function showScore() {
+  var correct = 0, incorrect = 0, skipped = 0;
+  var sections = {};
+
+  for (var i = 0; i < questions.length; i++) {
+    var q = questions[i];
+    var sec = q.section || "General";
+    if (!sections[sec]) sections[sec] = {correct: 0, total: 0};
+    sections[sec].total++;
+
+    if (userAnswers[i].length === 0) {
+      skipped++;
+    } else if (checkCorrect(i)) {
+      correct++;
+      sections[sec].correct++;
+    } else {
+      incorrect++;
+    }
+  }
+
+  var pct = Math.round(correct / questions.length * 100);
+  var passGoal = getPassPercent();
+  var pass = pct >= passGoal;
+
+  // Save attempt with FULL SNAPSHOT (expensive but needed for review)
+  var now = new Date();
+  var dateStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0") + " " + String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
+  
+  // Create snapshot of questions (so we know which answer was which if we reload)
+  var snapshot = questions.map(function(q) {
+     return {
+         prompt: q.prompt, 
+         _shuffledAnswers: q._shuffledAnswers,
+         _correctMapped: q._correctMapped,
+         _isMulti: q._isMulti,
+         section: q.section,
+         correct_response: q.correct_response, // needed?
+         assessment_type: q.assessment_type
+     };
+  });
+
+  saveAttempt({
+    date: dateStr,
+    mode: mode,
+    correct: correct,
+    incorrect: incorrect,
+    skipped: skipped,
+    total: questions.length,
+    pct: pct,
+    time: document.getElementById("timer").textContent, // capture final timer value
+    answers: userAnswers,
+    flagged: flagged,
+    snapshot: snapshot // heavy data!
+  });
+
+  document.getElementById("quizScreen").classList.add("hidden");
+  document.getElementById("scoreScreen").classList.remove("hidden");
+  document.getElementById("endExamBtn").classList.add("hidden");
+  document.getElementById("liveScore").classList.add("hidden");
+  document.getElementById("exitBtn").classList.add("hidden");
+
+  document.getElementById("scorePct").textContent = pct + "%";
+  document.getElementById("scoreStatus").textContent = pass ? "PASSED" : "NOT PASSED";
+  
+  // Animated ring
+  var ring = document.getElementById("scoreCircle");
+  var ringColor = pass ? "#10b981" : "#ef4444";
+  var degrees = Math.round(pct * 3.6);
+  ring.style.setProperty("--ring-color", ringColor);
+  ring.style.background = "conic-gradient(" + ringColor + " 0deg, #2d2f31 0deg)";
+  setTimeout(function() {
+    ring.style.transition = "background 1.2s ease-out";
+    ring.style.background = "conic-gradient(" + ringColor + " " + degrees + "deg, #2d2f31 " + degrees + "deg)";
+  }, 50);
+  
+  document.getElementById("scoreCorrect").textContent = correct;
+  document.getElementById("scoreIncorrect").textContent = incorrect;
+  document.getElementById("scoreSkipped").textContent = skipped;
+  var avgSec = Math.round(seconds > 0 ? seconds / questions.length : 0);
+  var avgStr = avgSec >= 60 ? Math.floor(avgSec/60) + "m " + (avgSec%60) + "s" : avgSec + "s";
+  document.getElementById("scoreTime").textContent = "⏱ Time: " + document.getElementById("timer").textContent + "  ·  avg " + avgStr + "/question";
+
+  // Trend line
+  var allAttempts = getAttempts();
+  var trendEl = document.getElementById("scoreTrend");
+  if (allAttempts.length > 1) {
+    var recent = allAttempts.slice(0, 5).reverse();
+    var tHtml = '<span style="font-size:12px;color:#6b7280">Trend:</span> ';
+    for (var t = 0; t < recent.length; t++) {
+      if (t > 0) tHtml += '<span class="trend-arrow">→</span> ';
+      var tc = recent[t].pct >= passGoal ? "pass" : "fail";
+      tHtml += '<span class="trend-dot ' + tc + '">' + recent[t].pct + '%</span> ';
+    }
+    trendEl.innerHTML = tHtml;
+  } else { trendEl.innerHTML = ""; }
+
+  // Section breakdown with bars
+  var bd = document.getElementById("sectionBreakdown");
+  bd.innerHTML = '<h3 style="margin-bottom:12px;font-size:16px;color:#a0a0a0">Section Breakdown</h3>';
+  var secKeys = Object.keys(sections).sort();
+  for (var j = 0; j < secKeys.length; j++) {
+    var secName = secKeys[j];
+    var s = sections[secName];
+    var sp = Math.round(s.correct / s.total * 100);
+    var color = sp >= passGoal ? "#10b981" : sp >= 50 ? "#f59e0b" : "#ef4444";
+    bd.innerHTML += '<div class="section-row">' +
+      '<div class="section-row-header"><span class="sec-name">' + secName + '</span><span class="sec-score" style="color:' + color + '">' + s.correct + '/' + s.total + ' (' + sp + '%)</span></div>' +
+      '<div class="section-bar"><div class="section-bar-fill" style="width:' + sp + '%;background:' + color + '"></div></div>' +
+      '</div>';
+  }
+}
+
+// ── Navigator Filters (Dropdowns) ───────────────────────────
+
+var activeFilter = "all";
+var activeSection = "all";
+var activeSearch = "";
+var filteredIndices = [];
+
+function buildNavFilters() {
+  var container = document.getElementById("navFilters");
+  
+  // Collect sections
+  var sections = [];
+  var seenSections = {};
+  for (var i = 0; i < questions.length; i++) {
+    var sec = questions[i].section || "";
+    if (sec && !seenSections[sec]) {
+      seenSections[sec] = true;
+      sections.push(sec);
+    }
+  }
+  sections.sort();
+  
+  // Build question filter dropdown
+  var html = '<div class="filter-dropdown" id="questionFilterDD">';
+  html += '<button class="filter-dropdown-btn" onclick="toggleDropdown(\'questionFilterMenu\')">';
+  html += '<span id="questionFilterLabel">All questions</span> <span class="arrow">&#9660;</span></button>';
+  html += '<div class="filter-dropdown-menu" id="questionFilterMenu">';
+  html += buildFilterItems();
+  html += '</div></div>';
+  
+  // Build section dropdown (only if multiple sections)
+  if (sections.length > 1) {
+    html += '<div class="filter-dropdown" id="sectionFilterDD">';
+    html += '<button class="filter-dropdown-btn" onclick="toggleDropdown(\'sectionFilterMenu\')">';
+    html += '<span id="sectionFilterLabel">All domains</span> <span class="arrow">&#9660;</span></button>';
+    html += '<div class="filter-dropdown-menu" id="sectionFilterMenu">';
+    html += '<div class="filter-dropdown-item active" data-section="all" onclick="pickSection(\'all\')">All domains</div>';
+    for (var j = 0; j < sections.length; j++) {
+      var escaped = sections[j].replace(/"/g, '&quot;').replace(/'/g, "\\'");
+      html += '<div class="filter-dropdown-item" data-section="' + sections[j].replace(/"/g, '&quot;') + '" onclick="pickSection(\'' + escaped + '\')">' + sections[j] + '</div>';
+    }
+    html += '</div></div>';
+  }
+  
+  html += '<input class="question-search" type="search" placeholder="Search questions" aria-label="Search questions" oninput="setQuestionSearch(this.value)">';
+  container.innerHTML = html;
+}
+
+function setQuestionSearch(value) {
+  activeSearch = (value || "").toLowerCase().trim();
+  applyFilters();
+  if (filteredIndices.length > 0 && filteredIndices.indexOf(currentQ) < 0) currentQ = filteredIndices[0];
+  renderQuestion();
+}
+
+function buildFilterItems() {
+  var items = '';
+  if (examFinished || (mode === "review")) {
+    // Post-exam or review: show result-based filters
+    items += '<div class="filter-dropdown-item active" data-filter="all" onclick="pickFilter(\'all\')">All questions</div>';
+    items += '<div class="filter-dropdown-item" data-filter="correct" onclick="pickFilter(\'correct\')">Correct</div>';
+    items += '<div class="filter-dropdown-item" data-filter="incorrect" onclick="pickFilter(\'incorrect\')">Incorrect</div>';
+    items += '<div class="filter-dropdown-item" data-filter="skipped" onclick="pickFilter(\'skipped\')">Skipped</div>';
+    items += '<div class="filter-dropdown-item" data-filter="flagged" onclick="pickFilter(\'flagged\')">Marked for review</div>';
+    items += '<div class="filter-dropdown-item" data-filter="unanswered" onclick="pickFilter(\'unanswered\')">Not answered yet</div>';
+  } else {
+    // During exam: show status-based filters
+    items += '<div class="filter-dropdown-item active" data-filter="all" onclick="pickFilter(\'all\')">All questions</div>';
+    items += '<div class="filter-dropdown-item" data-filter="answered" onclick="pickFilter(\'answered\')">Answered</div>';
+    items += '<div class="filter-dropdown-item" data-filter="unanswered" onclick="pickFilter(\'unanswered\')">Not answered yet</div>';
+    items += '<div class="filter-dropdown-item" data-filter="flagged" onclick="pickFilter(\'flagged\')">Marked for review</div>';
+  }
+  return items;
+}
+
+function toggleDropdown(menuId) {
+  var menu = document.getElementById(menuId);
+  var isOpen = menu.classList.contains("show");
+  // Close all dropdowns first
+  closeAllDropdowns();
+  if (!isOpen) menu.classList.add("show");
+}
+
+function closeAllDropdowns() {
+  var menus = document.querySelectorAll(".filter-dropdown-menu");
+  for (var i = 0; i < menus.length; i++) menus[i].classList.remove("show");
+}
+
+// Close dropdowns on outside click
+document.addEventListener("click", function(e) {
+  if (!e.target.closest(".filter-dropdown")) closeAllDropdowns();
+});
+
+function pickFilter(f) {
+  activeFilter = f;
+  closeAllDropdowns();
+  
+  // Update label
+  var labelMap = {all:"All questions", correct:"Correct", incorrect:"Incorrect", skipped:"Skipped", flagged:"Marked for review", unanswered:"Not answered yet", answered:"Answered"};
+  var el = document.getElementById("questionFilterLabel");
+  if (el) el.textContent = labelMap[f] || f;
+  
+  // Update active state in menu
+  var items = document.querySelectorAll("#questionFilterMenu .filter-dropdown-item");
+  for (var i = 0; i < items.length; i++) {
+    items[i].classList.toggle("active", items[i].getAttribute("data-filter") === f);
+  }
+  
+  applyFilters();
+  if (filteredIndices.length > 0 && filteredIndices.indexOf(currentQ) < 0) {
+    currentQ = filteredIndices[0];
+  }
+  renderQuestion();
+}
+
+function pickSection(s) {
+  activeSection = s;
+  closeAllDropdowns();
+  
+  var el = document.getElementById("sectionFilterLabel");
+  if (el) el.textContent = s === "all" ? "All domains" : s;
+  
+  var items = document.querySelectorAll("#sectionFilterMenu .filter-dropdown-item");
+  for (var i = 0; i < items.length; i++) {
+    items[i].classList.toggle("active", items[i].getAttribute("data-section") === s);
+  }
+  
+  applyFilters();
+  if (filteredIndices.length > 0 && filteredIndices.indexOf(currentQ) < 0) {
+    currentQ = filteredIndices[0];
+  }
+  renderQuestion();
+}
+
+function applyFilters() {
+  filteredIndices = [];
+  for (var i = 0; i < questions.length; i++) {
+    if (activeSearch) {
+      var searchable = ((questions[i].question_plain || "") + " " + (questions[i].section || "")).toLowerCase();
+      if (searchable.indexOf(activeSearch) < 0) continue;
+    }
+    // Section filter
+    if (activeSection !== "all") {
+      var sec = questions[i].section || "";
+      if (sec !== activeSection) continue;
+    }
+    // Type filter
+    if (activeFilter === "correct") {
+      if (userAnswers[i].length === 0 || !checkCorrect(i)) continue;
+    } else if (activeFilter === "incorrect") {
+      if (userAnswers[i].length === 0 || checkCorrect(i)) continue;
+    } else if (activeFilter === "skipped") {
+      if (userAnswers[i].length > 0) continue;
+    } else if (activeFilter === "flagged") {
+      if (!flagged[i]) continue;
+    } else if (activeFilter === "unanswered") {
+      if (userAnswers[i].length > 0) continue;
+    } else if (activeFilter === "answered") {
+      if (userAnswers[i].length === 0) continue;
+    }
+    filteredIndices.push(i);
+  }
+  updateFilteredGrid();
+}
+
+function updateFilteredGrid() {
+  var dots = document.querySelectorAll(".q-dot");
+  for (var i = 0; i < dots.length; i++) {
+    if (activeFilter === "all" && activeSection === "all") {
+      dots[i].style.display = "";
+    } else {
+      dots[i].style.display = filteredIndices.indexOf(i) >= 0 ? "" : "none";
+    }
+  }
+}
+
+function reviewFromScore() {
+  document.getElementById("scoreScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
+  document.getElementById("checkRow").classList.add("hidden");
+  document.getElementById("exitBtn").classList.remove("hidden");
+  activeFilter = "all";
+  activeSection = "all";
+  buildNavFilters();
+  applyFilters();
+  currentQ = filteredIndices.length > 0 ? filteredIndices[0] : 0;
+  renderQuestion();
+}
+
+function retakeExam() {
+  document.getElementById("scoreScreen").classList.add("hidden");
+  document.getElementById("startScreen").classList.remove("hidden");
+  document.getElementById("endExamBtn").classList.add("hidden");
+  document.getElementById("modeBadge").classList.add("hidden");
+  document.getElementById("liveScore").classList.add("hidden");
+  document.getElementById("timer").textContent = "00:00:00";
+  document.getElementById("timer").className = "timer";
+  document.getElementById("navFilters").innerHTML = "";
+  document.getElementById("navSummary").innerHTML = "";
+  activeFilter = "all";
+  activeSection = "all";
+  renderAttempts();
+  renderQuickStats();
+}
+
+// ── Navigator Summary Chips ─────────────────────────────────
+
+function updateNavSummary() {
+  var el = document.getElementById("navSummary");
+  if (!el || !questions.length) return;
+  var answeredN = 0, flaggedN = 0, correctN = 0, incorrectN = 0;
+  for (var i = 0; i < questions.length; i++) {
+    if (userAnswers[i].length > 0) answeredN++;
+    if (flagged[i]) flaggedN++;
+    if (examFinished) {
+      if (userAnswers[i].length > 0) {
+        if (checkCorrect(i)) correctN++; else incorrectN++;
+      }
+    }
+  }
+  var chips = '';
+  if (examFinished) {
+    chips += '<span class="nav-chip"><span class="chip-dot c-correct"></span> ' + correctN + ' correct</span>';
+    chips += '<span class="nav-chip"><span class="chip-dot c-incorrect"></span> ' + incorrectN + ' incorrect</span>';
+    chips += '<span class="nav-chip"><span class="chip-dot c-remaining"></span> ' + (questions.length - answeredN) + ' skipped</span>';
+  } else {
+    chips += '<span class="nav-chip"><span class="chip-dot c-answered"></span> ' + answeredN + ' answered</span>';
+    chips += '<span class="nav-chip"><span class="chip-dot c-remaining"></span> ' + (questions.length - answeredN) + ' remaining</span>';
+  }
+  if (flaggedN > 0) chips += '<span class="nav-chip"><span class="chip-dot c-flagged"></span> ' + flaggedN + ' marked</span>';
+  el.innerHTML = chips;
+}
+
+// ── Keyboard Navigation ─────────────────────────────────────
+
+document.addEventListener("keydown", function(e) {
+  // Don't handle if modal is open or quiz screen is hidden
+  if (document.getElementById("customModal")) return;
+  var quiz = document.getElementById("quizScreen");
+  if (!quiz || quiz.classList.contains("hidden")) return;
+
+  var key = e.key;
+  
+  // Arrow keys: navigate questions
+  if (key === "ArrowLeft") { e.preventDefault(); navigate(-1); }
+  else if (key === "ArrowRight") { e.preventDefault(); navigate(1); }
+  
+  // B: toggle bookmark
+  else if (key === "b" || key === "B") { e.preventDefault(); toggleFlag(); }
+  
+  // 1-9: select answer by number
+  else if (key >= "1" && key <= "9") {
+    var idx = parseInt(key) - 1;
+    var q = questions[currentQ];
+    if (idx < q._shuffledAnswers.length) {
+      var showAnswer = examFinished || (mode === "review" && checked[currentQ]);
+      if (!showAnswer) {
+        e.preventDefault();
+        if (q._isMulti) {
+          var pos = userAnswers[currentQ].indexOf(idx);
+          if (pos >= 0) userAnswers[currentQ].splice(pos, 1);
+          else userAnswers[currentQ].push(idx);
+        } else {
+          userAnswers[currentQ] = [idx];
+        }
+        renderQuestion();
+      }
+    }
+  }
+  
+  // Enter/Space: check answer (review mode)
+  else if (key === "Enter" || key === " ") {
+    if (mode === "review" && !examFinished && !checked[currentQ] && userAnswers[currentQ].length > 0) {
+      e.preventDefault();
+      checkAnswer();
+    }
+  }
+  
+  // Escape: close dropdowns
+  else if (key === "Escape") { closeAllDropdowns(); }
+});
+
+init();
+</script>
+</body>
+</html>
