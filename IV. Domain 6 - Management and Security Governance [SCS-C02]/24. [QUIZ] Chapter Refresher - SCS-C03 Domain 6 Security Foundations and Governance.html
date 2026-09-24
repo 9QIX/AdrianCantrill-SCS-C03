@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<title>Chapter Refresher - SCS-C03 Domain 6: Security Foundations and Governance</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#1c1d1f;color:#fff;min-height:100vh}
+
+/* Header */
+.header{background:#2d2f31;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #3e4143;position:sticky;top:0;z-index:100}
+.header h1{font-size:16px;font-weight:600;color:#fff;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.header-right{display:flex;align-items:center;gap:12px}
+.timer{font-size:14px;color:#a435f0;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums;transition:color .3s,text-shadow .3s}
+.timer.urgent{color:#ef4444;animation:timerPulse 1s ease-in-out infinite}
+.timer.critical{color:#ef4444;text-shadow:0 0 12px rgba(239,68,68,.6);animation:timerPulse .5s ease-in-out infinite}
+@keyframes timerPulse{0%,100%{opacity:1}50%{opacity:.5}}
+.live-score{font-size:13px;font-weight:600;padding:4px 12px;border-radius:6px;background:rgba(16,185,129,.12);color:#10b981;white-space:nowrap;transition:all .3s}
+.live-score.failing{background:rgba(239,68,68,.12);color:#ef4444}
+
+/* Buttons */
+.btn{padding:8px 16px;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary{background:#a435f0;color:#fff}.btn-primary:hover{background:#8710d8;box-shadow:0 4px 12px rgba(164,53,240,.3)}
+.btn-outline{background:transparent;color:#a435f0;border:1px solid #a435f0}.btn-outline:hover{background:rgba(164,53,240,.08)}
+.btn-danger{background:#ef4444;color:#fff}.btn-danger:hover{background:#dc2626}
+.btn-success{background:#10b981;color:#fff}.btn-success:hover{background:#059669}
+.btn-check{background:#6366f1;color:#fff;padding:10px 28px;font-size:15px;border-radius:8px}.btn-check:hover{background:#4f46e5;box-shadow:0 4px 12px rgba(99,102,241,.3)}
+.btn-ghost{background:transparent;color:#6b7280;border:1px solid #3e4143;font-size:12px;padding:6px 12px}.btn-ghost:hover{border-color:#6b7280;color:#a0a0a0}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* Layout */
+.main{max-width:900px;margin:0 auto;padding:24px}
+
+/* Progress */
+.progress-row{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.progress-bar{background:#3e4143;border-radius:8px;height:6px;overflow:hidden;flex:1}
+.progress-fill{height:100%;background:linear-gradient(90deg,#a435f0,#6d28d9);border-radius:8px;transition:width .4s ease}
+.progress-counter{font-size:12px;color:#a0a0a0;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* Question */
+.question-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.q-number{font-size:14px;color:#a0a0a0}.q-section{font-size:12px;color:#a435f0;background:rgba(164,53,240,.08);padding:4px 10px;border-radius:12px}
+.q-type{font-size:13px;color:#f59e0b;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.question-text{font-size:16px;line-height:1.6;margin-bottom:24px;color:#e0e0e0}
+.question-text p{margin-bottom:10px}
+
+.question-text img{max-width:100%;border-radius:8px;margin:8px 0}
+.question-text ul{margin-left:24px;margin-bottom:16px}
+.question-text li{margin-bottom:6px}
+
+/* Answers */
+.answers{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.answer{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:2px solid #3e4143;border-radius:8px;cursor:pointer;transition:all .2s;background:#2d2f31;position:relative}
+.answer:hover:not(.locked){border-color:#6d28d9;background:rgba(45,47,49,.6);transform:translateX(2px)}
+.answer.just-selected{animation:answerPulse .3s ease}
+@keyframes answerPulse{0%{transform:scale(1)}50%{transform:scale(1.01)}100%{transform:scale(1)}}
+.answer.selected{border-color:#a435f0;background:rgba(164,53,240,.08)}
+.answer.correct{border-color:#10b981;background:rgba(16,185,129,.07)}
+.answer.incorrect{border-color:#ef4444;background:rgba(239,68,68,.07)}
+.answer.missed{border-color:#f59e0b;background:rgba(245,158,11,.06)}
+.answer.locked{cursor:default}
+
+/* Answer label tags */
+.answer-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:auto;flex-shrink:0;white-space:nowrap;letter-spacing:.3px;user-select:all}
+.answer-tag.tag-correct{background:rgba(16,185,129,.15);color:#10b981}
+.answer-tag.tag-wrong{background:rgba(239,68,68,.15);color:#ef4444}
+.answer-tag.tag-missed{background:rgba(245,158,11,.15);color:#f59e0b}
+
+/* Radio indicator (single-answer) */
+.answer-indicator{min-width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid #6b7280;flex-shrink:0;margin-top:3px;transition:all .2s}
+.answer-indicator .dot{width:10px;height:10px;border-radius:50%;background:#a435f0;display:none}
+.answer.selected .answer-indicator{border-color:#a435f0}.answer.selected .answer-indicator .dot{display:block}
+.answer.correct .answer-indicator{border-color:#10b981;background:#10b981}.answer.correct .answer-indicator .dot{display:block;background:#fff}
+.answer.incorrect .answer-indicator{border-color:#ef4444;background:#ef4444}.answer.incorrect .answer-indicator .dot{display:block;background:#fff}
+.answer.missed .answer-indicator{border-color:#f59e0b;background:#f59e0b}.answer.missed .answer-indicator .dot{display:block;background:#fff}
+
+/* Checkbox indicator (multi-answer) */
+.answer-indicator.checkbox{border-radius:4px}
+.answer-indicator.checkbox .dot{width:14px;height:14px;border-radius:2px;background:transparent;display:none;font-size:14px;font-weight:700;color:#a435f0;line-height:14px}
+.answer.selected .answer-indicator.checkbox{border-color:#a435f0;background:rgba(164,53,240,.15)}.answer.selected .answer-indicator.checkbox .dot{display:flex;align-items:center;justify-content:center}
+.answer.correct .answer-indicator.checkbox{border-color:#10b981;background:#10b981}.answer.correct .answer-indicator.checkbox .dot{display:flex;color:#fff}
+.answer.incorrect .answer-indicator.checkbox{border-color:#ef4444;background:#ef4444}.answer.incorrect .answer-indicator.checkbox .dot{display:flex;color:#fff}
+.answer.missed .answer-indicator.checkbox{border-color:#f59e0b;background:#f59e0b}.answer.missed .answer-indicator.checkbox .dot{display:flex;color:#fff}
+
+.answer-text{font-size:14px;line-height:1.5;color:#d1d5db;flex:1}
+.answer-text p{margin-bottom:4px}
+.answer-text code{background:#1a1a2e;padding:2px 6px;border-radius:3px;font-size:13px;font-family:'Cascadia Code','Fira Code','Consolas',monospace;color:#e2b714;border:1px solid #2d2f31}
+
+/* Explanation */
+.explanation{background:#1a2332;border:1px solid #1e3a5f;border-radius:8px;padding:20px;margin:16px 0;display:none}
+.explanation.show{display:block;animation:fadeIn .3s ease}
+.explanation h3{color:#60a5fa;margin-bottom:12px;font-size:15px}.explanation-body{font-size:14px;line-height:1.7;color:#cbd5e1}
+.explanation-body p{margin-bottom:10px}.explanation-body img{max-width:100%;border-radius:8px;margin:8px 0}
+.explanation-body a{color:#60a5fa}
+
+/* Result banner */
+.result-banner{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-weight:600;font-size:15px;display:none}
+.result-banner.show{display:flex;align-items:center;gap:8px;animation:fadeIn .3s ease}
+.result-banner.banner-correct{background:rgba(16,185,129,.12);border:1px solid #10b981;color:#10b981}
+.result-banner.banner-incorrect{background:rgba(239,68,68,.12);border:1px solid #ef4444;color:#ef4444}
+
+/* Nav */
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;padding-top:16px;border-top:1px solid #3e4143}
+.check-row{display:flex;justify-content:center;margin-bottom:16px}
+
+/* Question grid */
+.q-grid{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0}
+.q-dot{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:2px solid #3e4143;background:#2d2f31;transition:all .2s;position:relative}
+.q-dot:hover{border-color:#a435f0;transform:scale(1.05)}
+.q-dot.current{border-color:#a435f0;background:rgba(164,53,240,.25);box-shadow:0 0 0 3px rgba(164,53,240,.3);transform:scale(1.1);font-weight:700;z-index:1}
+.q-dot.answered{background:#6d28d9;border-color:#6d28d9;color:#fff}
+.q-dot.correct-dot{background:#10b981;border-color:#10b981;color:#fff}
+.q-dot.incorrect-dot{background:#ef4444;border-color:#ef4444;color:#fff}
+.q-dot.flagged::after{content:"";width:6px;height:6px;background:#f59e0b;border-radius:50%;position:absolute;top:-2px;right:-2px}
+
+/* Score card */
+.score-card{text-align:center;padding:48px 24px}
+.score-ring-wrap{width:180px;height:180px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative;background:conic-gradient(var(--ring-color,#3e4143) 0deg,#3e4143 0deg)}
+.score-ring-wrap.animate{animation:ringFill 1.2s ease-out forwards}
+@keyframes ringFill{from{background:conic-gradient(var(--ring-color) 0deg,#2d2f31 0deg)}}
+.score-ring-inner{width:160px;height:160px;border-radius:50%;background:#1c1d1f;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:1}
+.score-ring-threshold{position:absolute;width:180px;height:180px;border-radius:50%;border:2px dashed rgba(255,255,255,.15);top:0;left:0;z-index:0}
+.score-pct{font-size:48px;font-weight:700}.score-label{font-size:14px;color:#a0a0a0;margin-top:4px}
+.score-details{display:flex;justify-content:center;gap:32px;margin:24px 0}
+.score-stat{text-align:center}.score-stat .num{font-size:24px;font-weight:700}.score-stat .lbl{font-size:12px;color:#a0a0a0}
+.score-stat .num.green{color:#10b981}.score-stat .num.red{color:#ef4444}.score-stat .num.yellow{color:#f59e0b}
+.score-trend{display:flex;align-items:center;gap:8px;justify-content:center;margin:12px 0;font-size:13px;color:#a0a0a0}
+.score-trend .trend-dot{display:inline-block;padding:3px 8px;border-radius:4px;font-weight:600;font-size:12px}
+.score-trend .trend-dot.pass{background:rgba(16,185,129,.12);color:#10b981}
+.score-trend .trend-dot.fail{background:rgba(239,68,68,.12);color:#ef4444}
+.score-trend .trend-arrow{color:#6b7280}
+.section-breakdown{max-width:500px;margin:24px auto;text-align:left}
+.section-row{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-bottom:1px solid #2d2f31;font-size:14px}
+.section-row-header{display:flex;justify-content:space-between;align-items:center}
+.section-row .sec-name{color:#d1d5db;font-size:13px}.section-row .sec-score{font-weight:600;font-size:13px}
+.section-bar{height:6px;background:#3e4143;border-radius:4px;overflow:hidden}
+.section-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+
+/* Start screen */
+.start-screen{text-align:center;padding:60px 24px;max-width:650px;margin:0 auto}
+.start-screen h2{font-size:28px;margin-bottom:12px;color:#fff;font-weight:700}
+.start-screen .subtitle{color:#a0a0a0;font-size:15px;margin-bottom:16px}
+.quick-stats{display:flex;gap:12px;justify-content:center;margin-bottom:28px;flex-wrap:wrap}
+.quick-stat{font-size:12px;color:#a0a0a0;background:#2d2f31;border:1px solid #3e4143;border-radius:20px;padding:5px 14px;font-weight:600}
+.quick-stat .qs-val{color:#a435f0}
+.quick-stat .qs-val.pass{color:#10b981}
+.quick-stat .qs-val.fail{color:#ef4444}
+.mode-cards{display:flex;gap:16px;margin:0 auto 32px;flex-wrap:wrap;justify-content:center}
+.mode-card{background:#2d2f31;border:2px solid #3e4143;border-radius:12px;padding:32px 24px;cursor:pointer;transition:all .25s;flex:1;min-width:240px;max-width:290px;position:relative;overflow:hidden}
+.mode-card::before{content:"";position:absolute;inset:0;border-radius:12px;padding:2px;background:linear-gradient(135deg,#a435f0,#6d28d9,#a435f0);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .3s}
+.mode-card:hover::before{opacity:1}
+.mode-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(164,53,240,.15)}
+.mode-card h3{font-size:18px;margin-bottom:8px;font-weight:600}.mode-card p{font-size:13px;color:#a0a0a0;line-height:1.5}
+.mode-card .mode-icon{font-size:36px;margin-bottom:14px}
+
+/* Info panel */
+.info-panel{max-width:600px;margin:0 auto;padding:40px 24px;text-align:left;animation:fadeIn .3s ease}
+.info-panel h2{font-size:22px;margin-bottom:16px;text-align:center}
+.info-panel .info-desc{background:#2d2f31;border-radius:8px;padding:24px;margin-bottom:24px;font-size:14px;line-height:1.7;color:#d1d5db}
+.info-panel .info-desc p{margin-bottom:12px}
+.info-panel .info-desc ul{margin-left:20px;margin-bottom:12px}
+.info-panel .info-desc li{margin-bottom:6px}
+.info-panel .info-meta{display:flex;gap:16px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
+.info-meta-item{background:#2d2f31;border-radius:8px;padding:12px 20px;text-align:center;flex:1;min-width:120px}
+.info-meta-item .meta-val{font-size:20px;font-weight:700;color:#a435f0}.info-meta-item .meta-lbl{font-size:12px;color:#a0a0a0;margin-top:4px}
+
+/* Past attempts */
+.attempts-section{margin-top:32px;text-align:left}
+.attempts-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.attempts-header h3{font-size:15px;color:#a0a0a0;font-weight:600}
+.attempts-table{width:100%;border-collapse:collapse;font-size:13px}
+.attempts-table th{text-align:left;padding:8px 12px;color:#6b7280;font-weight:600;border-bottom:1px solid #3e4143;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.attempts-table td{padding:8px 12px;border-bottom:1px solid #2d2f31;color:#d1d5db}
+.attempts-table tr{cursor:pointer;transition:background .15s}
+.attempts-table tr:hover{background:rgba(164,53,240,.08)}
+.attempt-mode{font-size:10px;padding:2px 6px;border-radius:3px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.attempt-mode.exam{background:rgba(164,53,240,.15);color:#a435f0}
+.attempt-mode.review{background:rgba(59,130,246,.15);color:#3b82f6}
+.attempt-score{font-weight:700}
+.attempt-score.pass{color:#10b981}.attempt-score.fail{color:#ef4444}
+.no-attempts{color:#6b7280;font-size:14px;text-align:center;padding:20px}
+
+/* Misc */
+.hidden{display:none!important}
+
+/* Custom confirm modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;animation:fadeIn .15s ease}
+.modal-card{background:#2d2f31;border:1px solid #3e4143;border-radius:16px;padding:32px;max-width:420px;width:90%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.4);animation:slideIn .2s ease}
+.modal-icon{font-size:40px;margin-bottom:12px}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:8px;color:#fff}
+.modal-body{font-size:14px;color:#a0a0a0;line-height:1.6;margin-bottom:24px}
+.modal-stats{display:flex;gap:12px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.modal-stat{background:#1c1d1f;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600}
+.modal-stat.s-answered{color:#a435f0}.modal-stat.s-unanswered{color:#f59e0b}.modal-stat.s-flagged{color:#60a5fa}
+.modal-actions{display:flex;gap:10px;justify-content:center}
+
+/* Navigator summary chips */
+.nav-summary{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.nav-chip{font-size:11px;color:#a0a0a0;background:#2d2f31;border:1px solid #3e4143;border-radius:16px;padding:4px 12px;font-weight:600;display:inline-flex;align-items:center;gap:4px}
+.nav-chip .chip-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.nav-chip .chip-dot.c-answered{background:#6d28d9}
+.nav-chip .chip-dot.c-remaining{background:#3e4143}
+.nav-chip .chip-dot.c-correct{background:#10b981}
+.nav-chip .chip-dot.c-incorrect{background:#ef4444}
+.nav-chip .chip-dot.c-flagged{background:#f59e0b}
+
+/* Bookmark button */
+.bookmark-btn{background:none;border:none;cursor:pointer;padding:6px;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;border-radius:6px}
+.bookmark-btn:hover{background:rgba(255,255,255,.06)}
+.bookmark-btn svg{width:24px;height:24px;stroke:#a0a0a0;stroke-width:2;fill:none;transition:all .2s}
+.bookmark-btn:hover svg{stroke:#fff}
+.bookmark-btn.bookmarked svg{fill:#fff;stroke:#fff}
+
+/* Navigator filter dropdowns */
+.nav-filters{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.filter-dropdown{position:relative;display:inline-block}
+.filter-dropdown-btn{background:#a435f0;border:none;border-radius:4px;font-size:13px;cursor:pointer;padding:8px 14px;color:#fff;font-weight:600;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+.filter-dropdown-btn:hover{background:#8b2ccf}
+.filter-dropdown-btn .arrow{font-size:10px;opacity:.8}
+.filter-dropdown-menu{display:none;position:absolute;top:calc(100% + 4px);left:0;background:#1e1f22;border:1px solid #3e4143;border-radius:6px;min-width:200px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.4);overflow:hidden;animation:fadeIn .15s ease}
+.filter-dropdown-menu.show{display:block}
+.filter-dropdown-item{padding:10px 16px;font-size:13px;color:#d1d5db;cursor:pointer;transition:background .1s;border-left:3px solid transparent}
+.filter-dropdown-item:hover{background:rgba(255,255,255,.06)}
+.filter-dropdown-item.active{color:#fff;border-left-color:#a435f0;background:rgba(164,53,240,.12)}
+.mode-badge{font-size:11px;padding:3px 8px;border-radius:4px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-right:auto}
+.mode-badge.exam{background:rgba(164,53,240,.15);color:#a435f0}.mode-badge.review{background:rgba(59,130,246,.15);color:#3b82f6}
+.mode-badge.history{background:rgba(107,114,128,.15);color:#9ca3af}
+
+/* Question transition animation */
+.quiz-content{animation:slideIn .25s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* Subtle card */
+.quiz-content{background:rgba(45,47,49,.55);border:1px solid rgba(62,65,67,.5);border-radius:16px;padding:28px;margin:-4px}
+
+@media(max-width:640px){
+  .main{padding:12px}.header h1{font-size:14px}.score-details{gap:16px}
+  .q-dot{width:36px;height:36px;font-size:11px}
+  .mode-cards{flex-direction:column;align-items:center}
+  .header-right{gap:8px}.live-score{font-size:11px;padding:3px 8px}
+  .info-panel .info-meta{flex-direction:column}
+  .nav{flex-wrap:wrap;gap:8px;justify-content:center}
+  .nav-filters{flex-direction:column}
+  .quiz-content{padding:16px;margin:0;border-radius:12px}
+  .filter-dropdown-btn{font-size:12px;padding:6px 12px}
+  .score-ring-wrap{width:150px;height:150px}
+  .score-ring-inner{width:132px;height:132px}
+  .score-pct{font-size:36px}
+}
+
+/* 1. The Code Container */
+.question-text pre, 
+.answer-text pre {
+    /* Deep navy/black background like the screenshot */
+    background-color: #0d1117 !important; 
+    
+    /* Soft border to define the edges */
+    border: 1px solid #30363d !important;
+    
+    /* Rounded corners */
+    border-radius: 12px !important;
+    
+    /* Generous padding for breathing room */
+    padding: 24px !important;
+    
+    /* Shadow to make it "pop" off the page */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    
+    /* Modern coding font */
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #e6edf3; /* Default text color (brackets/punctuation) */
+    overflow-x: auto;
+    margin: 16px 0;
+}
+
+/* Inline code styling (for single words and inline blocks) */
+.question-text code, 
+.answer-text code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+    background: #0d1117 !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    border: 1px solid #30363d !important;
+    color: #e6edf3 !important;
+}
+
+/* Fix for code inside pre: remove double border/background & avoid line artifacts */
+.question-text pre code,
+.answer-text pre code {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    color: inherit !important;
+}
+
+/* 2. Syntax Highlighting Colors */
+
+/* JSON Keys (e.g., "Version":) -> Cyan/Blue */
+.highlight-key {
+    color: #79c0ff !important; 
+    font-weight: 600;
+}
+
+/* Strings (e.g., "2021-10-17") -> Soft Orange */
+.highlight-string {
+    color: #ffab70 !important;
+}
+
+/* Numbers -> Mint Green */
+.highlight-number {
+    color: #7ee787 !important;
+}
+
+/* Booleans (true/false) -> Blue */
+.highlight-boolean {
+    color: #79c0ff !important;
+    font-style: italic;
+}
+
+/* Nulls -> Red/Pink */
+.highlight-null {
+    color: #ff7b72 !important;
+}
+
+/* Generic Code Highlighting */
+.highlight-keyword { color: #ff7b72 !important; font-weight: bold; } /* Red/Pink */
+.highlight-comment { color: #8b949e !important; font-style: italic; } /* Grey */
+.highlight-func { color: #d2a8ff !important; } /* Purple */
+.highlight-operator { color: #79c0ff !important; } /* Blue */
+.question-search{min-width:220px;padding:9px 12px;border:1px solid #4b5563;border-radius:6px;background:#1f2937;color:#fff}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1 id="headerTitle"></h1>
+  <div class="header-right">
+    <span class="mode-badge hidden" id="modeBadge"></span>
+    <span class="live-score hidden" id="liveScore"></span>
+    <span class="timer" id="timer">00:00:00</span>
+    <button class="btn btn-ghost hidden" id="exitBtn" onclick="exitReview()">Exit</button>
+    <button class="btn btn-danger hidden" id="endExamBtn" onclick="endExam()">End Exam</button>
+  </div>
+</div>
+
+<div class="main">
+  <!-- Start Screen -->
+  <div id="startScreen" class="start-screen">
+    <h2 id="examTitle"></h2>
+    <p class="subtitle"><strong id="examCount"></strong> &middot; Questions and answers will be randomized</p>
+    <div class="quick-stats" id="quickStats"></div>
+    <div class="mode-cards">
+      <div class="mode-card" onclick="selectMode('exam')">
+        <div class="mode-icon">📝</div>
+        <h3>Exam Mode</h3>
+        <p>Simulate the real exam. Answers and explanations are revealed only after you finish all questions.</p>
+      </div>
+      <div class="mode-card" onclick="selectMode('review')">
+        <div class="mode-icon">📖</div>
+        <h3>Review Mode</h3>
+        <p>Learn as you go. Check your answer after each question and see the explanation immediately.</p>
+      </div>
+    </div>
+    <div class="attempts-section" id="attemptsSection"></div>
+  </div>
+
+  <!-- Info Panel (shown after mode selection) -->
+  <div id="infoPanel" class="hidden">
+    <div class="info-panel">
+      <h2 id="infoTitle"></h2>
+      <div class="info-meta" id="infoMeta">
+        <div class="info-meta-item"><div class="meta-val" id="infoQuestions">0</div><div class="meta-lbl">Questions</div></div>
+        <div class="info-meta-item"><div class="meta-val" id="infoTime">--</div><div class="meta-lbl">Duration</div></div>
+        <div class="info-meta-item"><div class="meta-val" id="infoPass">72%</div><div class="meta-lbl">To Pass</div></div>
+      </div>
+      <div class="info-desc" id="infoDesc"></div>
+      <div style="text-align:center">
+        <button class="btn btn-primary" style="padding:14px 40px;font-size:16px" onclick="startExam()">Start Practice Test</button>
+        <div style="margin-top:12px"><button class="btn btn-ghost" onclick="goBackToStart()">← Back</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Screen -->
+  <div id="quizScreen" class="hidden">
+    <div class="quiz-content" id="quizContent">
+      <div class="progress-row">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <span class="progress-counter" id="progressCounter"></span>
+      </div>
+      <div class="question-header">
+        <span class="q-number" id="qNumber"></span>
+        <span class="q-section" id="qSection"></span>
+      </div>
+      <div class="q-type" id="qType"></div>
+      <div class="question-text" id="qText"></div>
+      <div class="answers" id="answers"></div>
+      <div class="result-banner" id="resultBanner"></div>
+      <div class="check-row hidden" id="checkRow"><button class="btn btn-check" id="checkBtn" onclick="checkAnswer()" disabled>Check Answer</button></div>
+      <div class="explanation" id="explanation"><h3>💡 Explanation</h3><div class="explanation-body" id="explanationBody"></div></div>
+      <div class="nav">
+        <button class="btn btn-outline" id="prevBtn" onclick="navigate(-1)">← Previous</button>
+        <button class="bookmark-btn" id="flagBtn" onclick="toggleFlag()" title="Save for review"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16l-7-3.5L5 21V5z" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="btn btn-primary" id="nextBtn" onclick="navigate(1)">Next →</button>
+      </div>
+      <div style="margin-top:24px">
+      <div class="nav-summary" id="navSummary"></div>
+        <div class="nav-filters" id="navFilters"></div>
+        <div class="q-grid" id="qGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Score Screen -->
+  <div id="scoreScreen" class="hidden">
+    <div class="score-card">
+      <h2 style="margin-bottom:24px;font-size:24px">Exam Results</h2>
+      <div class="score-ring-wrap" id="scoreCircle">
+        <div class="score-ring-threshold"></div>
+        <div class="score-ring-inner">
+          <div class="score-pct" id="scorePct"></div>
+          <div class="score-label" id="scoreStatus"></div>
+        </div>
+      </div>
+      <div class="score-trend" id="scoreTrend"></div>
+      <div class="score-details">
+        <div class="score-stat"><div class="num green" id="scoreCorrect">0</div><div class="lbl">Correct</div></div>
+        <div class="score-stat"><div class="num red" id="scoreIncorrect">0</div><div class="lbl">Incorrect</div></div>
+        <div class="score-stat"><div class="num yellow" id="scoreSkipped">0</div><div class="lbl">Skipped</div></div>
+      </div>
+      <div id="scoreTime" style="color:#a0a0a0;font-size:14px;margin-bottom:16px"></div>
+      <div class="section-breakdown" id="sectionBreakdown"></div>
+      <div style="margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="reviewFromScore()">Review All Answers</button>
+        <button class="btn btn-outline" onclick="retakeExam()">Retake Exam</button>
+        <button class="btn btn-ghost" onclick="exportAttempts()">Export Attempt History</button>
+        <button class="btn btn-ghost" onclick="goBackToStart()">Back to Start</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script id="quiz-data-script" type="application/json">{"id": 4170369, "title": "Chapter Refresher - SCS-C03 Domain 6: Security Foundations and Governance", "description": null, "pass_score": 750, "duration": 84, "assessments": [{"_class": "assessment", "id": 900000193, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A logistics company attaches an SCP to the organization root that denies cloudtrail:StopLogging and cloudtrail:DeleteTrail. Two weeks later, CloudTrail shows that an IAM role in the organization&#x27;s management account stopped the organization trail. Every member account correctly receives AccessDenied when attempting the same action. What explains this behavior?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>SCPs do not affect users or roles in the management account, so the SCP cannot restrict principals there.<\/strong><\/p>\n\n<p>SCPs never apply to users or roles in the management account, even when the SCP is attached at the root. That is exactly why every member account was denied while the management account role could stop the organization trail.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>SCPs apply only to member accounts; principals in the management account are never restricted by SCPs, even those attached at the root. This is why AWS recommends keeping workloads and routine administration out of the management account and tightly controlling who can use it.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>The SCP must also be attached directly to each OU because SCPs attached to the root are inherited only by accounts that are not in an OU.<\/strong><\/p>\n\n<p>SCPs attached to the root are inherited by every OU and every account beneath it, which is why the member accounts were correctly denied. Attaching it again to each OU would change nothing for the management account, because SCPs never apply there.<\/p>\n\n<p><strong>CloudTrail is a global service, so SCP deny statements for CloudTrail actions are evaluated only in us-east-1.<\/strong><\/p>\n\n<p>SCPs are evaluated for CloudTrail calls wherever they are made, and the member accounts were correctly denied. Region has nothing to do with the management account being unaffected.<\/p>\n\n<p><strong>The role in the management account had an identity-based policy with an explicit Allow, which overrides an SCP deny.<\/strong><\/p>\n\n<p>An explicit Allow never overrides an explicit deny. The role succeeded only because SCPs do not apply to the management account at all.<\/p>", "answers": ["<p>The SCP must also be attached directly to each OU because SCPs attached to the root are inherited only by accounts that are not in an OU.<\/p>", "<p>SCPs do not affect users or roles in the management account, so the SCP cannot restrict principals there.<\/p>", "<p>CloudTrail is a global service, so SCP deny statements for CloudTrail actions are evaluated only in us-east-1.<\/p>", "<p>The role in the management account had an identity-based policy with an explicit Allow, which overrides an SCP deny.<\/p>"]}, "correct_response": ["b"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A logistics company attaches an SCP to the organization root that denies cloudtrail:StopLogging and cloudtrail:DeleteTrail. Two weeks later, CloudTrail shows that an IAM role in the organization's management account stopped the organization trail. Every member account correctly receives AccessDenied when attempting the same action. What explains this behavior?", "related_lectures": []}, {"_class": "assessment", "id": 900000194, "assessment_type": "multi-select", "prompt": {"question": "<p>A security architect is documenting how service control policies (SCPs) behave before the company adopts a deny-list SCP strategy across 120 member accounts. Which statements about SCPs are accurate? Select THREE.<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", "", "", ""], "explanation": "<p><strong>\u2705 Correct answers<\/strong><\/p>\n\n<p><strong>SCPs do not grant permissions; an identity-based or resource-based policy must still allow the action.<\/strong><\/p>\n\n<p>SCPs are guardrails that only set the maximum available permissions. A deny-list strategy still relies on identity-based or resource-based policies to grant the access, so the SCP alone never makes a request succeed.<\/p>\n\n<p><strong>SCPs restrict the root user of a member account.<\/strong><\/p>\n\n<p>SCPs apply to every principal in a member account, including the member account root user. This is what makes SCPs useful for restricting root-user actions across the 120 accounts.<\/p>\n\n<p><strong>SCPs do not restrict service-linked roles.<\/strong><\/p>\n\n<p>Service-linked roles are exempt from SCPs so that AWS services integrated with the account keep working. The architect should document that a deny-list SCP will not block actions taken by these roles.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>SCPs define the maximum available permissions for principals in member accounts, including the member account root user, but never grant access on their own. Service-linked roles are exempt so AWS services can continue to operate. Restricting what external principals can do to your resources requires resource control policies (RCPs) or resource policies, not SCPs.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>SCPs restrict the actions available to the management account&#x27;s IAM roles in the same way as member accounts.<\/strong><\/p>\n\n<p>SCPs never apply to users or roles in the management account, so describing them as restricting it the same way as member accounts is wrong. This is also why the management account must be protected with other controls.<\/p>\n\n<p><strong>SCPs restrict principals from external AWS accounts that access a member account&#x27;s S3 bucket through a bucket policy.<\/strong><\/p>\n\n<p>SCPs only restrict principals that belong to accounts in the organization; external principals are governed by RCPs or resource policies.<\/p>\n\n<p><strong>SCP changes take effect only after affected IAM users sign out and sign back in.<\/strong><\/p>\n\n<p>SCP changes are evaluated on the next request and do not wait for users to sign out and back in. Documenting a sign-out requirement would wrongly suggest a delay before the deny-list takes effect.<\/p>", "answers": ["<p>SCPs do not grant permissions; an identity-based or resource-based policy must still allow the action.<\/p>", "<p>SCPs restrict the actions available to the management account&#x27;s IAM roles in the same way as member accounts.<\/p>", "<p>SCPs restrict the root user of a member account.<\/p>", "<p>SCPs restrict principals from external AWS accounts that access a member account&#x27;s S3 bucket through a bucket policy.<\/p>", "<p>SCPs do not restrict service-linked roles.<\/p>", "<p>SCP changes take effect only after affected IAM users sign out and sign back in.<\/p>"]}, "correct_response": ["a", "c", "e"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A security architect is documenting how service control policies (SCPs) behave before the company adopts a deny-list SCP strategy across 120 member accounts. Which statements about SCPs are accurate? Select THREE.", "related_lectures": []}, {"_class": "assessment", "id": 900000195, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A payments company has 60 member accounts in AWS Organizations. Several S3 buckets are accessed by partner companies&#x27; AWS accounts through bucket policies. A new standard requires that every request to any S3 bucket in the member accounts, including requests from partner principals, be denied unless it uses TLS. The solution must apply automatically to new buckets and new accounts with the LEAST operational overhead. What should the security engineer do?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Attach a resource control policy (RCP) to the root that denies s3:* for Principal &quot;*&quot; when aws:SecureTransport is false.<\/strong><\/p>\n\n<p>An RCP is evaluated on requests to resources in member accounts no matter who the caller is, so partner principals are covered as well as internal ones. One RCP at the root applies automatically to new buckets and new accounts without editing any bucket policy, which is the least operational overhead.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>RCPs set the maximum permissions on resources in member accounts and apply regardless of which principal makes the request, including principals outside the organization. A single RCP at the root enforces TLS on all current and future buckets without editing bucket policies. RCPs, like SCPs, do not apply to resources in the management account, which is another reason to keep workloads out of it.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Attach an SCP to the root that denies s3:* when aws:SecureTransport is false.<\/strong><\/p>\n\n<p>SCPs restrict only principals in the organization&#x27;s member accounts, so partner principals would not be affected.<\/p>\n\n<p><strong>Deploy the s3-bucket-ssl-requests-only AWS Config rule through an organization conformance pack with automatic remediation that updates each bucket policy.<\/strong><\/p>\n\n<p>This is a reactive detective-plus-remediation approach that leaves a window of noncompliance and requires rewriting bucket policies.<\/p>\n\n<p><strong>Enable the Security Hub CSPM control that checks for SSL-only bucket policies and create EventBridge rules that notify bucket owners.<\/strong><\/p>\n\n<p>Security Hub CSPM detects and notifies but does not enforce the requirement.<\/p>", "answers": ["<p>Attach an SCP to the root that denies s3:* when aws:SecureTransport is false.<\/p>", "<p>Deploy the s3-bucket-ssl-requests-only AWS Config rule through an organization conformance pack with automatic remediation that updates each bucket policy.<\/p>", "<p>Attach a resource control policy (RCP) to the root that denies s3:* for Principal &quot;*&quot; when aws:SecureTransport is false.<\/p>", "<p>Enable the Security Hub CSPM control that checks for SSL-only bucket policies and create EventBridge rules that notify bucket owners.<\/p>"]}, "correct_response": ["c"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A payments company has 60 member accounts in AWS Organizations. Several S3 buckets are accessed by partner companies' AWS accounts through bucket policies. A new standard requires that every request to any S3 bucket in the member accounts, including requests from partner principals, be denied unless it uses TLS. The solution must apply automatically to new buckets and new accounts with the LEAST operational overhead. What should the security engineer do?", "related_lectures": []}, {"_class": "assessment", "id": 900000196, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A company attaches the following resource control policy (RCP) to its Workloads OU. The default RCPFullAWSAccess policy remains attached. In a member account in that OU, a role named VendorAudit has a trust policy that allows a third-party vendor&#x27;s AWS account (not in the company&#x27;s organization) to assume it.<\/p>\n\n<pre>{\n  &quot;Version&quot;: &quot;2012-10-17&quot;,\n  &quot;Statement&quot;: [\n    {\n      &quot;Sid&quot;: &quot;EnforceOrgIdentities&quot;,\n      &quot;Effect&quot;: &quot;Deny&quot;,\n      &quot;Principal&quot;: &quot;*&quot;,\n      &quot;Action&quot;: &quot;sts:AssumeRole&quot;,\n      &quot;Resource&quot;: &quot;*&quot;,\n      &quot;Condition&quot;: {\n        &quot;StringNotEqualsIfExists&quot;: {\n          &quot;aws:PrincipalOrgID&quot;: &quot;o-exampleorg1&quot;\n        },\n        &quot;BoolIfExists&quot;: {\n          &quot;aws:PrincipalIsAWSService&quot;: &quot;false&quot;\n        }\n      }\n    }\n  ]\n}<\/pre>\n\n<p>What is the result?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>The vendor cannot assume VendorAudit, while principals from the company&#x27;s organization and AWS service principals can still assume roles whose trust policies allow them.<\/strong><\/p>\n\n<p>The deny applies only when both conditions match: the caller&#x27;s aws:PrincipalOrgID is not o-exampleorg1 and the caller is not an AWS service. The vendor matches both and is explicitly denied, organization principals fail the first condition, and service principals fail the second, so their access still depends on the trust policy.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Both conditions must match for the deny to apply. The vendor&#x27;s organization ID does not equal o-exampleorg1 and the vendor is not an AWS service, so the request is explicitly denied. Organization principals fail the first condition and service principals fail the second, so their access continues to depend on the trust policy.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>The vendor can assume VendorAudit because the explicit Allow in the role trust policy overrides the RCP deny.<\/strong><\/p>\n\n<p>An explicit deny in an RCP overrides any Allow, including an Allow in a role trust policy. The vendor matches both deny conditions, so the trust policy cannot rescue it.<\/p>\n\n<p><strong>The vendor cannot assume VendorAudit, and AWS service principals such as lambda.amazonaws.com also can no longer assume roles in the OU.<\/strong><\/p>\n\n<p>Service principals set aws:PrincipalIsAWSService to true, so the BoolIfExists condition does not match and they are not denied.<\/p>\n\n<p><strong>The RCP has no effect because RCPs cannot be used with AWS STS; an SCP must be used instead.<\/strong><\/p>\n\n<p>AWS STS is one of the services supported by RCPs, and SCPs cannot restrict external principals.<\/p>", "answers": ["<p>The vendor cannot assume VendorAudit, while principals from the company&#x27;s organization and AWS service principals can still assume roles whose trust policies allow them.<\/p>", "<p>The vendor can assume VendorAudit because the explicit Allow in the role trust policy overrides the RCP deny.<\/p>", "<p>The vendor cannot assume VendorAudit, and AWS service principals such as lambda.amazonaws.com also can no longer assume roles in the OU.<\/p>", "<p>The RCP has no effect because RCPs cannot be used with AWS STS; an SCP must be used instead.<\/p>"]}, "correct_response": ["a"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A company attaches the following resource control policy (RCP) to its Workloads OU. The default RCPFullAWSAccess policy remains attached. In a member account in that OU, a role named VendorAudit has a trust policy that allows a third-party vendor's AWS account (not in the company's organization) to assume it. { \"Version\": \"2012-10-17\", \"Statement\": [ { \"Sid\": \"EnforceOrgIdentities\", \"Effect\": \"Deny\", \"Principal\": \"*\", \"Action\": \"sts:AssumeRole\", \"Resource\": \"*\", \"Condition\": { \"StringNotEqualsIfExists\": { \"aws:PrincipalOrgID\": \"o-exampleorg1\" }, \"BoolIfExists\": { \"aws:PrincipalIsAWSService\": \"false\" } } } ] } What is the result?", "related_lectures": []}, {"_class": "assessment", "id": 900000197, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A healthcare SaaS provider wants every account in its organization to require IMDSv2 by default for new instances and to block public sharing of AMIs and EBS snapshots. Local account administrators must not be able to change these settings, the configuration must remain enforced even when AWS introduces new APIs, and users who attempt a noncompliant action should see a custom message pointing to the internal wiki. Which solution meets these requirements with the LEAST ongoing maintenance?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Create and attach declarative policies for EC2 at the organization root that configure instance metadata defaults, image block public access, and snapshot block public access with a custom error message.<\/strong><\/p>\n\n<p>Declarative policies enforce the desired EC2 configuration, such as IMDSv2 defaults, image block public access, and snapshot block public access, at the service level. The setting stays enforced when new APIs are added, local administrators cannot override it, and a custom error message can point users to the internal wiki.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Declarative policies enforce the desired configuration of EC2, EBS, and VPC service attributes at the service level, so the state is maintained even as new APIs are added, and account administrators cannot override it. They also support custom error messages for noncompliant actions.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Create SCPs that deny ec2:ModifyImageAttribute, ec2:ModifySnapshotAttribute, and ec2:RunInstances unless ec2:MetadataHttpTokens is required.<\/strong><\/p>\n\n<p>SCPs can block specific API calls but must be maintained as new APIs appear and do not support custom error messages.<\/p>\n\n<p><strong>Deploy AWS Config managed rules with SSM Automation remediation that reverts public AMIs and snapshots and enforces IMDSv2.<\/strong><\/p>\n\n<p>Config remediation is reactive, so resources can be noncompliant until remediation runs, and local administrators can still change the settings in between. It also cannot show users a custom error message when they attempt the action.<\/p>\n\n<p><strong>Use AWS Firewall Manager policies to enforce IMDSv2 and block public snapshot sharing across all accounts.<\/strong><\/p>\n\n<p>Firewall Manager manages WAF, Shield Advanced, security group, Network Firewall, and DNS Firewall policies, not EC2 metadata or snapshot sharing settings.<\/p>", "answers": ["<p>Create SCPs that deny ec2:ModifyImageAttribute, ec2:ModifySnapshotAttribute, and ec2:RunInstances unless ec2:MetadataHttpTokens is required.<\/p>", "<p>Deploy AWS Config managed rules with SSM Automation remediation that reverts public AMIs and snapshots and enforces IMDSv2.<\/p>", "<p>Use AWS Firewall Manager policies to enforce IMDSv2 and block public snapshot sharing across all accounts.<\/p>", "<p>Create and attach declarative policies for EC2 at the organization root that configure instance metadata defaults, image block public access, and snapshot block public access with a custom error message.<\/p>"]}, "correct_response": ["d"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A healthcare SaaS provider wants every account in its organization to require IMDSv2 by default for new instances and to block public sharing of AMIs and EBS snapshots. Local account administrators must not be able to change these settings, the configuration must remain enforced even when AWS introduces new APIs, and users who attempt a noncompliant action should see a custom message pointing to the internal wiki. Which solution meets these requirements with the LEAST ongoing maintenance?", "related_lectures": []}, {"_class": "assessment", "id": 900000198, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A manufacturing company requires that all Amazon EBS volumes and Amazon RDS databases tagged backup=daily in any account are backed up every day with a copy sent to a second Region. Account administrators must not be able to modify or delete these backup plans, and new accounts must be covered automatically. What should the security engineer implement?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>An AWS Organizations backup policy attached to the root that defines the plan, the tag-based resource selection, and the cross-Region copy action.<\/strong><\/p>\n\n<p>A backup policy lets the organization centrally define AWS Backup plans with tag-based selection and cross-Region copy actions for both EBS and RDS. Local administrators can see policy-managed plans but cannot change or delete them, and inheritance from the root covers new accounts automatically.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Organizations backup policies let the management account (or a delegated administrator) centrally define AWS Backup plans that are applied to accounts in the organization. Policy-managed plans are visible but cannot be changed by local administrators, and inheritance covers new accounts automatically.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>A CloudFormation StackSet that deploys an AWS Backup plan into each account with an SCP that denies all backup:* actions.<\/strong><\/p>\n\n<p>Local administrators could modify stack-deployed plans unless heavily restricted, and denying all backup actions would break backup operations.<\/p>\n\n<p><strong>Amazon Data Lifecycle Manager policies deployed to each account through AWS Systems Manager.<\/strong><\/p>\n\n<p>Data Lifecycle Manager handles EBS snapshots and EBS-backed AMIs but not RDS. It is also not centrally enforced by Organizations, so local administrators could change the policies and new accounts would not be covered automatically.<\/p>\n\n<p><strong>An AWS Config rule that detects untagged resources and a Lambda function that creates snapshots daily.<\/strong><\/p>\n\n<p>This custom, reactive setup creates snapshots but not tamper-resistant backup plans, and it has no built-in cross-Region copy. Local administrators could also change or remove the Lambda function.<\/p>", "answers": ["<p>An AWS Organizations backup policy attached to the root that defines the plan, the tag-based resource selection, and the cross-Region copy action.<\/p>", "<p>A CloudFormation StackSet that deploys an AWS Backup plan into each account with an SCP that denies all backup:* actions.<\/p>", "<p>Amazon Data Lifecycle Manager policies deployed to each account through AWS Systems Manager.<\/p>", "<p>An AWS Config rule that detects untagged resources and a Lambda function that creates snapshots daily.<\/p>"]}, "correct_response": ["a"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A manufacturing company requires that all Amazon EBS volumes and Amazon RDS databases tagged backup=daily in any account are backed up every day with a copy sent to a second Region. Account administrators must not be able to modify or delete these backup plans, and new accounts must be covered automatically. What should the security engineer implement?", "related_lectures": []}, {"_class": "assessment", "id": 900000199, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A legal team at a media company determines that content processed by AWS AI services, such as Amazon Rekognition and Amazon Comprehend, must not be stored or used by AWS for service improvement. The requirement applies to all current and future accounts in the organization. What is the MOST operationally efficient solution?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Create an AI services opt-out policy for all services and attach it to the organization root.<\/strong><\/p>\n\n<p>An AI services opt-out policy is the AWS Organizations policy type built for this purpose, and it tells AI services not to store or use content for service improvement. Attaching one policy for all services at the root covers every current and future account with no per-account work, while the services remain usable.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>AI services opt-out policies are an AWS Organizations policy type that controls whether AI services can store and use content for service improvement. Attaching one to the root applies to every existing and future account without per-account requests.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Open an AWS Support case from each account requesting an opt-out for every AI service used.<\/strong><\/p>\n\n<p>Per-account support cases do not scale and do not automatically cover new accounts.<\/p>\n\n<p><strong>Attach an SCP that denies all rekognition:* and comprehend:* actions.<\/strong><\/p>\n\n<p>Denying the services blocks Rekognition and Comprehend completely. The requirement is to keep using them while stopping AWS from storing or using the content, which this does not achieve.<\/p>\n\n<p><strong>Enable an AWS Config rule that detects AI service usage and notifies the legal team.<\/strong><\/p>\n\n<p>A Config rule would only report AI service usage. It does not change how AWS stores or uses the content, so the legal requirement is not met.<\/p>", "answers": ["<p>Open an AWS Support case from each account requesting an opt-out for every AI service used.<\/p>", "<p>Attach an SCP that denies all rekognition:* and comprehend:* actions.<\/p>", "<p>Create an AI services opt-out policy for all services and attach it to the organization root.<\/p>", "<p>Enable an AWS Config rule that detects AI service usage and notifies the legal team.<\/p>"]}, "correct_response": ["c"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A legal team at a media company determines that content processed by AWS AI services, such as Amazon Rekognition and Amazon Comprehend, must not be stored or used by AWS for service improvement. The requirement applies to all current and future accounts in the organization. What is the MOST operationally efficient solution?", "related_lectures": []}, {"_class": "assessment", "id": 900000200, "assessment_type": "multi-select", "prompt": {"question": "<p>A retail group wants to stop using its management account for daily security operations. Amazon GuardDuty and Amazon Macie must be managed from a dedicated Security Tooling account, and every new account created in the organization must be enrolled automatically. Which actions should the security engineer take? Select TWO.<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", "", ""], "explanation": "<p><strong>\u2705 Correct answers<\/strong><\/p>\n\n<p><strong>From the management account, designate the Security Tooling account as the delegated administrator for GuardDuty and Macie.<\/strong><\/p>\n\n<p>Designating the Security Tooling account as delegated administrator for GuardDuty and Macie moves daily security operations out of the management account while keeping the Organizations integration.<\/p>\n\n<p><strong>From the delegated administrator account, configure GuardDuty and Macie to automatically enable for new organization member accounts.<\/strong><\/p>\n\n<p>Once the delegated administrator is in place, its auto-enable settings enroll every new member account in GuardDuty and Macie automatically, with no invitations or manual steps.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Designating a delegated administrator moves day-to-day management out of the management account while keeping organization-level integration. From the delegated administrator, auto-enable settings enroll new member accounts automatically.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Create an IAM user in the management account for each security analyst with read-only access to GuardDuty and Macie.<\/strong><\/p>\n\n<p>This keeps daily security operations in the management account, which is the opposite of the goal. It also does nothing to enroll new accounts automatically.<\/p>\n\n<p><strong>Send membership invitations by email from the Security Tooling account and have each account owner accept them.<\/strong><\/p>\n\n<p>Invitation-based membership is the legacy method used without Organizations integration. Every account owner has to accept manually, so new accounts are not enrolled automatically.<\/p>\n\n<p><strong>Deploy a CloudFormation StackSet that creates a GuardDuty detector in each account and accepts invitations from the Security Tooling account.<\/strong><\/p>\n\n<p>This adds custom automation and still relies on invitations instead of Organizations integration.<\/p>", "answers": ["<p>From the management account, designate the Security Tooling account as the delegated administrator for GuardDuty and Macie.<\/p>", "<p>Create an IAM user in the management account for each security analyst with read-only access to GuardDuty and Macie.<\/p>", "<p>From the delegated administrator account, configure GuardDuty and Macie to automatically enable for new organization member accounts.<\/p>", "<p>Send membership invitations by email from the Security Tooling account and have each account owner accept them.<\/p>", "<p>Deploy a CloudFormation StackSet that creates a GuardDuty detector in each account and accepts invitations from the Security Tooling account.<\/p>"]}, "correct_response": ["a", "c"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A retail group wants to stop using its management account for daily security operations. Amazon GuardDuty and Amazon Macie must be managed from a dedicated Security Tooling account, and every new account created in the organization must be enrolled automatically. Which actions should the security engineer take? Select TWO.", "related_lectures": []}, {"_class": "assessment", "id": 900000201, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A company governs 40 accounts with AWS Control Tower. All infrastructure is deployed through AWS CloudFormation. The security team must stop any CloudFormation stack from creating an S3 bucket that lacks versioning before the resource is provisioned, and compliance status must be visible in the Control Tower console. Which type of control should the team enable?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>A proactive control, which uses CloudFormation Hooks to evaluate resources before provisioning.<\/strong><\/p>\n\n<p>Proactive controls use CloudFormation Hooks to check resource properties, such as S3 versioning, before CloudFormation provisions the resource, and they block stacks that do not comply. Because they are Control Tower controls, their compliance status appears in the Control Tower console.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Control Tower proactive controls are implemented with CloudFormation Hooks and evaluate resource properties before CloudFormation provisions them, blocking noncompliant resources. They are managed and reported through Control Tower.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>A detective control, which uses AWS Config rules to flag unversioned buckets.<\/strong><\/p>\n\n<p>Detective controls use Config rules that flag unversioned buckets only after they exist. The requirement is to stop the stack before the bucket is provisioned.<\/p>\n\n<p><strong>A preventive control, which uses an SCP to deny s3:CreateBucket.<\/strong><\/p>\n\n<p>An SCP cannot evaluate a bucket&#x27;s versioning configuration at creation time; denying CreateBucket blocks all buckets.<\/p>\n\n<p><strong>A Security Hub CSPM control that reports unversioned buckets to the delegated administrator.<\/strong><\/p>\n\n<p>Security Hub CSPM reports unversioned buckets only after deployment and does not block CloudFormation. Its findings are also not Control Tower control compliance status.<\/p>", "answers": ["<p>A detective control, which uses AWS Config rules to flag unversioned buckets.<\/p>", "<p>A preventive control, which uses an SCP to deny s3:CreateBucket.<\/p>", "<p>A Security Hub CSPM control that reports unversioned buckets to the delegated administrator.<\/p>", "<p>A proactive control, which uses CloudFormation Hooks to evaluate resources before provisioning.<\/p>"]}, "correct_response": ["d"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A company governs 40 accounts with AWS Control Tower. All infrastructure is deployed through AWS CloudFormation. The security team must stop any CloudFormation stack from creating an S3 bucket that lacks versioning before the resource is provisioned, and compliance status must be visible in the Control Tower console. Which type of control should the team enable?", "related_lectures": []}, {"_class": "assessment", "id": 900000202, "assessment_type": "multi-select", "prompt": {"question": "<p>An operations team made several changes to an AWS Control Tower environment directly in the AWS Organizations console instead of through Control Tower. Auto-enrollment is not turned on. Which of the following changes will Control Tower report as governance drift? Select THREE.<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", "", "", ""], "explanation": "<p><strong>\u2705 Correct answers<\/strong><\/p>\n\n<p><strong>Moving an enrolled account from one registered OU to another in the Organizations console.<\/strong><\/p>\n\n<p>Control Tower manages which registered OU each enrolled account belongs to. Moving the account in the Organizations console changes that outside Control Tower, so it is reported as account drift.<\/p>\n\n<p><strong>Editing the content of an SCP that Control Tower created for a preventive control.<\/strong><\/p>\n\n<p>SCPs that Control Tower creates for preventive controls are Control Tower-managed resources. Editing their content directly in Organizations changes a managed resource and causes SCP drift.<\/p>\n\n<p><strong>Removing an enrolled account from the organization.<\/strong><\/p>\n\n<p>Removing an enrolled account from the organization removes it from governance outside Control Tower&#x27;s workflow. Control Tower reports this as account drift.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Control Tower detects account and OU governance drift when resources it manages are changed outside Control Tower, such as moving or removing enrolled accounts and modifying or detaching Control Tower-managed SCPs. Creating unrelated OUs or attaching your own SCPs does not alter Control Tower-managed resources.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Creating a new OU in the Organizations console.<\/strong><\/p>\n\n<p>A new OU made in the Organizations console is only unregistered with Control Tower. No Control Tower-managed resource changes, so it is not reported as drift.<\/p>\n\n<p><strong>Attaching an additional customer-managed SCP to a registered OU.<\/strong><\/p>\n\n<p>Customer-managed SCPs can sit alongside Control Tower&#x27;s SCPs on a registered OU. Control Tower&#x27;s own managed SCPs are unchanged, so no drift is reported.<\/p>\n\n<p><strong>Adding a tag to an enrolled account.<\/strong><\/p>\n\n<p>Adding a tag to an enrolled account does not change the account&#x27;s OU placement or any resource Control Tower manages. It is not reported as drift.<\/p>", "answers": ["<p>Moving an enrolled account from one registered OU to another in the Organizations console.<\/p>", "<p>Editing the content of an SCP that Control Tower created for a preventive control.<\/p>", "<p>Creating a new OU in the Organizations console.<\/p>", "<p>Removing an enrolled account from the organization.<\/p>", "<p>Attaching an additional customer-managed SCP to a registered OU.<\/p>", "<p>Adding a tag to an enrolled account.<\/p>"]}, "correct_response": ["a", "b", "d"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "An operations team made several changes to an AWS Control Tower environment directly in the AWS Organizations console instead of through Control Tower. Auto-enrollment is not turned on. Which of the following changes will Control Tower report as governance drift? Select THREE.", "related_lectures": []}, {"_class": "assessment", "id": 900000203, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A platform engineering team manages all infrastructure with Terraform and GitOps workflows. The company uses AWS Control Tower and wants new accounts to be requested through pull requests, provisioned into the correct OU, and automatically customized with baseline security resources written in Terraform. Which solution BEST meets these requirements?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Deploy AWS Control Tower Account Factory for Terraform (AFT) and define account requests and customizations in its Git repositories.<\/strong><\/p>\n\n<p>AFT is the Control Tower solution for a Terraform-based GitOps workflow. Account requests are pull requests to its Git repositories, accounts are vended through Account Factory into the right OU, and global and account-specific Terraform customizations are applied automatically.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>AFT provides a Terraform-based GitOps pipeline for provisioning accounts through Control Tower Account Factory and applying global and account-specific customizations. Accounts are enrolled in Control Tower governance automatically.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Use the AWS Organizations CreateAccount API from a Terraform module run on a developer workstation.<\/strong><\/p>\n\n<p>Accounts created with the raw CreateAccount API from a workstation are not enrolled in Control Tower governance. There is no pull-request pipeline, and no automatic Terraform customization.<\/p>\n\n<p><strong>Share an AWS Service Catalog portfolio that contains a CloudFormation template for account creation.<\/strong><\/p>\n\n<p>A Service Catalog product built on a CloudFormation template does not meet the Terraform and pull-request GitOps requirement. It also does not provide the Terraform-based account customizations.<\/p>\n\n<p><strong>Use CloudFormation StackSets with self-managed permissions to create accounts and apply baselines.<\/strong><\/p>\n\n<p>StackSets deploy resources into accounts that already exist. They cannot vend new accounts, enroll them in Control Tower, or run a Terraform GitOps workflow.<\/p>", "answers": ["<p>Deploy AWS Control Tower Account Factory for Terraform (AFT) and define account requests and customizations in its Git repositories.<\/p>", "<p>Use the AWS Organizations CreateAccount API from a Terraform module run on a developer workstation.<\/p>", "<p>Share an AWS Service Catalog portfolio that contains a CloudFormation template for account creation.<\/p>", "<p>Use CloudFormation StackSets with self-managed permissions to create accounts and apply baselines.<\/p>"]}, "correct_response": ["a"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A platform engineering team manages all infrastructure with Terraform and GitOps workflows. The company uses AWS Control Tower and wants new accounts to be requested through pull requests, provisioned into the correct OU, and automatically customized with baseline security resources written in Terraform. Which solution BEST meets these requirements?", "related_lectures": []}, {"_class": "assessment", "id": 900000204, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A startup is designing a multi-account structure following the AWS Security Reference Architecture. It needs an immutable, centralized store for organization CloudTrail logs and AWS Config history, and a separate location where the security team operates GuardDuty, Security Hub CSPM, and Amazon Detective. Which design is recommended?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Store logs in a Log Archive account with tightly restricted access, and designate a Security Tooling account as the delegated administrator for security services.<\/strong><\/p>\n\n<p>The AWS SRA puts immutable logs in a dedicated, tightly restricted Log Archive account and runs security services from a Security Tooling account acting as delegated administrator. Keeping the two separate enforces separation of duties and limits blast radius, and neither role uses the management account.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>The AWS SRA separates a Log Archive account that centrally stores immutable logs from a Security Tooling account that operates security services as delegated administrator. Both reside in a Security OU, limiting blast radius and separating duties.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Store logs in the management account and run security services from the same account to simplify access.<\/strong><\/p>\n\n<p>The management account should not host workloads or daily security operations, and SCPs do not protect it.<\/p>\n\n<p><strong>Store logs in each workload account and aggregate them into the Security Tooling account with S3 replication.<\/strong><\/p>\n\n<p>Keeping primary logs in workload accounts lets workload administrators change or delete them before replication, so the store is not immutable or centralized. It also puts the log archive role in the Security Tooling account, which removes separation of duties.<\/p>\n\n<p><strong>Store logs and run security services in a single Security account in the Workloads OU.<\/strong><\/p>\n\n<p>Combining the two roles removes separation of duties, and security accounts belong in a Security OU, not the Workloads OU.<\/p>", "answers": ["<p>Store logs in the management account and run security services from the same account to simplify access.<\/p>", "<p>Store logs in a Log Archive account with tightly restricted access, and designate a Security Tooling account as the delegated administrator for security services.<\/p>", "<p>Store logs in each workload account and aggregate them into the Security Tooling account with S3 replication.<\/p>", "<p>Store logs and run security services in a single Security account in the Workloads OU.<\/p>"]}, "correct_response": ["b"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A startup is designing a multi-account structure following the AWS Security Reference Architecture. It needs an immutable, centralized store for organization CloudTrail logs and AWS Config history, and a separate location where the security team operates GuardDuty, Security Hub CSPM, and Amazon Detective. Which design is recommended?", "related_lectures": []}, {"_class": "assessment", "id": 900000205, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A security team must deploy a read-only incident-response IAM role into every account in the Workloads OU, including accounts added in the future. The team does not want to create StackSet administration and execution roles manually in each account. What should the team do?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Create a StackSet with service-managed permissions targeting the Workloads OU and enable automatic deployment.<\/strong><\/p>\n\n<p>Service-managed StackSets use trusted access with AWS Organizations, so CloudFormation creates the administration and execution roles for you. With automatic deployment turned on, the incident-response role is deployed to every account that later joins the Workloads OU.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Service-managed StackSets use trusted access with AWS Organizations, so CloudFormation creates the required roles automatically. With automatic deployment enabled, stack instances are deployed to accounts that later join the target OU.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Create a StackSet with self-managed permissions and deploy AWSCloudFormationStackSetExecutionRole to each account first.<\/strong><\/p>\n\n<p>Self-managed permissions require manually creating roles in every account and do not auto-deploy to new accounts.<\/p>\n\n<p><strong>Use AWS Resource Access Manager to share the IAM role with the Workloads OU.<\/strong><\/p>\n\n<p>IAM roles cannot be shared through AWS RAM. Each account needs its own copy of the role, so RAM cannot deliver it to the Workloads OU.<\/p>\n\n<p><strong>Create an SCP that grants the incident-response role permissions in every account.<\/strong><\/p>\n\n<p>SCPs never grant permissions and cannot create IAM roles. They could only restrict what the role does, so no role would be deployed.<\/p>", "answers": ["<p>Create a StackSet with self-managed permissions and deploy AWSCloudFormationStackSetExecutionRole to each account first.<\/p>", "<p>Use AWS Resource Access Manager to share the IAM role with the Workloads OU.<\/p>", "<p>Create a StackSet with service-managed permissions targeting the Workloads OU and enable automatic deployment.<\/p>", "<p>Create an SCP that grants the incident-response role permissions in every account.<\/p>"]}, "correct_response": ["c"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A security team must deploy a read-only incident-response IAM role into every account in the Workloads OU, including accounts added in the future. The team does not want to create StackSet administration and execution roles manually in each account. What should the team do?", "related_lectures": []}, {"_class": "assessment", "id": 900000206, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A development team pushes CloudFormation templates to a Git repository that triggers AWS CodePipeline. The security team wants the pipeline to fail if a template defines an unencrypted Amazon RDS instance or a security group that allows 0.0.0.0/0 on port 22, before any change set is created. Which approach meets this requirement?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Add an AWS CodeBuild stage that runs cfn-guard validate against the templates with organization rule sets and fails on violations.<\/strong><\/p>\n\n<p>cfn-guard validates the template text against policy-as-code rules, so a CodeBuild stage can fail the pipeline on an unencrypted RDS instance or an open SSH rule. The check runs before any change set is created, which is what the requirement asks for.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>AWS CloudFormation Guard is a policy-as-code tool that validates templates against rules before deployment. Running it in a CodeBuild stage shifts security checks left and stops noncompliant templates before any change set is created.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Enable CloudFormation drift detection on production stacks and fail the pipeline when drift is detected.<\/strong><\/p>\n\n<p>Drift detection compares deployed resources with their templates after deployment. It does not check templates against security rules, so it cannot fail the pipeline before a change set is created.<\/p>\n\n<p><strong>Deploy AWS Config rules for RDS encryption and restricted SSH in the target account.<\/strong><\/p>\n\n<p>Config rules evaluate resources after they are deployed. By then the unencrypted RDS instance or open security group already exists, which misses the before-change-set requirement.<\/p>\n\n<p><strong>Apply a stack policy that denies Update:* actions on RDS and security group resources.<\/strong><\/p>\n\n<p>Stack policies only protect existing stack resources from certain update actions. They do not validate new template content, so an unencrypted RDS instance or open SSH rule would still deploy.<\/p>", "answers": ["<p>Enable CloudFormation drift detection on production stacks and fail the pipeline when drift is detected.<\/p>", "<p>Deploy AWS Config rules for RDS encryption and restricted SSH in the target account.<\/p>", "<p>Apply a stack policy that denies Update:* actions on RDS and security group resources.<\/p>", "<p>Add an AWS CodeBuild stage that runs cfn-guard validate against the templates with organization rule sets and fails on violations.<\/p>"]}, "correct_response": ["d"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A development team pushes CloudFormation templates to a Git repository that triggers AWS CodePipeline. The security team wants the pipeline to fail if a template defines an unencrypted Amazon RDS instance or a security group that allows 0.0.0.0/0 on port 22, before any change set is created. Which approach meets this requirement?", "related_lectures": []}, {"_class": "assessment", "id": 900000207, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A company does not use AWS Control Tower. Engineers deploy CloudFormation stacks from pipelines, the console, and the AWS CLI across 25 accounts. The security team wants to block any CloudFormation create or update operation that provisions an unencrypted Amazon EBS volume, regardless of how the stack is launched. What should the team implement?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Activate a CloudFormation Guard Hook in FAIL mode with the encryption rule, deployed to each account and Region by using a service-managed StackSet.<\/strong><\/p>\n\n<p>A Guard Hook runs inside CloudFormation itself, so it evaluates every create and update operation whether the stack is launched from a pipeline, the console, or the CLI. FAIL mode stops the operation on a violation, and a service-managed StackSet distributes the hook to all 25 accounts without Control Tower.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>CloudFormation Hooks run inside CloudFormation before resources are provisioned, so they apply to every stack operation regardless of the launch method. A Guard Hook in FAIL mode stops the operation when a rule is violated, and StackSets distribute it across accounts.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Add a cfn-guard validation step to the main CodePipeline pipeline.<\/strong><\/p>\n\n<p>A pipeline check only covers stacks that go through that pipeline. Stacks launched from the console or the CLI would skip the check and could still create unencrypted volumes.<\/p>\n\n<p><strong>Enable the AWS Config rule encrypted-volumes with automatic remediation.<\/strong><\/p>\n\n<p>Config remediation reacts after the volume already exists and cannot encrypt an existing EBS volume in place. It does not block the CloudFormation operation, which is what the requirement asks for.<\/p>\n\n<p><strong>Enable EBS encryption by default through a Security Hub CSPM control.<\/strong><\/p>\n\n<p>Security Hub CSPM controls only produce findings. They do not turn on EBS encryption by default or block CloudFormation stacks.<\/p>", "answers": ["<p>Activate a CloudFormation Guard Hook in FAIL mode with the encryption rule, deployed to each account and Region by using a service-managed StackSet.<\/p>", "<p>Add a cfn-guard validation step to the main CodePipeline pipeline.<\/p>", "<p>Enable the AWS Config rule encrypted-volumes with automatic remediation.<\/p>", "<p>Enable EBS encryption by default through a Security Hub CSPM control.<\/p>"]}, "correct_response": ["a"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A company does not use AWS Control Tower. Engineers deploy CloudFormation stacks from pipelines, the console, and the AWS CLI across 25 accounts. The security team wants to block any CloudFormation create or update operation that provisions an unencrypted Amazon EBS volume, regardless of how the stack is launched. What should the team implement?", "related_lectures": []}, {"_class": "assessment", "id": 900000208, "assessment_type": "multi-select", "prompt": {"question": "<p>A production CloudFormation stack contains an Amazon RDS database. The DBA team wants to prevent stack updates from replacing or deleting the database resource, and wants to prevent anyone from accidentally deleting the entire stack. Other resources in the stack must remain updatable. Which actions meet these requirements? Select TWO.<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", "", ""], "explanation": "<p><strong>\u2705 Correct answers<\/strong><\/p>\n\n<p><strong>Apply a stack policy that denies Update:Replace and Update:Delete on the database logical resource and allows Update:* on all other resources.<\/strong><\/p>\n\n<p>A stack policy controls which update actions are allowed on specific logical resources. Denying Update:Replace and Update:Delete on the database while allowing Update:* on everything else protects the database and keeps the other resources updatable.<\/p>\n\n<p><strong>Enable termination protection on the stack.<\/strong><\/p>\n\n<p>Termination protection blocks deletion of the entire stack until someone explicitly disables it, which covers the accidental whole-stack deletion requirement.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Stack policies protect specified resources from unintended update actions during stack updates, while still allowing other resources to change. Termination protection prevents the stack from being deleted until it is explicitly disabled.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Run drift detection on the stack daily.<\/strong><\/p>\n\n<p>Drift detection only reports differences between the stack and its template. It cannot stop an update from replacing the database or stop the stack from being deleted.<\/p>\n\n<p><strong>Configure CloudFormation rollback triggers with a CloudWatch alarm on database connections.<\/strong><\/p>\n\n<p>Rollback triggers roll back a stack operation when a monitored alarm enters the ALARM state, but they do not prevent replacement or deletion.<\/p>\n\n<p><strong>Convert the stack to a StackSet with the retain stacks option.<\/strong><\/p>\n\n<p>The retain stacks option only controls what happens to stacks when stack instances are removed from a StackSet. It does not stop the database from being replaced during updates or the stack from being deleted.<\/p>", "answers": ["<p>Run drift detection on the stack daily.<\/p>", "<p>Apply a stack policy that denies Update:Replace and Update:Delete on the database logical resource and allows Update:* on all other resources.<\/p>", "<p>Configure CloudFormation rollback triggers with a CloudWatch alarm on database connections.<\/p>", "<p>Enable termination protection on the stack.<\/p>", "<p>Convert the stack to a StackSet with the retain stacks option.<\/p>"]}, "correct_response": ["b", "d"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A production CloudFormation stack contains an Amazon RDS database. The DBA team wants to prevent stack updates from replacing or deleting the database resource, and wants to prevent anyone from accidentally deleting the entire stack. Other resources in the stack must remain updatable. Which actions meet these requirements? Select TWO.", "related_lectures": []}, {"_class": "assessment", "id": 900000209, "assessment_type": "multiple-choice", "prompt": {"question": "<p>An engineer&#x27;s CloudFormation template creates an Amazon RDS instance and currently takes the master password as a parameter with a default value. A security review requires that the password never appear in the template, in stack parameters, or in the console, and that it be rotated automatically. Which change meets these requirements?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Store the password in AWS Secrets Manager with rotation and reference it with a {{resolve:secretsmanager:...}} dynamic reference.<\/strong><\/p>\n\n<p>A {{resolve:secretsmanager:...}} dynamic reference makes CloudFormation fetch the secret at deployment time, so the password never appears in the template, the stack parameters, or the console. Secrets Manager also provides the required automatic rotation.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Secrets Manager dynamic references let CloudFormation retrieve the secret at deployment time without storing it in the template or displaying it, and Secrets Manager provides automatic rotation. For RDS specifically, ManageMasterUserPassword is another option that achieves the same goal.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Set NoEcho to true on the password parameter and keep the default value.<\/strong><\/p>\n\n<p>NoEcho masks the value in output but the default still exists in the template, and no rotation is provided.<\/p>\n\n<p><strong>Store the password as an SSM String parameter and reference it with a {{resolve:ssm:...}} dynamic reference.<\/strong><\/p>\n\n<p>An SSM String parameter is stored as plaintext and has no built-in rotation. The password would be exposed to anyone who can read the parameter, and the rotation requirement is not met.<\/p>\n\n<p><strong>Encrypt the template file with a KMS key before uploading it to Amazon S3.<\/strong><\/p>\n\n<p>Encrypting the template file in S3 only protects it at rest. CloudFormation still reads the password from the template or parameters, and nothing rotates it.<\/p>", "answers": ["<p>Set NoEcho to true on the password parameter and keep the default value.<\/p>", "<p>Store the password in AWS Secrets Manager with rotation and reference it with a {{resolve:secretsmanager:...}} dynamic reference.<\/p>", "<p>Store the password as an SSM String parameter and reference it with a {{resolve:ssm:...}} dynamic reference.<\/p>", "<p>Encrypt the template file with a KMS key before uploading it to Amazon S3.<\/p>"]}, "correct_response": ["b"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "An engineer's CloudFormation template creates an Amazon RDS instance and currently takes the master password as a parameter with a default value. A security review requires that the password never appear in the template, in stack parameters, or in the console, and that it be rotated automatically. Which change meets these requirements?", "related_lectures": []}, {"_class": "assessment", "id": 900000210, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A central IT account maintains an AWS Service Catalog portfolio of approved, hardened products. The portfolio must be available to all accounts in the Sandbox OU, including new accounts, and end users in each account sign in through IAM Identity Center with a role whose name starts with AWSReservedSSO_Developer. The team wants to avoid associating principals in each account manually. What should the team do?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Share the portfolio with the Sandbox OU through AWS Organizations and enable principal name sharing with a wildcard role name pattern.<\/strong><\/p>\n\n<p>Sharing the portfolio with the Sandbox OU through Organizations covers current and future accounts automatically. Principal name sharing with a wildcard such as AWSReservedSSO_Developer* matches the IAM Identity Center role names in every recipient account, so nobody has to associate principals manually.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Service Catalog supports sharing portfolios with OUs through Organizations integration, which covers new accounts automatically. Principal name sharing associates IAM principals by name, including wildcard patterns, so matching roles in recipient accounts get access without per-account association.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Share the portfolio with each account ID and have an administrator in each account associate the Developer role.<\/strong><\/p>\n\n<p>Sharing with each account ID and associating the Developer role by hand is exactly the per-account work the team wants to avoid. It also does not cover new accounts added to the Sandbox OU.<\/p>\n\n<p><strong>Copy the portfolio into each account by using a CloudFormation StackSet.<\/strong><\/p>\n\n<p>Copying the portfolio into each account creates many separate copies that must be kept in sync. Principals still have to be associated in each copy, which misses the goal.<\/p>\n\n<p><strong>Use AWS RAM to share the underlying CloudFormation templates with the Sandbox OU.<\/strong><\/p>\n\n<p>AWS RAM cannot share CloudFormation templates. Templates alone would not give governed self-service with approved products and constraints.<\/p>", "answers": ["<p>Share the portfolio with each account ID and have an administrator in each account associate the Developer role.<\/p>", "<p>Copy the portfolio into each account by using a CloudFormation StackSet.<\/p>", "<p>Use AWS RAM to share the underlying CloudFormation templates with the Sandbox OU.<\/p>", "<p>Share the portfolio with the Sandbox OU through AWS Organizations and enable principal name sharing with a wildcard role name pattern.<\/p>"]}, "correct_response": ["d"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A central IT account maintains an AWS Service Catalog portfolio of approved, hardened products. The portfolio must be available to all accounts in the Sandbox OU, including new accounts, and end users in each account sign in through IAM Identity Center with a role whose name starts with AWSReservedSSO_Developer. The team wants to avoid associating principals in each account manually. What should the team do?", "related_lectures": []}, {"_class": "assessment", "id": 900000211, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A hospital network must continuously evaluate all accounts and Regions in its organization against a HIPAA-aligned set of AWS Config rules and view results as a single compliance score. The security team operates from a delegated administrator account and wants new accounts evaluated automatically. What should the team deploy?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>An organization conformance pack built from the Operational Best Practices for HIPAA Security sample template, deployed from the delegated administrator account.<\/strong><\/p>\n\n<p>An organization conformance pack deploys a whole set of Config rules, here the HIPAA operational best practices, to all member accounts from the delegated administrator and gives a single compliance score. New accounts are evaluated automatically.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Conformance packs bundle Config rules and optional remediation into one deployable unit with a compliance score. Organization conformance packs deployed from the management or delegated administrator account apply to all member accounts, including new ones.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>An AWS Config aggregator in the delegated administrator account without any rules.<\/strong><\/p>\n\n<p>An aggregator only collects Config data that already exists. It does not deploy HIPAA rules or evaluate any resources, so there would be nothing to score.<\/p>\n\n<p><strong>An AWS Audit Manager assessment that uses the HIPAA framework in each account.<\/strong><\/p>\n\n<p>Audit Manager has not accepted new customers since April 30, 2026, and it collects audit evidence rather than deploying Config rules. Per-account assessments also would not give one organization-wide compliance score.<\/p>\n\n<p><strong>An AWS Artifact report for HIPAA downloaded into each account.<\/strong><\/p>\n\n<p>AWS Artifact reports describe AWS&#x27;s own compliance. They do not evaluate the hospital&#x27;s resources, so they cannot provide continuous rule evaluations or a compliance score.<\/p>", "answers": ["<p>An organization conformance pack built from the Operational Best Practices for HIPAA Security sample template, deployed from the delegated administrator account.<\/p>", "<p>An AWS Config aggregator in the delegated administrator account without any rules.<\/p>", "<p>An AWS Audit Manager assessment that uses the HIPAA framework in each account.<\/p>", "<p>An AWS Artifact report for HIPAA downloaded into each account.<\/p>"]}, "correct_response": ["a"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A hospital network must continuously evaluate all accounts and Regions in its organization against a HIPAA-aligned set of AWS Config rules and view results as a single compliance score. The security team operates from a delegated administrator account and wants new accounts evaluated automatically. What should the team deploy?", "related_lectures": []}, {"_class": "assessment", "id": 900000212, "assessment_type": "multi-select", "prompt": {"question": "<p>A company&#x27;s AWS Config rule s3-bucket-logging-enabled flags buckets without server access logging. The security team wants noncompliant buckets fixed automatically within minutes, using AWS-managed automation where possible. Which steps are required? Select TWO.<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", "", ""], "explanation": "<p><strong>\u2705 Correct answers<\/strong><\/p>\n\n<p><strong>Configure automatic remediation on the Config rule by using the AWS-ConfigureS3BucketLogging Systems Manager Automation runbook.<\/strong><\/p>\n\n<p>Config automatic remediation runs a Systems Manager Automation runbook as soon as a resource is flagged noncompliant. AWS-ConfigureS3BucketLogging is an AWS-managed runbook that turns on server access logging, so no custom code is needed.<\/p>\n\n<p><strong>Create an IAM role that Systems Manager Automation can assume with permissions to configure bucket logging, and pass it as the AutomationAssumeRole parameter.<\/strong><\/p>\n\n<p>The Automation runbook changes bucket settings on your behalf, so it needs an IAM role it can assume with permission to configure bucket logging. Without a valid AutomationAssumeRole, the remediation fails.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>AWS Config remediation actions invoke Systems Manager Automation runbooks, and automatic remediation runs them when a resource becomes noncompliant. The runbook needs an IAM role that Automation assumes with permission to change the bucket configuration.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Create a CloudTrail trail and a Lambda function that parses PutBucket events.<\/strong><\/p>\n\n<p>This builds custom code that Config remediation already provides. It adds maintenance, and the requirement asks for AWS-managed automation wherever possible.<\/p>\n\n<p><strong>Enable Amazon GuardDuty S3 Protection to enable logging on flagged buckets.<\/strong><\/p>\n\n<p>GuardDuty S3 Protection detects suspicious data access. It never changes bucket settings, so it cannot turn on server access logging.<\/p>\n\n<p><strong>Use AWS Trusted Advisor to enable logging on flagged buckets.<\/strong><\/p>\n\n<p>Trusted Advisor provides checks and recommendations only. It cannot turn on server access logging for the flagged buckets.<\/p>", "answers": ["<p>Create a CloudTrail trail and a Lambda function that parses PutBucket events.<\/p>", "<p>Configure automatic remediation on the Config rule by using the AWS-ConfigureS3BucketLogging Systems Manager Automation runbook.<\/p>", "<p>Enable Amazon GuardDuty S3 Protection to enable logging on flagged buckets.<\/p>", "<p>Use AWS Trusted Advisor to enable logging on flagged buckets.<\/p>", "<p>Create an IAM role that Systems Manager Automation can assume with permissions to configure bucket logging, and pass it as the AutomationAssumeRole parameter.<\/p>"]}, "correct_response": ["b", "e"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A company's AWS Config rule s3-bucket-logging-enabled flags buckets without server access logging. The security team wants noncompliant buckets fixed automatically within minutes, using AWS-managed automation where possible. Which steps are required? Select TWO.", "related_lectures": []}, {"_class": "assessment", "id": 900000213, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A security team needs an AWS Config rule that marks Amazon DynamoDB tables noncompliant unless they have a DataClass tag and point-in-time recovery enabled. No single managed rule covers both conditions, and the team does not want to write or maintain Lambda functions. What should the team create?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>An AWS Config custom policy rule written in AWS CloudFormation Guard syntax.<\/strong><\/p>\n\n<p>Config custom policy rules let the team write evaluation logic in Guard syntax that checks both the DataClass tag and the point-in-time recovery setting on the configuration item. There is no Lambda function to write or maintain, and results are reported like any other Config rule.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Config custom policy rules let teams define evaluation logic in Guard syntax without Lambda functions. The rule evaluates the configuration item, including tags and PITR settings, and reports compliance like any other Config rule.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>An AWS Config custom Lambda rule written in Python.<\/strong><\/p>\n\n<p>A Lambda-backed custom rule would work, but it means writing and maintaining function code, which the team explicitly wants to avoid.<\/p>\n\n<p><strong>An SCP that denies dynamodb:CreateTable without the DataClass tag.<\/strong><\/p>\n\n<p>An SCP can only block API calls. It cannot check point-in-time recovery status and does not produce Config compliance results for existing tables.<\/p>\n\n<p><strong>A Security Hub CSPM custom standard containing the two checks.<\/strong><\/p>\n\n<p>Security Hub CSPM does not let customers write new check logic as a custom standard. Custom checks come from Config rules, so this does not provide the required evaluation.<\/p>", "answers": ["<p>An AWS Config custom Lambda rule written in Python.<\/p>", "<p>An SCP that denies dynamodb:CreateTable without the DataClass tag.<\/p>", "<p>An AWS Config custom policy rule written in AWS CloudFormation Guard syntax.<\/p>", "<p>A Security Hub CSPM custom standard containing the two checks.<\/p>"]}, "correct_response": ["c"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A security team needs an AWS Config rule that marks Amazon DynamoDB tables noncompliant unless they have a DataClass tag and point-in-time recovery enabled. No single managed rule covers both conditions, and the team does not want to write or maintain Lambda functions. What should the team create?", "related_lectures": []}, {"_class": "assessment", "id": 900000214, "assessment_type": "multi-select", "prompt": {"question": "<p>A payment processor that is new to AWS runs its cardholder data environment in 40 member accounts of an organization. The security team must continuously evaluate AWS resources against PCI DSS controls from a single delegated administrator account, and the QSA auditor also requires proof that AWS has met its own PCI DSS obligations for the underlying infrastructure. Which combination of actions meets these requirements with the LEAST operational overhead? (Select TWO.)<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", "", "", ""], "explanation": "<p><strong>\u2705 Correct answers<\/strong><\/p>\n\n<p><strong>Enable the PCI DSS standard in AWS Security Hub CSPM for all accounts and Regions by using a central configuration policy from the delegated administrator account.<\/strong><\/p>\n\n<p>The Security Hub CSPM PCI DSS standard continuously evaluates customer resources against PCI DSS controls. A central configuration policy from the delegated administrator enables it in all 40 accounts and all Regions at once, which is the least operational overhead.<\/p>\n\n<p><strong>Download the AWS PCI DSS Attestation of Compliance (AOC) and Responsibility Summary from AWS Artifact and provide them to the auditor.<\/strong><\/p>\n\n<p>The PCI DSS AOC and Responsibility Summary in AWS Artifact are AWS&#x27;s third-party audit evidence for its own side of the shared responsibility model. Downloading them is how the auditor gets proof that AWS has met its PCI DSS obligations for the underlying infrastructure.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Security Hub CSPM provides a PCI DSS standard whose controls continuously evaluate customer resources, and central configuration lets the delegated administrator enable it across all accounts and Regions with one policy. AWS Artifact provides AWS&#x27;s own third-party audit reports, such as the PCI DSS AOC and Responsibility Summary, which cover AWS&#x27;s side of the shared responsibility model.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Set up AWS Audit Manager in each member account and create a PCI DSS framework assessment.<\/strong><\/p>\n\n<p>AWS Audit Manager has not accepted new customers since April 30, 2026 and is in maintenance mode, so a company new to AWS cannot adopt it; AWS recommends AWS Config conformance packs as the alternative.<\/p>\n\n<p><strong>Run AWS Trusted Advisor checks in each account and export the results as the PCI DSS compliance report.<\/strong><\/p>\n\n<p>Trusted Advisor checks are best-practice recommendations, not a PCI DSS control evaluation or audit evidence.<\/p>\n\n<p><strong>Open an AWS Support case asking AWS to perform a PCI DSS assessment of the company&#x27;s workloads.<\/strong><\/p>\n\n<p>AWS does not assess customer workloads for PCI DSS; under the shared responsibility model the customer engages its own QSA.<\/p>\n\n<p><strong>Enable Amazon Macie in every account so that Macie certifies the cardholder data environment as PCI DSS compliant.<\/strong><\/p>\n\n<p>Macie discovers sensitive data such as card numbers in S3 but does not evaluate PCI DSS controls or certify compliance.<\/p>", "answers": ["<p>Enable the PCI DSS standard in AWS Security Hub CSPM for all accounts and Regions by using a central configuration policy from the delegated administrator account.<\/p>", "<p>Download the AWS PCI DSS Attestation of Compliance (AOC) and Responsibility Summary from AWS Artifact and provide them to the auditor.<\/p>", "<p>Set up AWS Audit Manager in each member account and create a PCI DSS framework assessment.<\/p>", "<p>Run AWS Trusted Advisor checks in each account and export the results as the PCI DSS compliance report.<\/p>", "<p>Open an AWS Support case asking AWS to perform a PCI DSS assessment of the company&#x27;s workloads.<\/p>", "<p>Enable Amazon Macie in every account so that Macie certifies the cardholder data environment as PCI DSS compliant.<\/p>"]}, "correct_response": ["a", "b"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A payment processor that is new to AWS runs its cardholder data environment in 40 member accounts of an organization. The security team must continuously evaluate AWS resources against PCI DSS controls from a single delegated administrator account, and the QSA auditor also requires proof that AWS has met its own PCI DSS obligations for the underlying infrastructure. Which combination of actions meets these requirements with the LEAST operational overhead? (Select TWO.)", "related_lectures": []}, {"_class": "assessment", "id": 900000215, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A telehealth company uses AWS Organizations with 30 accounts that will process protected health information. The compliance officer needs the AWS Business Associate Addendum (BAA) to apply to every account, including accounts created later, with the least effort. What should the officer do?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Sign in to the management account and accept the BAA as an organization agreement in AWS Artifact.<\/strong><\/p>\n\n<p>An organization agreement accepted in AWS Artifact from the management account applies the BAA to every current account and to accounts created later. It is a single action, so it is the least effort.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>AWS Artifact organization agreements are accepted from the management account and apply to all current and future accounts in the organization. Account agreements apply only to the individual account that accepts them.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Accept the BAA as an account agreement in AWS Artifact from each member account.<\/strong><\/p>\n\n<p>Accepting the BAA separately in each account repeats the work 30 times. Accounts created later would not be covered until someone accepts it there too.<\/p>\n\n<p><strong>Enable the HIPAA conformance pack in all accounts to establish the BAA.<\/strong><\/p>\n\n<p>A conformance pack evaluates resource configurations and has no contractual effect. It cannot establish a BAA with AWS.<\/p>\n\n<p><strong>Request the BAA through AWS Audit Manager from the delegated administrator account.<\/strong><\/p>\n\n<p>Audit Manager does not manage AWS agreements, and it is closed to new customers. BAAs are accepted in AWS Artifact.<\/p>", "answers": ["<p>Sign in to the management account and accept the BAA as an organization agreement in AWS Artifact.<\/p>", "<p>Accept the BAA as an account agreement in AWS Artifact from each member account.<\/p>", "<p>Enable the HIPAA conformance pack in all accounts to establish the BAA.<\/p>", "<p>Request the BAA through AWS Audit Manager from the delegated administrator account.<\/p>"]}, "correct_response": ["a"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A telehealth company uses AWS Organizations with 30 accounts that will process protected health information. The compliance officer needs the AWS Business Associate Addendum (BAA) to apply to every account, including accounts created later, with the least effort. What should the officer do?", "related_lectures": []}, {"_class": "assessment", "id": 900000216, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A fintech company uses Security Hub CSPM with a delegated administrator. It wants AWS Foundational Security Best Practices enabled in all accounts and Regions, but the Sandbox OU must have several costly controls disabled. New accounts must inherit the correct settings automatically, and local account administrators must not be able to change them. What should the security engineer do?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Use central configuration from the delegated administrator home Region to create configuration policies and associate one with the root and a different one with the Sandbox OU.<\/strong><\/p>\n\n<p>Central configuration policies define enabled standards and controls, and the delegated administrator can associate one with the root and a different one with the Sandbox OU. Centrally managed accounts, including new ones, inherit the policy and local administrators cannot change it.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Central configuration lets the delegated administrator create configuration policies that define enabled standards and controls and associate them with the root, OUs, or accounts across Regions. Centrally managed accounts inherit the policy and cannot change these settings locally.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Enable Security Hub CSPM in each account with a StackSet and disable controls with per-account API calls.<\/strong><\/p>\n\n<p>This is custom per-account work that does not stop local changes or automatically handle new accounts.<\/p>\n\n<p><strong>Create an SCP that denies securityhub:DisableStandard and enable standards manually in each Region.<\/strong><\/p>\n\n<p>An SCP can stop settings from being changed, but it cannot enable standards or disable specific controls for the Sandbox OU. Enabling standards by hand in every Region does not scale or cover new accounts.<\/p>\n\n<p><strong>Configure a cross-Region finding aggregator and enable auto-enable default standards.<\/strong><\/p>\n\n<p>Aggregation and auto-enable of default standards do not provide different control settings for specific OUs.<\/p>", "answers": ["<p>Enable Security Hub CSPM in each account with a StackSet and disable controls with per-account API calls.<\/p>", "<p>Create an SCP that denies securityhub:DisableStandard and enable standards manually in each Region.<\/p>", "<p>Use central configuration from the delegated administrator home Region to create configuration policies and associate one with the root and a different one with the Sandbox OU.<\/p>", "<p>Configure a cross-Region finding aggregator and enable auto-enable default standards.<\/p>"]}, "correct_response": ["c"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A fintech company uses Security Hub CSPM with a delegated administrator. It wants AWS Foundational Security Best Practices enabled in all accounts and Regions, but the Sandbox OU must have several costly controls disabled. New accounts must inherit the correct settings automatically, and local account administrators must not be able to change them. What should the security engineer do?", "related_lectures": []}, {"_class": "assessment", "id": 900000217, "assessment_type": "multiple-choice", "prompt": {"question": "<p>An architecture review board wants a repeatable way to evaluate new workloads against the Security Pillar and against internal security standards unique to the company. Reviews must record risks, track improvement plans over time with milestones, and be shared with workload owners in other accounts. Which solution meets these requirements?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>The AWS Well-Architected Tool with the Well-Architected Framework lens plus a custom lens containing the internal standards, shared with the workload owners&#x27; accounts.<\/strong><\/p>\n\n<p>The Well-Architected Tool runs question-based reviews against the Security Pillar, records risks, and tracks improvement plans with milestones. A custom lens adds the company&#x27;s internal standards, and both workloads and lenses can be shared with owners in other accounts.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>The Well-Architected Tool guides question-based reviews, records high and medium risks, and tracks improvement plans with milestones. Custom lenses add organization-specific best practices, and workloads and lenses can be shared with other accounts.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>AWS Trusted Advisor security checks with weekly email reports.<\/strong><\/p>\n\n<p>Trusted Advisor runs automated checks on account resources. It does not do architecture reviews, support custom internal questions, or track improvement plans with milestones.<\/p>\n\n<p><strong>AWS Audit Manager custom frameworks for each workload.<\/strong><\/p>\n\n<p>Audit Manager collects audit evidence and is closed to new customers. It does not do question-based architecture reviews or track improvement plans with milestones.<\/p>\n\n<p><strong>Security Hub CSPM with the CIS AWS Foundations Benchmark standard.<\/strong><\/p>\n\n<p>CIS benchmark checks evaluate account configuration settings. They do not review workload architecture decisions, record review risks, or support internal custom standards as review questions.<\/p>", "answers": ["<p>AWS Trusted Advisor security checks with weekly email reports.<\/p>", "<p>The AWS Well-Architected Tool with the Well-Architected Framework lens plus a custom lens containing the internal standards, shared with the workload owners&#x27; accounts.<\/p>", "<p>AWS Audit Manager custom frameworks for each workload.<\/p>", "<p>Security Hub CSPM with the CIS AWS Foundations Benchmark standard.<\/p>"]}, "correct_response": ["b"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "An architecture review board wants a repeatable way to evaluate new workloads against the Security Pillar and against internal security standards unique to the company. Reviews must record risks, track improvement plans over time with milestones, and be shared with workload owners in other accounts. Which solution meets these requirements?", "related_lectures": []}, {"_class": "assessment", "id": 900000218, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A software company builds container images in a CI/CD pipeline and pushes them to Amazon ECR. The security team wants to stop any image that contains critical-severity package vulnerabilities from ever being pushed to ECR. What should the team implement?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Integrate Amazon Inspector into the build stage by generating an SBOM and scanning it with Amazon Inspector, and fail the build when critical vulnerabilities are reported.<\/strong><\/p>\n\n<p>Inspector&#x27;s CI/CD integration scans the SBOM generated during the build and returns results before the image is pushed. Failing the build on critical findings means a vulnerable image never reaches ECR.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Amazon Inspector CI/CD integration scans software bills of materials generated during the build and returns vulnerability results before the artifact is published. Failing the build on a severity threshold keeps vulnerable images from reaching ECR.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Enable ECR basic scanning with scan on push and delete images that have critical findings.<\/strong><\/p>\n\n<p>Scan on push runs only after the image is already in ECR, so the vulnerable image has already been pushed. Deleting it afterward misses the never-pushed requirement.<\/p>\n\n<p><strong>Enable Amazon Inspector enhanced scanning with continuous scanning on the ECR repositories.<\/strong><\/p>\n\n<p>Enhanced continuous scanning evaluates images only after they are in ECR. It finds the vulnerabilities but cannot stop the push.<\/p>\n\n<p><strong>Enable GuardDuty Runtime Monitoring for the ECS clusters that run the images.<\/strong><\/p>\n\n<p>GuardDuty Runtime Monitoring detects threats in running workloads. It does not scan images for package vulnerabilities, and it acts long after the image is pushed.<\/p>", "answers": ["<p>Enable ECR basic scanning with scan on push and delete images that have critical findings.<\/p>", "<p>Enable Amazon Inspector enhanced scanning with continuous scanning on the ECR repositories.<\/p>", "<p>Enable GuardDuty Runtime Monitoring for the ECS clusters that run the images.<\/p>", "<p>Integrate Amazon Inspector into the build stage by generating an SBOM and scanning it with Amazon Inspector, and fail the build when critical vulnerabilities are reported.<\/p>"]}, "correct_response": ["d"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A software company builds container images in a CI/CD pipeline and pushes them to Amazon ECR. The security team wants to stop any image that contains critical-severity package vulnerabilities from ever being pushed to ECR. What should the team implement?", "related_lectures": []}, {"_class": "assessment", "id": 900000219, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A company uses attribute-based access control (ABAC) based on the access-project tag. It attaches the following SCP to the Workloads OU. The default FullAWSAccess SCP remains attached, and IAM policies grant developers ec2:CreateTags.<\/p>\n\n<pre>{\n  &quot;Version&quot;: &quot;2012-10-17&quot;,\n  &quot;Statement&quot;: [\n    {\n      &quot;Sid&quot;: &quot;ProtectAbacTag&quot;,\n      &quot;Effect&quot;: &quot;Deny&quot;,\n      &quot;Action&quot;: [&quot;ec2:CreateTags&quot;, &quot;ec2:DeleteTags&quot;],\n      &quot;Resource&quot;: &quot;*&quot;,\n      &quot;Condition&quot;: {\n        &quot;ForAnyValue:StringEquals&quot;: {\n          &quot;aws:TagKeys&quot;: [&quot;access-project&quot;]\n        },\n        &quot;ArnNotLike&quot;: {\n          &quot;aws:PrincipalArn&quot;: &quot;arn:aws:iam::*:role/TagAdmin&quot;\n        }\n      }\n    }\n  ]\n}<\/pre>\n\n<p>Which statement describes the effect of this SCP in the Workloads OU accounts?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>A developer role that adds both access-project and owner tags in a single request is denied, while a TagAdmin role can add the access-project tag if its IAM policies allow it.<\/strong><\/p>\n\n<p>A request that includes access-project among its tag keys matches ForAnyValue:StringEquals, so a developer role is denied even if the request also contains an owner tag. TagAdmin matches the ArnNotLike exclusion, so the SCP does not deny it, but it still needs its IAM policy to allow the action because SCPs never grant permissions.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>The deny applies when any requested tag key is access-project and the caller is not a TagAdmin role. A request that includes access-project among its keys matches ForAnyValue and is denied for developers. TagAdmin is excluded from the deny, but SCPs never grant permissions, so it still needs an IAM Allow.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>A developer role cannot add any tag to EC2 resources, including an owner tag.<\/strong><\/p>\n\n<p>A request that contains only an owner tag does not match the aws:TagKeys condition, so it is not denied by this SCP.<\/p>\n\n<p><strong>The SCP grants the TagAdmin role permission to call ec2:CreateTags even without an IAM policy.<\/strong><\/p>\n\n<p>SCPs never grant permissions. The ArnNotLike condition only excludes TagAdmin from the deny, so it still needs an identity-based Allow to call ec2:CreateTags.<\/p>\n\n<p><strong>A developer role is denied only when removing the access-project tag; adding it is allowed.<\/strong><\/p>\n\n<p>The statement denies both ec2:CreateTags and ec2:DeleteTags when the access-project key is in the request. Developers are blocked from adding the tag as well as removing it.<\/p>", "answers": ["<p>A developer role cannot add any tag to EC2 resources, including an owner tag.<\/p>", "<p>A developer role that adds both access-project and owner tags in a single request is denied, while a TagAdmin role can add the access-project tag if its IAM policies allow it.<\/p>", "<p>The SCP grants the TagAdmin role permission to call ec2:CreateTags even without an IAM policy.<\/p>", "<p>A developer role is denied only when removing the access-project tag; adding it is allowed.<\/p>"]}, "correct_response": ["b"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A company uses attribute-based access control (ABAC) based on the access-project tag. It attaches the following SCP to the Workloads OU. The default FullAWSAccess SCP remains attached, and IAM policies grant developers ec2:CreateTags. { \"Version\": \"2012-10-17\", \"Statement\": [ { \"Sid\": \"ProtectAbacTag\", \"Effect\": \"Deny\", \"Action\": [\"ec2:CreateTags\", \"ec2:DeleteTags\"], \"Resource\": \"*\", \"Condition\": { \"ForAnyValue:StringEquals\": { \"aws:TagKeys\": [\"access-project\"] }, \"ArnNotLike\": { \"aws:PrincipalArn\": \"arn:aws:iam::*:role/TagAdmin\" } } } ] } Which statement describes the effect of this SCP in the Workloads OU accounts?", "related_lectures": []}, {"_class": "assessment", "id": 900000220, "assessment_type": "multiple-choice", "prompt": {"question": "<p>An organization has FullAWSAccess attached to the root. On the Prod OU, the security team detaches FullAWSAccess and attaches an allow-list SCP that allows only ec2:*, s3:*, and cloudwatch:*. Account 111122223333 in the Prod OU has FullAWSAccess attached directly, and an administrator in that account has the AdministratorAccess IAM policy. What happens when the administrator calls dynamodb:PutItem?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>The call is denied because an action must be allowed by an SCP at every level from the root through the OU to the account, and the Prod OU does not allow DynamoDB.<\/strong><\/p>\n\n<p>For SCPs, an action must be allowed at every level from the root through each OU to the account. The Prod OU&#x27;s allow-list does not include DynamoDB, so dynamodb:PutItem is implicitly denied no matter what is attached to the account or granted by AdministratorAccess.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>With SCPs, an action is available only if an Allow exists at each level of the hierarchy: root, every OU in the path, and the account. The Prod OU allows only EC2, S3, and CloudWatch, so DynamoDB is implicitly denied regardless of what is attached below it or granted by IAM.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>The call succeeds because FullAWSAccess attached directly to the account overrides the OU allow-list.<\/strong><\/p>\n\n<p>An SCP attached to the account cannot restore permissions that a parent OU does not allow. Every level must allow the action, and the Prod OU does not allow DynamoDB.<\/p>\n\n<p><strong>The call succeeds because AdministratorAccess is an identity policy and SCPs only affect resource policies.<\/strong><\/p>\n\n<p>SCPs limit what IAM principals in member accounts can do, including permissions granted by identity policies such as AdministratorAccess. The administrator is still limited by the Prod OU allow-list.<\/p>\n\n<p><strong>The call is denied because allow-list SCPs automatically include an explicit deny for unlisted services.<\/strong><\/p>\n\n<p>The denial is an implicit deny because no Allow exists at the Prod OU level. Allow-list SCPs do not generate an explicit deny for services they leave out.<\/p>", "answers": ["<p>The call succeeds because FullAWSAccess attached directly to the account overrides the OU allow-list.<\/p>", "<p>The call succeeds because AdministratorAccess is an identity policy and SCPs only affect resource policies.<\/p>", "<p>The call is denied because an action must be allowed by an SCP at every level from the root through the OU to the account, and the Prod OU does not allow DynamoDB.<\/p>", "<p>The call is denied because allow-list SCPs automatically include an explicit deny for unlisted services.<\/p>"]}, "correct_response": ["c"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "An organization has FullAWSAccess attached to the root. On the Prod OU, the security team detaches FullAWSAccess and attaches an allow-list SCP that allows only ec2:*, s3:*, and cloudwatch:*. Account 111122223333 in the Prod OU has FullAWSAccess attached directly, and an administrator in that account has the AdministratorAccess IAM policy. What happens when the administrator calls dynamodb:PutItem?", "related_lectures": []}, {"_class": "assessment", "id": 900000221, "assessment_type": "multi-select", "prompt": {"question": "<p>A network team in a central Network account shares a transit gateway and VPC subnets with workload accounts. It wants resources shared with all accounts in the Workloads OU without invitations, including new accounts, and must ensure that no account in the organization can share resources with principals outside the organization. Which actions should be taken? Select TWO.<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", "", ""], "explanation": "<p><strong>\u2705 Correct answers<\/strong><\/p>\n\n<p><strong>Enable resource sharing with AWS Organizations in AWS RAM and create resource shares that target the Workloads OU.<\/strong><\/p>\n\n<p>When resource sharing with AWS Organizations is enabled, RAM can share the transit gateway and subnets with the Workloads OU without invitations. Accounts that join the OU later get access automatically.<\/p>\n\n<p><strong>Attach an SCP that denies ram:CreateResourceShare and ram:UpdateResourceShare when ram:RequestedAllowsExternalPrincipals is true.<\/strong><\/p>\n\n<p>The ram:RequestedAllowsExternalPrincipals condition key checks whether a create or update request would allow principals outside the organization. Denying those requests in an SCP stops every member account from sharing externally.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Enabling sharing with Organizations lets RAM share with OUs without invitations, and new accounts in the OU receive access automatically. An SCP using the ram:RequestedAllowsExternalPrincipals condition key, which tests the allowExternalPrincipals value in the request, prevents creating or updating shares that allow principals outside the organization.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Create a resource share for each account ID and have each account accept the invitation.<\/strong><\/p>\n\n<p>Per-account shares with invitations require each account to accept manually and do not cover new accounts. They also do nothing to prevent external sharing.<\/p>\n\n<p><strong>Use CloudFormation StackSets to copy the Transit Gateway into every account.<\/strong><\/p>\n\n<p>Transit gateways are shared, not copied. Copying one into each account breaks the central network design and does not stop external sharing.<\/p>\n\n<p><strong>Enable AWS Config in each account to detect external shares.<\/strong><\/p>\n\n<p>Config would only detect external shares after they are created. The requirement is to prevent them.<\/p>", "answers": ["<p>Enable resource sharing with AWS Organizations in AWS RAM and create resource shares that target the Workloads OU.<\/p>", "<p>Create a resource share for each account ID and have each account accept the invitation.<\/p>", "<p>Use CloudFormation StackSets to copy the Transit Gateway into every account.<\/p>", "<p>Attach an SCP that denies ram:CreateResourceShare and ram:UpdateResourceShare when ram:RequestedAllowsExternalPrincipals is true.<\/p>", "<p>Enable AWS Config in each account to detect external shares.<\/p>"]}, "correct_response": ["a", "d"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A network team in a central Network account shares a transit gateway and VPC subnets with workload accounts. It wants resources shared with all accounts in the Workloads OU without invitations, including new accounts, and must ensure that no account in the organization can share resources with principals outside the organization. Which actions should be taken? Select TWO.", "related_lectures": []}, {"_class": "assessment", "id": 900000222, "assessment_type": "multi-select", "prompt": {"question": "<p>A security team wants to use AWS Firewall Manager to apply an AWS WAF web ACL policy automatically to every Application Load Balancer tagged public=true across all accounts in the organization, including accounts added later. Which prerequisites must be in place? Select THREE.<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", "", "", ""], "explanation": "<p><strong>\u2705 Correct answers<\/strong><\/p>\n\n<p><strong>The accounts must be members of an organization in AWS Organizations with all features enabled.<\/strong><\/p>\n\n<p>Firewall Manager depends on AWS Organizations with all features enabled so it can see and apply policies to every account, including accounts added later.<\/p>\n\n<p><strong>An account must be designated as the Firewall Manager administrator.<\/strong><\/p>\n\n<p>A Firewall Manager administrator account must be designated because that is the account where WAF policies are created and managed for the whole organization.<\/p>\n\n<p><strong>AWS Config must be enabled in the member accounts and Regions that the policy covers.<\/strong><\/p>\n\n<p>Firewall Manager uses AWS Config to discover resources such as ALBs tagged public=true. Without Config enabled in the covered accounts and Regions, it cannot find the resources to protect.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>Firewall Manager requires AWS Organizations with all features, a designated Firewall Manager administrator account, and AWS Config enabled in the accounts and Regions in scope so it can discover resources. Its policies then apply to matching resources in new accounts automatically.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>An AWS Shield Advanced subscription must be active in every account.<\/strong><\/p>\n\n<p>Shield Advanced is required only for Shield Advanced policies. A WAF web ACL policy for ALBs works without a Shield Advanced subscription.<\/p>\n\n<p><strong>Amazon GuardDuty must be enabled in every account.<\/strong><\/p>\n\n<p>GuardDuty is a threat detection service and is not a Firewall Manager prerequisite. Firewall Manager needs Organizations, an administrator account, and AWS Config.<\/p>\n\n<p><strong>IAM Identity Center must be enabled in the management account.<\/strong><\/p>\n\n<p>IAM Identity Center handles workforce sign-in and is not required for Firewall Manager. Policies are managed from the Firewall Manager administrator account.<\/p>", "answers": ["<p>The accounts must be members of an organization in AWS Organizations with all features enabled.<\/p>", "<p>An AWS Shield Advanced subscription must be active in every account.<\/p>", "<p>An account must be designated as the Firewall Manager administrator.<\/p>", "<p>Amazon GuardDuty must be enabled in every account.<\/p>", "<p>AWS Config must be enabled in the member accounts and Regions that the policy covers.<\/p>", "<p>IAM Identity Center must be enabled in the management account.<\/p>"]}, "correct_response": ["a", "c", "e"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A security team wants to use AWS Firewall Manager to apply an AWS WAF web ACL policy automatically to every Application Load Balancer tagged public=true across all accounts in the organization, including accounts added later. Which prerequisites must be in place? Select THREE.", "related_lectures": []}, {"_class": "assessment", "id": 900000223, "assessment_type": "multi-select", "prompt": {"question": "<p>A bank is moving a database from self-managed MySQL on Amazon EC2 to Amazon RDS for MySQL. An auditor asks which security tasks remain the bank&#x27;s responsibility after the migration. Which tasks are the customer&#x27;s responsibility? Select TWO.<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", "", ""], "explanation": "<p><strong>\u2705 Correct answers<\/strong><\/p>\n\n<p><strong>Configuring security groups and network access to the DB instance.<\/strong><\/p>\n\n<p>Security groups and network access rules for the DB instance are configured by the customer, so this stays the bank&#x27;s job after moving to RDS.<\/p>\n\n<p><strong>Enabling encryption at rest when the DB instance is created and managing access to the KMS key.<\/strong><\/p>\n\n<p>The customer decides whether to encrypt the RDS instance at creation and controls who can use the KMS key. Data protection settings stay the bank&#x27;s responsibility under the shared responsibility model.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>With a managed service such as RDS, AWS handles the underlying infrastructure, host OS, and database engine patch mechanics, while customers remain responsible for network access controls, encryption choices, database users, and key access. Moving to RDS shifts OS responsibilities to AWS but not data protection configuration.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Patching the operating system of the underlying RDS host.<\/strong><\/p>\n\n<p>On RDS, AWS manages and patches the operating system of the underlying host, so this task moves from the bank to AWS after the migration.<\/p>\n\n<p><strong>Maintaining physical security of the data center.<\/strong><\/p>\n\n<p>Physical data center security is always AWS&#x27;s responsibility, both before and after the migration, so it is not a task that remains with the bank.<\/p>\n\n<p><strong>Patching the hypervisor that runs the DB instance.<\/strong><\/p>\n\n<p>The hypervisor and virtualization layer are AWS&#x27;s responsibility for both EC2 and RDS. The bank never patches them.<\/p>", "answers": ["<p>Patching the operating system of the underlying RDS host.<\/p>", "<p>Configuring security groups and network access to the DB instance.<\/p>", "<p>Maintaining physical security of the data center.<\/p>", "<p>Enabling encryption at rest when the DB instance is created and managing access to the KMS key.<\/p>", "<p>Patching the hypervisor that runs the DB instance.<\/p>"]}, "correct_response": ["b", "d"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A bank is moving a database from self-managed MySQL on Amazon EC2 to Amazon RDS for MySQL. An auditor asks which security tasks remain the bank's responsibility after the migration. Which tasks are the customer's responsibility? Select TWO.", "related_lectures": []}, {"_class": "assessment", "id": 900000224, "assessment_type": "multiple-choice", "prompt": {"question": "<p>A consulting firm regularly finishes client projects and must decommission the associated AWS accounts. Before closing them, it must retain the accounts for 90 days for legal review, with no one able to create or change resources, while a specific break-glass security role can still read data and logs. Which approach is MOST appropriate?<\/p>", "relatedLectureIds": "", "feedbacks": ["", "", "", ""], "explanation": "<p><strong>\u2705 Correct answer<\/strong><\/p>\n\n<p><strong>Move the accounts to a Suspended OU that has an SCP denying all actions except for the break-glass security role.<\/strong><\/p>\n\n<p>A Suspended OU with a deny-all SCP centrally stops everyone in those accounts, including the member account root user, from creating or changing resources during the 90 days. A condition that exempts the break-glass role&#x27;s ARN keeps its read access, and the accounts stay in the organization and governed until closure.<\/p>\n\n<p><strong>Summary:<\/strong><\/p>\n\n<p>A dedicated Suspended OU with a restrictive SCP centrally prevents changes by everyone in those accounts, including the member root user, while a condition on the principal ARN allows the break-glass role. The accounts remain in the organization and governed until final closure.<\/p>\n\n<p><strong>\u274c Incorrect options<\/strong><\/p>\n\n<p><strong>Delete all IAM users and roles in the accounts and remove the accounts from the organization.<\/strong><\/p>\n\n<p>Removing accounts from the organization removes central governance, and deleting identities eliminates the required read access.<\/p>\n\n<p><strong>Attach AWS Config rules that flag any new resources in the accounts.<\/strong><\/p>\n\n<p>Config rules only flag new resources after they are created. They do not prevent anyone from creating or changing resources during the legal hold.<\/p>\n\n<p><strong>Close the accounts immediately with the CloseAccount API so they enter the post-closure period.<\/strong><\/p>\n\n<p>Closed accounts cannot be used for the required legal review with break-glass read access.<\/p>", "answers": ["<p>Delete all IAM users and roles in the accounts and remove the accounts from the organization.<\/p>", "<p>Move the accounts to a Suspended OU that has an SCP denying all actions except for the break-glass security role.<\/p>", "<p>Attach AWS Config rules that flag any new resources in the accounts.<\/p>", "<p>Close the accounts immediately with the CloseAccount API so they enter the post-closure period.<\/p>"]}, "correct_response": ["b"], "section": "Domain 6: Security Foundations and Governance", "question_plain": "A consulting firm regularly finishes client projects and must decommission the associated AWS accounts. Before closing them, it must retain the accounts for 90 days for legal review, with no one able to create or change resources, while a specific break-glass security role can still read data and logs. Which approach is MOST appropriate?", "related_lectures": []}]}</script>
+<script>
+var DATA = JSON.parse(document.getElementById("quiz-data-script").textContent);
+var questions = [];
+var userAnswers = [];
+var flagged = [];
+var checked = [];
+var currentQ = 0;
+var timerInterval = null;
+var seconds = 0;
+var examFinished = false;
+var mode = "exam";
+var selectedMode = "exam";
+var STORAGE_KEY = "attempts_" + DATA.title.replace(/[^a-zA-Z0-9]/g, "_").substring(0, 60);
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function formatTime(sec) {
+  var h = Math.floor(sec / 3600);
+  var m = String(Math.floor((sec % 3600) / 60)).padStart(2, "0");
+  var s = String(sec % 60).padStart(2, "0");
+  if (h > 0) return String(h).padStart(2, "0") + ":" + m + ":" + s;
+  return "00:" + m + ":" + s;
+}
+
+function formatDescription(html) {
+  if (!html) return "";
+  // Convert - bullet points to real bullets if regex matches
+  // Matches "- text<br>" or "- text$"
+  return html.replace(/(?:^|<br>)\s*-\s+(.*?)(?=<br>|$)/g, "<li>$1</li>")
+             .replace(/((?:<li>.*?<\/li>\s*)+)/g, "<ul>$1</ul>");
+}
+
+// ── Helper: Format Answer ──────────────────────────────────
+function formatAnswer(text) {
+  if (!text) return "";
+  if (text.includes("<pre") || text.includes("<code")) return text;
+
+  // Heuristic: If text has newlines and starts with { or [, treat as code (JSON/Array)
+  var trimmed = text.trim();
+  if (trimmed.length > 20 && (trimmed.startsWith("{") || trimmed.startsWith("["))) {
+     try {
+       // Try to parse and re-stringify for perfect indentation
+       var obj = JSON.parse(text);
+       var pretty = JSON.stringify(obj, null, 2);
+       return '<pre><code>' + syntaxHighlight(pretty) + '</code></pre>';
+     } catch(e) {
+       // Fallback for partial/invalid JSON
+       return '<pre><code>' + syntaxHighlight(text) + '</code></pre>';
+     }
+  }
+  return text.replace(/\n/g, "<br>");
+}
+
+function syntaxHighlight(json) {
+    if (typeof json !== 'string') {
+         json = JSON.stringify(json, undefined, 2);
+    }
+    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        var cls = 'highlight-number';
+        if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+                cls = 'highlight-key';
+            } else {
+                cls = 'highlight-string';
+            }
+        } else if (/true|false/.test(match)) {
+            cls = 'highlight-boolean';
+        } else if (/null/.test(match)) {
+            cls = 'highlight-null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+    });
+}
+
+function highlightGeneric(text) {
+    // 1. Strings (double and single quoted)
+    // 2. Comments (// and #)
+    // 3. Keywords
+    // 4. Numbers
+    
+    // HTML Escape first
+    text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    
+    // Comments: // ... or # ...
+    // We must handle strings first to avoid replacing inside strings, but simple regex is hard.
+    // Let's do a simple pass: Tokenize by likely boundaries?
+    // Actually, simple regex replacement order matters. Strings first, then comments? 
+    // But comment markers can be inside strings.
+    // A robust way is to match ALL tokens in one regex.
+    
+    // 5. ARNs and AWS patterns (e.g. arn:aws:..., aws:RequestedRegion) - treat as string/key
+    // Match arn:... or aws:... until end of word or path
+    
+    const re = /("(?:\\.|[^\\"])*"\s*:)|("(?:\\.|[^\\"])*"|'(?:\\.|[^\\'])*')|(\/\/.*$|#.*$|\/\*[\s\S]*?\*\/)|(\b(?:arn|aws):[\w\-:/*.]+\b)|(\b(?:def|class|function|var|let|const|if|else|return|void|int|public|private|static|import|from|try|catch|while|for|switch|case|break|continue|new|this|true|false|null)\b)|(\b\d+(?:\.\d+)?\b)/gm;
+    
+    return text.replace(re, function(match, keyPair, string, comment, aws, keyword, number) {
+        if (keyPair) {
+             return keyPair.replace(/^"((?:\\.|[^\\"])*)"/, '<span class="highlight-key">"$1"</span>');
+        }
+        if (string) return '<span class="highlight-string">' + string + '</span>';
+        if (comment) return '<span class="highlight-comment">' + comment + '</span>';
+        if (aws) return '<span class="highlight-string">' + aws + '</span>'; // Treat ARNs as strings (orange) 
+        if (keyword) return '<span class="highlight-keyword">' + keyword + '</span>';
+        if (number) return '<span class="highlight-number">' + number + '</span>';
+        return match;
+    });
+}
+
+// ── localStorage Attempts ──────────────────────────────────
+
+function getAttempts() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch(e) { return []; }
+}
+
+function saveAttempt(data) {
+  var attempts = getAttempts();
+  attempts.unshift(data);
+  if (attempts.length > 20) attempts = attempts.slice(0, 20);
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(attempts)); } catch(e) {}
+}
+
+function clearAttempts() {
+  if (!confirm("Clear all past attempts for this test?")) return;
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  renderAttempts();
+}
+
+function exportAttempts() {
+  var payload = {quiz: DATA.title, exportedAt: new Date().toISOString(), attempts: getAttempts()};
+  var blob = new Blob([JSON.stringify(payload, null, 2)], {type: "application/json"});
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement("a");
+  link.href = url;
+  link.download = DATA.title.replace(/[^a-zA-Z0-9._-]+/g, "_") + "_attempts.json";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function loadAttempt(idx) {
+  var attempts = getAttempts();
+  var att = attempts[idx];
+  
+  if (!att.snapshot) {
+    alert("This attempt cannot be reviewed because it was saved before the 'Full History' feature was added.\n\nPlease take a new exam to enable detailed review.");
+    return;
+  }
+  
+  // Restore state from snapshot
+  questions = att.snapshot;
+  mode = "review";
+  examFinished = true;
+  userAnswers = att.answers || [];
+  flagged = att.flagged || new Array(questions.length).fill(false);
+  checked = new Array(questions.length).fill(true);
+    
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("scoreScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
+    
+  document.getElementById("exitBtn").classList.remove("hidden");
+  document.getElementById("endExamBtn").classList.add("hidden");
+  document.getElementById("checkRow").classList.add("hidden");
+  document.getElementById("modeBadge").textContent = "History";
+  document.getElementById("modeBadge").className = "mode-badge history";
+    
+  currentQ = 0;
+  activeFilter = "all";
+  activeSection = "all";
+  buildGrid();
+  buildNavFilters();
+  renderQuestion();
+}
+
+function renderAttempts() {
+  var section = document.getElementById("attemptsSection");
+  var attempts = getAttempts();
+  if (attempts.length === 0) {
+    section.innerHTML = "";
+    return;
+  }
+  
+  var passGoal = getPassPercent();
+  
+  var html = '<div class="attempts-header"><h3>📊 Past Attempts</h3><button class="btn btn-ghost" onclick="clearAttempts()">Clear History</button></div>';
+  html += '<table class="attempts-table"><thead><tr><th>Date</th><th>Mode</th><th>Score</th><th>Result</th><th>Time</th><th></th></tr></thead><tbody>';
+  for (var i = 0; i < attempts.length; i++) {
+    var a = attempts[i];
+    var pClass = a.pct >= passGoal ? "pass" : "fail";
+    var canReview = !!a.snapshot;
+    var rowClass = canReview ? "clickable" : "legacy";
+    var title = canReview ? "Click to review attempt" : "Legacy attempt (score only)";
+    
+    html += '<tr class="' + rowClass + '" onclick="loadAttempt(' + i + ')" title="' + title + '">';
+    html += '<td>' + a.date + '</td>';
+    html += '<td><span class="attempt-mode ' + a.mode + '">' + a.mode + '</span></td>';
+    html += '<td>' + a.correct + '/' + a.total + '</td>';
+    html += '<td><span class="attempt-score ' + pClass + '">' + a.pct + '%</span></td>';
+    html += '<td>' + a.time + '</td>';
+    html += '<td>' + (canReview ? '<span style="font-size:14px">👁️</span>' : '<span style="opacity:0.3">🚫</span>') + '</td>';
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  section.innerHTML = html;
+}
+
+// ── Init ────────────────────────────────────────────────────
+
+function getPassPercent() {
+  // Logic: 
+  // If pass_score is provided and > 100, assuming it's a scaled score (e.g. 720/1000) -> 72%
+  // If pass_score is <= 100, assume it's the percentage.
+  // Default to 72% if missing.
+  if (DATA.pass_score) {
+    if (DATA.pass_score > 100) return Math.round(DATA.pass_score / 10);
+    return DATA.pass_score;
+  }
+  return 72; // Default
+}
+
+function init() {
+  document.getElementById("examTitle").textContent = DATA.title;
+  document.getElementById("headerTitle").textContent = DATA.title;
+  document.getElementById("examCount").textContent = DATA.assessments.length + " Questions";
+  
+  // Initial shuffle for fresh start
+  initQuestions();
+  renderAttempts();
+  renderQuickStats();
+}
+
+function renderQuickStats() {
+  var container = document.getElementById("quickStats");
+  var attempts = getAttempts();
+  if (attempts.length === 0) { container.innerHTML = ""; return; }
+  var passGoal = getPassPercent();
+  var best = 0, last = attempts[0].pct;
+  for (var i = 0; i < attempts.length; i++) { if (attempts[i].pct > best) best = attempts[i].pct; }
+  var bClass = best >= passGoal ? "pass" : "fail";
+  var lClass = last >= passGoal ? "pass" : "fail";
+  container.innerHTML = '<span class="quick-stat">Best: <span class="qs-val ' + bClass + '">' + best + '%</span></span>' +
+    '<span class="quick-stat">Last: <span class="qs-val ' + lClass + '">' + last + '%</span></span>' +
+    '<span class="quick-stat">Attempts: <span class="qs-val">' + attempts.length + '</span></span>';
+}
+
+function initQuestions() {
+  var indexed = DATA.assessments.map(function(a, i) { return Object.assign({}, a, {_origIdx: i}); });
+  questions = shuffle(indexed);
+
+  questions.forEach(function(q) {
+    var prompt = q.prompt;
+    var isMulti = q.assessment_type === "multi-select" || q.correct_response.length > 1;
+    q._isMulti = isMulti;
+    var answers = prompt.answers.map(function(ans, i) { return {text: ans, origLetter: String.fromCharCode(97 + i)}; });
+    var shuffled = shuffle(answers);
+    q._shuffledAnswers = shuffled;
+    // Map correct response letters to indices in the shuffled array
+    q._correctMapped = q.correct_response.map(function(cr) { return shuffled.findIndex(function(s) { return s.origLetter === cr; }); });
+  });
+}
+
+// ── Mode Selection → Info Panel ─────────────────────────────
+
+function selectMode(m) {
+  selectedMode = m;
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("infoPanel").classList.remove("hidden");
+
+  document.getElementById("infoTitle").textContent = DATA.title;
+  document.getElementById("infoQuestions").textContent = DATA.assessments.length;
+  
+  // Time/Pass metadata
+  var dur = DATA.duration || Math.round(DATA.assessments.length * 2); // default 2 min/q if unknown
+  document.getElementById("infoTime").textContent = dur + " min";
+  var pass = getPassPercent();
+  document.getElementById("infoPass").textContent = pass + "%";
+  
+  // Prepare description
+  var descEl = document.getElementById("infoDesc");
+  if (DATA.description) {
+    descEl.innerHTML = formatDescription(DATA.description);
+    descEl.style.display = "";
+  } else {
+    descEl.style.display = "none";
+  }
+}
+
+function goBackToStart() {
+  document.getElementById("infoPanel").classList.add("hidden");
+  document.getElementById("startScreen").classList.remove("hidden");
+  document.getElementById("scoreScreen").classList.add("hidden");
+  renderAttempts();
+  renderQuickStats();
+}
+
+function exitReview() {
+  showModal("📚", "Exit Review?", "Return to the start screen?", "Exit", function() {
+    closeModal();
+    clearInterval(timerInterval);
+    document.getElementById("quizScreen").classList.add("hidden");
+    document.getElementById("startScreen").classList.remove("hidden");
+    document.getElementById("exitBtn").classList.add("hidden");
+    document.getElementById("navFilters").innerHTML = "";
+    document.getElementById("navSummary").innerHTML = "";
+    activeFilter = "all";
+    activeSection = "all";
+    initQuestions();
+    renderAttempts();
+    renderQuickStats();
+  }, function() { closeModal(); });
+}
+
+// ── Start Exam ──────────────────────────────────────────────
+
+function startExam() {
+  mode = selectedMode;
+  var badge = document.getElementById("modeBadge");
+  badge.textContent = mode === "exam" ? "Exam" : "Review";
+  badge.className = "mode-badge " + mode;
+  badge.classList.remove("hidden");
+
+  // Re-shuffle for new exam
+  initQuestions();
+
+  userAnswers = [];
+  flagged = [];
+  checked = [];
+  for (var i = 0; i < questions.length; i++) {
+    userAnswers.push([]);
+    flagged.push(false);
+    checked.push(false);
+  }
+  currentQ = 0;
+  seconds = DATA.duration ? DATA.duration * 60 : 0;
+  examFinished = false;
+
+  document.getElementById("infoPanel").classList.add("hidden");
+  document.getElementById("scoreScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
+  
+  // Show/Hide buttons
+  document.getElementById("exitBtn").classList.remove("hidden"); // Exit button always useful?
+  document.getElementById("endExamBtn").classList.remove("hidden");
+
+  if (mode === "review") {
+    document.getElementById("checkRow").classList.remove("hidden");
+    document.getElementById("liveScore").classList.remove("hidden");
+    document.getElementById("exitBtn").classList.remove("hidden"); 
+    updateLiveScore();
+  } else {
+    document.getElementById("checkRow").classList.add("hidden");
+    document.getElementById("liveScore").classList.add("hidden");
+  }
+
+  buildGrid();
+  activeFilter = "all";
+  activeSection = "all";
+  buildNavFilters();
+  renderQuestion();
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  var isCountdown = !!DATA.duration;
+  var timerEl = document.getElementById("timer");
+  
+  timerInterval = setInterval(function() {
+    if (isCountdown) {
+      seconds--;
+      if (seconds <= 0) {
+        seconds = 0;
+        clearInterval(timerInterval);
+        showModal("⏱", "Time's Up!", "Your time has expired. The exam will now be scored.", "View Results", function() { closeModal(); examFinished = true; clearInterval(timerInterval); showScore(); }, null);
+        return;
+      }
+      // Timer urgency
+      if (seconds <= 60) { timerEl.className = "timer critical"; }
+      else if (seconds <= 300) { timerEl.className = "timer urgent"; }
+      else { timerEl.className = "timer"; }
+    } else {
+      seconds++;
+      timerEl.className = "timer";
+    }
+    timerEl.textContent = formatTime(seconds);
+  }, 1000);
+  
+  timerEl.textContent = formatTime(seconds);
+  timerEl.className = "timer";
+}
+
+// ── Live Score (Review Mode) ────────────────────────────────
+
+function updateLiveScore() {
+  if (mode !== "review") return;
+  var answered = 0, correct = 0;
+  for (var i = 0; i < questions.length; i++) {
+    if (checked[i]) {
+      answered++;
+      if (checkCorrect(i)) correct++;
+    }
+  }
+  var el = document.getElementById("liveScore");
+  if (answered === 0) {
+    el.textContent = "Score: 0/0";
+    el.className = "live-score";
+  } else {
+    var pct = Math.round(correct / answered * 100);
+    var pass = getPassPercent();
+    el.textContent = "Score: " + correct + "/" + answered + " (" + pct + "%)";
+    el.className = "live-score" + (pct < pass ? " failing" : "");
+  }
+}
+
+// ── Grid ────────────────────────────────────────────────────
+
+function buildGrid() {
+  var grid = document.getElementById("qGrid");
+  grid.innerHTML = "";
+  for (var i = 0; i < questions.length; i++) {
+    var dot = document.createElement("div");
+    dot.className = "q-dot";
+    dot.textContent = i + 1;
+    dot.setAttribute("data-index", i);
+    dot.onclick = function() {
+      currentQ = parseInt(this.getAttribute("data-index"));
+      renderQuestion();
+      window.scrollTo(0, 0);
+    };
+    grid.appendChild(dot);
+  }
+}
+
+function updateGrid() {
+  var dots = document.querySelectorAll(".q-dot");
+  for (var i = 0; i < dots.length; i++) {
+    var dot = dots[i];
+    dot.className = "q-dot";
+    if (i === currentQ) dot.classList.add("current");
+
+    if (examFinished) {
+      if (userAnswers[i].length > 0) {
+        if (checkCorrect(i)) dot.classList.add("correct-dot");
+        else dot.classList.add("incorrect-dot");
+      }
+    } else if (mode === "review" && checked[i]) {
+      if (checkCorrect(i)) dot.classList.add("correct-dot");
+      else dot.classList.add("incorrect-dot");
+    } else if (userAnswers[i].length > 0) {
+      dot.classList.add("answered");
+    }
+    if (flagged[i]) dot.classList.add("flagged");
+  }
+}
+
+function checkCorrect(qi) {
+  var q = questions[qi];
+  var correct = q._correctMapped.slice().sort().join(",");
+  var user = userAnswers[qi].slice().sort().join(",");
+  return correct === user && user !== "";
+}
+
+// ── Render Question ─────────────────────────────────────────
+
+function renderQuestion() {
+  var q = questions[currentQ];
+  var prompt = q.prompt;
+  var isMulti = q._isMulti;
+  var isChecked = checked[currentQ];
+  var showAnswer = examFinished || (mode === "review" && isChecked);
+
+  // Trigger animation
+  var content = document.getElementById("quizContent");
+  content.style.animation = "none";
+  content.offsetHeight; // reflow
+  content.style.animation = "";
+
+  document.getElementById("qNumber").textContent = "Question " + (currentQ + 1) + " of " + questions.length;
+  document.getElementById("qSection").textContent = q.section || "";
+  document.getElementById("qSection").style.display = q.section ? "" : "none";
+
+  var typeEl = document.getElementById("qType");
+  if (isMulti) {
+    typeEl.innerHTML = "☑ Select " + q.correct_response.length + " answers";
+  } else {
+    typeEl.innerHTML = "◉ Select one answer";
+  }
+
+  var qTextField = document.getElementById("qText");
+  qTextField.innerHTML = prompt.question || "";
+  
+  // Fix list styling
+  if(qTextField.innerHTML.includes("- ")) {
+       qTextField.innerHTML = formatDescription(qTextField.innerHTML);
+  }
+  
+  // 0. Coalesce adjacent <p><code>...</code></p> blocks into <pre>...</pre>
+  // Udemy often renders code blocks as separate paragraphs, causing "striped" styling.
+  var children = Array.from(qTextField.children);
+  var currentBlock = [];
+  
+  function processBlock(nodes) {
+      if (nodes.length === 0) return;
+      
+      // If it's a single line but looks like a standalone code block (starts with { or [), convert to pre
+      // If it's just a variable name in a P, maybe keep it? 
+      // User complaint was "background on every line", which implies multi-line.
+      if (nodes.length === 1 && nodes[0].textContent.trim().length < 50 && !nodes[0].textContent.trim().match(/[{[]/)) {
+          return; 
+      }
+
+      var first = nodes[0];
+      var pre = document.createElement("pre");
+      // Join with newlines and Normalize non-breaking spaces to regular spaces
+      var combinedText = nodes.map(function(n) { return n.textContent; }).join("\n").replace(/\u00A0/g, " ");
+      pre.textContent = combinedText;
+      
+      first.parentNode.insertBefore(pre, first);
+      nodes.forEach(function(n) { n.remove(); });
+  }
+
+  children.forEach(function(child) {
+      var isCodeP = false;
+      if (child.tagName === "P") {
+          var code = child.querySelector("code");
+          // Check if P contains *only* code (ignoring whitespace)
+          if (code && child.textContent.trim() === code.textContent.trim()) {
+              isCodeP = true;
+          }
+      }
+
+      if (isCodeP) {
+          currentBlock.push(child);
+      } else {
+          processBlock(currentBlock);
+          currentBlock = [];
+      }
+  });
+  processBlock(currentBlock);
+
+  // Auto-highlight code blocks in question
+  var codeBlocks = qTextField.querySelectorAll("pre, code");
+  codeBlocks.forEach(function(block) {
+      // Skip code elements that are inside pre (avoid double highlight)
+      if (block.tagName === 'CODE' && block.closest('pre')) return;
+
+      var txt = block.textContent;
+      try {
+         var trimmed = txt.trim();
+         // Only attempt JSON parse if it's a PRE block (likely full JSON)
+         if (block.tagName === 'PRE' && (trimmed.startsWith("{") || trimmed.startsWith("["))) {
+             var obj = JSON.parse(trimmed);
+             var pretty = JSON.stringify(obj, null, 2);
+             block.innerHTML = '<code>' + syntaxHighlight(pretty) + '</code>';
+         } else {
+             // Use generic highlighter
+             if (block.tagName === 'PRE') {
+                block.innerHTML = '<code>' + highlightGeneric(txt) + '</code>';
+             } else {
+                block.innerHTML = highlightGeneric(txt);
+             }
+         }
+      } catch(e) {
+         if (block.tagName === 'PRE') {
+            block.innerHTML = '<code>' + highlightGeneric(txt) + '</code>';
+         } else {
+            block.innerHTML = highlightGeneric(txt);
+         }
+      }
+      // Ensure strict styling
+      block.style.textDecoration = "none";
+  });
+  
+  document.getElementById("progressFill").style.width = ((currentQ + 1) / questions.length * 100) + "%";
+  var answered = userAnswers.filter(function(a){ return a.length > 0; }).length;
+  document.getElementById("progressCounter").textContent = answered + " / " + questions.length;
+
+  // Answers
+  var container = document.getElementById("answers");
+  container.innerHTML = "";
+  for (var i = 0; i < q._shuffledAnswers.length; i++) {
+    (function(idx) {
+      var ans = q._shuffledAnswers[idx];
+      var div = document.createElement("div");
+      var isSelected = userAnswers[currentQ].indexOf(idx) >= 0;
+      var isCorrectAnswer = q._correctMapped.indexOf(idx) >= 0;
+
+      div.className = "answer";
+      if (isSelected) div.classList.add("selected");
+      if (showAnswer) {
+        div.classList.add("locked");
+        if (isCorrectAnswer && isSelected) div.classList.add("correct");
+        else if (isCorrectAnswer && !isSelected) div.classList.add("missed");
+        else if (isSelected && !isCorrectAnswer) div.classList.add("incorrect");
+      }
+
+      var indicatorClass = isMulti ? "answer-indicator checkbox" : "answer-indicator";
+      var checkmark = isMulti ? "✓" : "";
+
+      // Build answer inner HTML with tag
+      var innerHtml = '<div class="' + indicatorClass + '"><div class="dot">' + checkmark + '</div></div>';
+      innerHtml += '<div class="answer-text">' + formatAnswer(ans.text) + '</div>';
+
+      // Add copyable label tags when showing answers
+      if (showAnswer) {
+        if (isSelected && isCorrectAnswer) {
+          innerHtml += '<span class="answer-tag tag-correct">✓ Your Answer (Correct)</span>';
+        } else if (isSelected && !isCorrectAnswer) {
+          innerHtml += '<span class="answer-tag tag-wrong">✗ Your Answer (Wrong)</span>';
+        } else if (isCorrectAnswer && !isSelected) {
+          innerHtml += '<span class="answer-tag tag-missed">✓ Correct Answer</span>';
+        }
+      }
+
+      div.innerHTML = innerHtml;
+
+      if (!showAnswer) {
+        div.onclick = function() {
+          if (isMulti) {
+            var pos = userAnswers[currentQ].indexOf(idx);
+            if (pos >= 0) userAnswers[currentQ].splice(pos, 1);
+            else userAnswers[currentQ].push(idx);
+          } else {
+            userAnswers[currentQ] = [idx];
+          }
+          // Pulse animation
+          div.classList.add("just-selected");
+          setTimeout(function(){ div.classList.remove("just-selected"); }, 300);
+          renderQuestion();
+        };
+      }
+      container.appendChild(div);
+      
+      // Auto-highlight code blocks in this answer
+      var ansCodes = div.querySelectorAll(".answer-text code");
+      ansCodes.forEach(function(c) {
+          // If it doesn't already have highlighting classes...
+          if (!c.querySelector("span[class^='highlight-']")) {
+             c.innerHTML = highlightGeneric(c.textContent);
+          }
+      });
+      
+    })(i);
+  }
+
+  // Result banner (review mode)
+  var banner = document.getElementById("resultBanner");
+  if (showAnswer && userAnswers[currentQ].length > 0) {
+    var isRight = checkCorrect(currentQ);
+    banner.className = "result-banner show " + (isRight ? "banner-correct" : "banner-incorrect");
+    banner.textContent = isRight ? "✓ Correct!" : "✗ Incorrect";
+  } else {
+    banner.className = "result-banner";
+  }
+
+  // Check button (review mode only)
+  if (mode === "review" && !examFinished) {
+    var checkBtn = document.getElementById("checkBtn");
+    checkBtn.disabled = userAnswers[currentQ].length === 0 || isChecked;
+    checkBtn.textContent = isChecked ? "✓ Checked" : "Check Answer";
+  }
+
+  // Explanation
+  var expl = document.getElementById("explanation");
+  var explBody = document.getElementById("explanationBody");
+  if (showAnswer && prompt.explanation) {
+    explBody.innerHTML = prompt.explanation;
+    // Open links in new tab
+    var links = explBody.querySelectorAll("a");
+    for (var li = 0; li < links.length; li++) { links[li].setAttribute("target", "_blank"); links[li].setAttribute("rel", "noopener"); }
+    expl.classList.add("show");
+  } else {
+    expl.classList.remove("show");
+  }
+
+  // Nav buttons
+  document.getElementById("prevBtn").disabled = currentQ === 0;
+  var nextBtn = document.getElementById("nextBtn");
+  if (currentQ === questions.length - 1 && !examFinished) {
+    nextBtn.textContent = mode === "exam" ? "Finish Exam →" : "See Results →";
+  } else {
+    nextBtn.textContent = "Next →";
+  }
+  nextBtn.disabled = currentQ === questions.length - 1 && examFinished;
+
+  // Flag
+  var flagBtn = document.getElementById("flagBtn");
+  flagBtn.className = "bookmark-btn" + (flagged[currentQ] ? " bookmarked" : "");
+
+  updateGrid();
+  updateNavSummary();
+}
+
+function checkAnswer() {
+  if (checked[currentQ] || userAnswers[currentQ].length === 0) return;
+  checked[currentQ] = true;
+  updateLiveScore();
+  renderQuestion();
+}
+
+function navigate(dir) {
+  if (dir === 1 && currentQ === questions.length - 1 && !examFinished) {
+    endExam();
+    return;
+  }
+  currentQ = Math.max(0, Math.min(questions.length - 1, currentQ + dir));
+  renderQuestion();
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function toggleFlag() {
+  flagged[currentQ] = !flagged[currentQ];
+  renderQuestion();
+}
+
+// ── End Exam ────────────────────────────────────────────────
+
+function endExam() {
+  if (mode === "exam") {
+    var answeredCount = userAnswers.filter(function(a) { return a.length > 0; }).length;
+    var unanswered = questions.length - answeredCount;
+    var flaggedCount = flagged.filter(Boolean).length;
+    var statsHtml = '<div class="modal-stats">' +
+      '<div class="modal-stat s-answered">✓ ' + answeredCount + ' answered</div>' +
+      '<div class="modal-stat s-unanswered">⊘ ' + unanswered + ' unanswered</div>' +
+      (flaggedCount > 0 ? '<div class="modal-stat s-flagged">🔖 ' + flaggedCount + ' flagged</div>' : '') +
+      '</div>';
+    showModal("🏁", "End Exam?", statsHtml + '<p style="color:#6b7280;font-size:13px">You cannot change your answers after submitting.</p>', "Submit Exam", function() {
+      closeModal();
+      clearInterval(timerInterval);
+      examFinished = true;
+      showScore();
+    }, function() { closeModal(); });
+    return;
+  }
+
+  clearInterval(timerInterval);
+  examFinished = true;
+  showScore();
+}
+
+// ── Custom Modal ────────────────────────────────────────────
+
+function showModal(icon, title, bodyHtml, confirmText, onConfirm, onCancel) {
+  var overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+  overlay.id = "customModal";
+  var cancelBtn = onCancel ? '<button class="btn btn-outline" onclick="if(window._modalCancel) window._modalCancel()">Cancel</button>' : '';
+  overlay.innerHTML = '<div class="modal-card">' +
+    '<div class="modal-icon">' + icon + '</div>' +
+    '<div class="modal-title">' + title + '</div>' +
+    '<div class="modal-body">' + bodyHtml + '</div>' +
+    '<div class="modal-actions">' + cancelBtn +
+    '<button class="btn btn-primary" onclick="if(window._modalConfirm) window._modalConfirm()">' + confirmText + '</button>' +
+    '</div></div>';
+  document.body.appendChild(overlay);
+  window._modalConfirm = onConfirm;
+  window._modalCancel = onCancel;
+}
+
+function closeModal() {
+  var m = document.getElementById("customModal");
+  if (m) m.remove();
+  window._modalConfirm = null;
+  window._modalCancel = null;
+}
+
+function showScore() {
+  var correct = 0, incorrect = 0, skipped = 0;
+  var sections = {};
+
+  for (var i = 0; i < questions.length; i++) {
+    var q = questions[i];
+    var sec = q.section || "General";
+    if (!sections[sec]) sections[sec] = {correct: 0, total: 0};
+    sections[sec].total++;
+
+    if (userAnswers[i].length === 0) {
+      skipped++;
+    } else if (checkCorrect(i)) {
+      correct++;
+      sections[sec].correct++;
+    } else {
+      incorrect++;
+    }
+  }
+
+  var pct = Math.round(correct / questions.length * 100);
+  var passGoal = getPassPercent();
+  var pass = pct >= passGoal;
+
+  // Save attempt with FULL SNAPSHOT (expensive but needed for review)
+  var now = new Date();
+  var dateStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0") + " " + String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
+  
+  // Create snapshot of questions (so we know which answer was which if we reload)
+  var snapshot = questions.map(function(q) {
+     return {
+         prompt: q.prompt, 
+         _shuffledAnswers: q._shuffledAnswers,
+         _correctMapped: q._correctMapped,
+         _isMulti: q._isMulti,
+         section: q.section,
+         correct_response: q.correct_response, // needed?
+         assessment_type: q.assessment_type
+     };
+  });
+
+  saveAttempt({
+    date: dateStr,
+    mode: mode,
+    correct: correct,
+    incorrect: incorrect,
+    skipped: skipped,
+    total: questions.length,
+    pct: pct,
+    time: document.getElementById("timer").textContent, // capture final timer value
+    answers: userAnswers,
+    flagged: flagged,
+    snapshot: snapshot // heavy data!
+  });
+
+  document.getElementById("quizScreen").classList.add("hidden");
+  document.getElementById("scoreScreen").classList.remove("hidden");
+  document.getElementById("endExamBtn").classList.add("hidden");
+  document.getElementById("liveScore").classList.add("hidden");
+  document.getElementById("exitBtn").classList.add("hidden");
+
+  document.getElementById("scorePct").textContent = pct + "%";
+  document.getElementById("scoreStatus").textContent = pass ? "PASSED" : "NOT PASSED";
+  
+  // Animated ring
+  var ring = document.getElementById("scoreCircle");
+  var ringColor = pass ? "#10b981" : "#ef4444";
+  var degrees = Math.round(pct * 3.6);
+  ring.style.setProperty("--ring-color", ringColor);
+  ring.style.background = "conic-gradient(" + ringColor + " 0deg, #2d2f31 0deg)";
+  setTimeout(function() {
+    ring.style.transition = "background 1.2s ease-out";
+    ring.style.background = "conic-gradient(" + ringColor + " " + degrees + "deg, #2d2f31 " + degrees + "deg)";
+  }, 50);
+  
+  document.getElementById("scoreCorrect").textContent = correct;
+  document.getElementById("scoreIncorrect").textContent = incorrect;
+  document.getElementById("scoreSkipped").textContent = skipped;
+  var avgSec = Math.round(seconds > 0 ? seconds / questions.length : 0);
+  var avgStr = avgSec >= 60 ? Math.floor(avgSec/60) + "m " + (avgSec%60) + "s" : avgSec + "s";
+  document.getElementById("scoreTime").textContent = "⏱ Time: " + document.getElementById("timer").textContent + "  ·  avg " + avgStr + "/question";
+
+  // Trend line
+  var allAttempts = getAttempts();
+  var trendEl = document.getElementById("scoreTrend");
+  if (allAttempts.length > 1) {
+    var recent = allAttempts.slice(0, 5).reverse();
+    var tHtml = '<span style="font-size:12px;color:#6b7280">Trend:</span> ';
+    for (var t = 0; t < recent.length; t++) {
+      if (t > 0) tHtml += '<span class="trend-arrow">→</span> ';
+      var tc = recent[t].pct >= passGoal ? "pass" : "fail";
+      tHtml += '<span class="trend-dot ' + tc + '">' + recent[t].pct + '%</span> ';
+    }
+    trendEl.innerHTML = tHtml;
+  } else { trendEl.innerHTML = ""; }
+
+  // Section breakdown with bars
+  var bd = document.getElementById("sectionBreakdown");
+  bd.innerHTML = '<h3 style="margin-bottom:12px;font-size:16px;color:#a0a0a0">Section Breakdown</h3>';
+  var secKeys = Object.keys(sections).sort();
+  for (var j = 0; j < secKeys.length; j++) {
+    var secName = secKeys[j];
+    var s = sections[secName];
+    var sp = Math.round(s.correct / s.total * 100);
+    var color = sp >= passGoal ? "#10b981" : sp >= 50 ? "#f59e0b" : "#ef4444";
+    bd.innerHTML += '<div class="section-row">' +
+      '<div class="section-row-header"><span class="sec-name">' + secName + '</span><span class="sec-score" style="color:' + color + '">' + s.correct + '/' + s.total + ' (' + sp + '%)</span></div>' +
+      '<div class="section-bar"><div class="section-bar-fill" style="width:' + sp + '%;background:' + color + '"></div></div>' +
+      '</div>';
+  }
+}
+
+// ── Navigator Filters (Dropdowns) ───────────────────────────
+
+var activeFilter = "all";
+var activeSection = "all";
+var activeSearch = "";
+var filteredIndices = [];
+
+function buildNavFilters() {
+  var container = document.getElementById("navFilters");
+  
+  // Collect sections
+  var sections = [];
+  var seenSections = {};
+  for (var i = 0; i < questions.length; i++) {
+    var sec = questions[i].section || "";
+    if (sec && !seenSections[sec]) {
+      seenSections[sec] = true;
+      sections.push(sec);
+    }
+  }
+  sections.sort();
+  
+  // Build question filter dropdown
+  var html = '<div class="filter-dropdown" id="questionFilterDD">';
+  html += '<button class="filter-dropdown-btn" onclick="toggleDropdown(\'questionFilterMenu\')">';
+  html += '<span id="questionFilterLabel">All questions</span> <span class="arrow">&#9660;</span></button>';
+  html += '<div class="filter-dropdown-menu" id="questionFilterMenu">';
+  html += buildFilterItems();
+  html += '</div></div>';
+  
+  // Build section dropdown (only if multiple sections)
+  if (sections.length > 1) {
+    html += '<div class="filter-dropdown" id="sectionFilterDD">';
+    html += '<button class="filter-dropdown-btn" onclick="toggleDropdown(\'sectionFilterMenu\')">';
+    html += '<span id="sectionFilterLabel">All domains</span> <span class="arrow">&#9660;</span></button>';
+    html += '<div class="filter-dropdown-menu" id="sectionFilterMenu">';
+    html += '<div class="filter-dropdown-item active" data-section="all" onclick="pickSection(\'all\')">All domains</div>';
+    for (var j = 0; j < sections.length; j++) {
+      var escaped = sections[j].replace(/"/g, '&quot;').replace(/'/g, "\\'");
+      html += '<div class="filter-dropdown-item" data-section="' + sections[j].replace(/"/g, '&quot;') + '" onclick="pickSection(\'' + escaped + '\')">' + sections[j] + '</div>';
+    }
+    html += '</div></div>';
+  }
+  
+  html += '<input class="question-search" type="search" placeholder="Search questions" aria-label="Search questions" oninput="setQuestionSearch(this.value)">';
+  container.innerHTML = html;
+}
+
+function setQuestionSearch(value) {
+  activeSearch = (value || "").toLowerCase().trim();
+  applyFilters();
+  if (filteredIndices.length > 0 && filteredIndices.indexOf(currentQ) < 0) currentQ = filteredIndices[0];
+  renderQuestion();
+}
+
+function buildFilterItems() {
+  var items = '';
+  if (examFinished || (mode === "review")) {
+    // Post-exam or review: show result-based filters
+    items += '<div class="filter-dropdown-item active" data-filter="all" onclick="pickFilter(\'all\')">All questions</div>';
+    items += '<div class="filter-dropdown-item" data-filter="correct" onclick="pickFilter(\'correct\')">Correct</div>';
+    items += '<div class="filter-dropdown-item" data-filter="incorrect" onclick="pickFilter(\'incorrect\')">Incorrect</div>';
+    items += '<div class="filter-dropdown-item" data-filter="skipped" onclick="pickFilter(\'skipped\')">Skipped</div>';
+    items += '<div class="filter-dropdown-item" data-filter="flagged" onclick="pickFilter(\'flagged\')">Marked for review</div>';
+    items += '<div class="filter-dropdown-item" data-filter="unanswered" onclick="pickFilter(\'unanswered\')">Not answered yet</div>';
+  } else {
+    // During exam: show status-based filters
+    items += '<div class="filter-dropdown-item active" data-filter="all" onclick="pickFilter(\'all\')">All questions</div>';
+    items += '<div class="filter-dropdown-item" data-filter="answered" onclick="pickFilter(\'answered\')">Answered</div>';
+    items += '<div class="filter-dropdown-item" data-filter="unanswered" onclick="pickFilter(\'unanswered\')">Not answered yet</div>';
+    items += '<div class="filter-dropdown-item" data-filter="flagged" onclick="pickFilter(\'flagged\')">Marked for review</div>';
+  }
+  return items;
+}
+
+function toggleDropdown(menuId) {
+  var menu = document.getElementById(menuId);
+  var isOpen = menu.classList.contains("show");
+  // Close all dropdowns first
+  closeAllDropdowns();
+  if (!isOpen) menu.classList.add("show");
+}
+
+function closeAllDropdowns() {
+  var menus = document.querySelectorAll(".filter-dropdown-menu");
+  for (var i = 0; i < menus.length; i++) menus[i].classList.remove("show");
+}
+
+// Close dropdowns on outside click
+document.addEventListener("click", function(e) {
+  if (!e.target.closest(".filter-dropdown")) closeAllDropdowns();
+});
+
+function pickFilter(f) {
+  activeFilter = f;
+  closeAllDropdowns();
+  
+  // Update label
+  var labelMap = {all:"All questions", correct:"Correct", incorrect:"Incorrect", skipped:"Skipped", flagged:"Marked for review", unanswered:"Not answered yet", answered:"Answered"};
+  var el = document.getElementById("questionFilterLabel");
+  if (el) el.textContent = labelMap[f] || f;
+  
+  // Update active state in menu
+  var items = document.querySelectorAll("#questionFilterMenu .filter-dropdown-item");
+  for (var i = 0; i < items.length; i++) {
+    items[i].classList.toggle("active", items[i].getAttribute("data-filter") === f);
+  }
+  
+  applyFilters();
+  if (filteredIndices.length > 0 && filteredIndices.indexOf(currentQ) < 0) {
+    currentQ = filteredIndices[0];
+  }
+  renderQuestion();
+}
+
+function pickSection(s) {
+  activeSection = s;
+  closeAllDropdowns();
+  
+  var el = document.getElementById("sectionFilterLabel");
+  if (el) el.textContent = s === "all" ? "All domains" : s;
+  
+  var items = document.querySelectorAll("#sectionFilterMenu .filter-dropdown-item");
+  for (var i = 0; i < items.length; i++) {
+    items[i].classList.toggle("active", items[i].getAttribute("data-section") === s);
+  }
+  
+  applyFilters();
+  if (filteredIndices.length > 0 && filteredIndices.indexOf(currentQ) < 0) {
+    currentQ = filteredIndices[0];
+  }
+  renderQuestion();
+}
+
+function applyFilters() {
+  filteredIndices = [];
+  for (var i = 0; i < questions.length; i++) {
+    if (activeSearch) {
+      var searchable = ((questions[i].question_plain || "") + " " + (questions[i].section || "")).toLowerCase();
+      if (searchable.indexOf(activeSearch) < 0) continue;
+    }
+    // Section filter
+    if (activeSection !== "all") {
+      var sec = questions[i].section || "";
+      if (sec !== activeSection) continue;
+    }
+    // Type filter
+    if (activeFilter === "correct") {
+      if (userAnswers[i].length === 0 || !checkCorrect(i)) continue;
+    } else if (activeFilter === "incorrect") {
+      if (userAnswers[i].length === 0 || checkCorrect(i)) continue;
+    } else if (activeFilter === "skipped") {
+      if (userAnswers[i].length > 0) continue;
+    } else if (activeFilter === "flagged") {
+      if (!flagged[i]) continue;
+    } else if (activeFilter === "unanswered") {
+      if (userAnswers[i].length > 0) continue;
+    } else if (activeFilter === "answered") {
+      if (userAnswers[i].length === 0) continue;
+    }
+    filteredIndices.push(i);
+  }
+  updateFilteredGrid();
+}
+
+function updateFilteredGrid() {
+  var dots = document.querySelectorAll(".q-dot");
+  for (var i = 0; i < dots.length; i++) {
+    if (activeFilter === "all" && activeSection === "all") {
+      dots[i].style.display = "";
+    } else {
+      dots[i].style.display = filteredIndices.indexOf(i) >= 0 ? "" : "none";
+    }
+  }
+}
+
+function reviewFromScore() {
+  document.getElementById("scoreScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
+  document.getElementById("checkRow").classList.add("hidden");
+  document.getElementById("exitBtn").classList.remove("hidden");
+  activeFilter = "all";
+  activeSection = "all";
+  buildNavFilters();
+  applyFilters();
+  currentQ = filteredIndices.length > 0 ? filteredIndices[0] : 0;
+  renderQuestion();
+}
+
+function retakeExam() {
+  document.getElementById("scoreScreen").classList.add("hidden");
+  document.getElementById("startScreen").classList.remove("hidden");
+  document.getElementById("endExamBtn").classList.add("hidden");
+  document.getElementById("modeBadge").classList.add("hidden");
+  document.getElementById("liveScore").classList.add("hidden");
+  document.getElementById("timer").textContent = "00:00:00";
+  document.getElementById("timer").className = "timer";
+  document.getElementById("navFilters").innerHTML = "";
+  document.getElementById("navSummary").innerHTML = "";
+  activeFilter = "all";
+  activeSection = "all";
+  renderAttempts();
+  renderQuickStats();
+}
+
+// ── Navigator Summary Chips ─────────────────────────────────
+
+function updateNavSummary() {
+  var el = document.getElementById("navSummary");
+  if (!el || !questions.length) return;
+  var answeredN = 0, flaggedN = 0, correctN = 0, incorrectN = 0;
+  for (var i = 0; i < questions.length; i++) {
+    if (userAnswers[i].length > 0) answeredN++;
+    if (flagged[i]) flaggedN++;
+    if (examFinished) {
+      if (userAnswers[i].length > 0) {
+        if (checkCorrect(i)) correctN++; else incorrectN++;
+      }
+    }
+  }
+  var chips = '';
+  if (examFinished) {
+    chips += '<span class="nav-chip"><span class="chip-dot c-correct"></span> ' + correctN + ' correct</span>';
+    chips += '<span class="nav-chip"><span class="chip-dot c-incorrect"></span> ' + incorrectN + ' incorrect</span>';
+    chips += '<span class="nav-chip"><span class="chip-dot c-remaining"></span> ' + (questions.length - answeredN) + ' skipped</span>';
+  } else {
+    chips += '<span class="nav-chip"><span class="chip-dot c-answered"></span> ' + answeredN + ' answered</span>';
+    chips += '<span class="nav-chip"><span class="chip-dot c-remaining"></span> ' + (questions.length - answeredN) + ' remaining</span>';
+  }
+  if (flaggedN > 0) chips += '<span class="nav-chip"><span class="chip-dot c-flagged"></span> ' + flaggedN + ' marked</span>';
+  el.innerHTML = chips;
+}
+
+// ── Keyboard Navigation ─────────────────────────────────────
+
+document.addEventListener("keydown", function(e) {
+  // Don't handle if modal is open or quiz screen is hidden
+  if (document.getElementById("customModal")) return;
+  var quiz = document.getElementById("quizScreen");
+  if (!quiz || quiz.classList.contains("hidden")) return;
+
+  var key = e.key;
+  
+  // Arrow keys: navigate questions
+  if (key === "ArrowLeft") { e.preventDefault(); navigate(-1); }
+  else if (key === "ArrowRight") { e.preventDefault(); navigate(1); }
+  
+  // B: toggle bookmark
+  else if (key === "b" || key === "B") { e.preventDefault(); toggleFlag(); }
+  
+  // 1-9: select answer by number
+  else if (key >= "1" && key <= "9") {
+    var idx = parseInt(key) - 1;
+    var q = questions[currentQ];
+    if (idx < q._shuffledAnswers.length) {
+      var showAnswer = examFinished || (mode === "review" && checked[currentQ]);
+      if (!showAnswer) {
+        e.preventDefault();
+        if (q._isMulti) {
+          var pos = userAnswers[currentQ].indexOf(idx);
+          if (pos >= 0) userAnswers[currentQ].splice(pos, 1);
+          else userAnswers[currentQ].push(idx);
+        } else {
+          userAnswers[currentQ] = [idx];
+        }
+        renderQuestion();
+      }
+    }
+  }
+  
+  // Enter/Space: check answer (review mode)
+  else if (key === "Enter" || key === " ") {
+    if (mode === "review" && !examFinished && !checked[currentQ] && userAnswers[currentQ].length > 0) {
+      e.preventDefault();
+      checkAnswer();
+    }
+  }
+  
+  // Escape: close dropdowns
+  else if (key === "Escape") { closeAllDropdowns(); }
+});
+
+init();
+</script>
+</body>
+</html>
